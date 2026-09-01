@@ -1,0 +1,26 @@
+# Web framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+
+# PDF parsing
+pdfplumber>=0.11.0
+
+# Vector store
+faiss-cpu>=1.12.0
+
+# Embeddings
+sentence-transformers>=3.0.0
+
+# LLM
+httpx>=0.25.0
+
+# NLP
+langdetect>=1.0.9
+deep-translator>=1.11.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+numpy>=2.0.0
