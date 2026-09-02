@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# Node
+frontend/node_modules
+frontend/dist
+
+# Python
+venv
+__pycache__
+*.pyc
+.pytest_cache
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data (will be mounted as volume)
+data/chroma_db
+data/processed
+
+# Tests
+tests
