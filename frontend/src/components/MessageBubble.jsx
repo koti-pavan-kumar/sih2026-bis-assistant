@@ -1,5 +1,23 @@
 import React from 'react'
 
+// Language display labels with flags
+const LANGUAGE_LABELS = {
+  en: '🇬🇧 English',
+  hi: '🇮🇳 हिंदी',
+  bn: '🇮🇳 বাংলা',
+  ta: '🇮🇳 தமிழ்',
+  te: '🇮🇳 తెలుగు',
+  mr: '🇮🇳 मराठी',
+  gu: '🇮🇳 ગુજરાતી',
+  ur: '🇮🇳 اردو',
+  kn: '🇮🇳 ಕನ್ನಡ',
+  ml: '🇮🇳 മലയാളം',
+  pa: '🇮🇳 ਪੰਜਾਬੀ',
+  or: '🇮🇳 ଓଡ଼ିଆ',
+  as: '🇮🇳 অসমীয়া',
+  ne: '🇮🇳 नेपाली',
+}
+
 export default function MessageBubble({ message, onRetry }) {
   const isUser = message.role === 'user'
   const isError = message.isError
@@ -39,15 +57,23 @@ export default function MessageBubble({ message, onRetry }) {
           )}
         </div>
 
-        {/* Confidence badge */}
-        {!isUser && message.confidence && (
+        {/* Confidence + Language badges */}
+        {!isUser && !isError && (
           <div className="mt-2 flex items-center gap-2 flex-wrap">
-            <span className={`text-xs px-2 py-1 rounded-full font-semibold ${confidenceColor}`}>
-              {message.confidence} confidence
-            </span>
-            {message.language && message.language !== 'en' && (
-              <span className="text-xs text-gray-400">
-                {message.language === 'hi' ? '🇮🇳 Hindi' : message.language}
+            {/* Confidence badge */}
+            {message.confidence && (
+              <span className={`text-xs px-2 py-1 rounded-full font-semibold ${confidenceColor}`}>
+                {message.confidence} confidence
+              </span>
+            )}
+            {/* Language indicator */}
+            {message.language && (
+              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                message.language === 'en'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-orange-100 text-orange-700'
+              }`}>
+                {LANGUAGE_LABELS[message.language] || message.language}
               </span>
             )}
           </div>
