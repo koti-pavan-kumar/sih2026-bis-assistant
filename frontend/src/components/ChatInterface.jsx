@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import MessageBubble from './MessageBubble'
 import LoadingDots from './LoadingDots'
+import VoiceInput from './VoiceInput'
 
 // Timeout for API requests (Ollama can take 30-60s for complex queries)
 const REQUEST_TIMEOUT_MS = 45000
@@ -167,9 +168,15 @@ export default function ChatInterface() {
           </div>
         )}
         <div ref={messagesEnd} />
-      </div>
-      <div className="p-4 bg-white border-t">
+      </div>        <div className="p-4 bg-white border-t">
         <div className="flex items-center gap-3 max-w-4xl mx-auto">
+          {/* Voice input */}
+          <VoiceInput
+            onResult={(text) => setInput(prev => prev ? `${prev} ${text}` : text)}
+            disabled={loading}
+          />
+
+          {/* Text input */}
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -178,6 +185,8 @@ export default function ChatInterface() {
             className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:bg-gray-100"
             disabled={loading}
           />
+
+          {/* Send button */}
           <button
             onClick={() => handleSend()}
             disabled={loading || !input.trim()}
