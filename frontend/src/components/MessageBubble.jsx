@@ -36,7 +36,7 @@ function cleanText(text) {
   if (!text) return ''
   
   let cleaned = text
-    // Remove ### heading markers (we detect headings by position)
+    // Remove ### heading markers
     .replace(/^#{1,6}\s+/gm, '')
     // Clean LaTeX symbols
     .replace(/\$\\pm\s*(\d+)(?:\\.(\d+))?\\%?\$/g, '±$1.$2%')
@@ -193,8 +193,8 @@ export default function MessageBubble({ message, onRetry }) {
                       </h4>
                       <div className="space-y-1.5">
                         {section.items.map((item, j) => {
-                          const isBullet = item.startsWith('•') || item.startsWith('-') || item.startsWith('*')
-                          const isSubItem = item.startsWith('  •') || item.startsWith('  -')
+                          const isBullet = /^\s*[•\-*]\s/.test(item)
+                          const isSubItem = /^\s{2,}[•\-*]\s/.test(item)
                           
                           return (
                             <div key={j} className={`text-sm leading-relaxed ${
@@ -204,7 +204,7 @@ export default function MessageBubble({ message, onRetry }) {
                                 <span className="text-saffron font-bold mt-0.5 flex-shrink-0">•</span>
                               )}
                               <span className={isBullet ? '' : 'text-gray-700'}>
-                                <RenderLine line={isBullet ? item.slice(item.indexOf(item.trim()[0])) : item} />
+                                <RenderLine line={isBullet ? item.replace(/^\s*[•\-*]\s*/, '') : item} />
                               </span>
                             </div>
                           )
