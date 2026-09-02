@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import AnalyticsDashboard from './AnalyticsDashboard'
 
-export default function Sidebar({ standards, health }) {
+export default function Sidebar({ standards, health, isOpen, onClose }) {
   const [showAnalytics, setShowAnalytics] = useState(false)
 
   const suggestions = [
@@ -12,7 +12,16 @@ export default function Sidebar({ standards, health }) {
   ]
 
   return (
-    <aside className="w-64 bg-white border-r flex flex-col overflow-y-auto">
+    <>n    {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={onClose}
+        ></div>
+      )}
+      <aside className={`w-64 bg-white border-r flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
       {/* Toggle */}
       <div className="flex border-b">
         <button
@@ -68,5 +77,6 @@ export default function Sidebar({ standards, health }) {
         </>
       )}
     </aside>
+    </>
   )
 }

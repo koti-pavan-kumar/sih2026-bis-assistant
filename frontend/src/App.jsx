@@ -6,6 +6,7 @@ import ChatInterface from './components/ChatInterface'
 export default function App() {
   const [standards, setStandards] = useState([])
   const [health, setHealth] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Initial load of standards list
   useEffect(() => {
@@ -29,12 +30,21 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <Header health={health} onHealthUpdate={handleHealthUpdate} />
+      <Header
+        health={health}
+        onHealthUpdate={handleHealthUpdate}
+        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+      />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar standards={standards} health={health} />
+        <Sidebar
+          standards={standards}
+          health={health}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
         <ChatInterface />
       </div>
-      <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white">
+      <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white hide-mobile">
         Ministry of Consumer Affairs &nbsp;|&nbsp; Supports 22 Indian Languages — Powered by RAG + LLM
       </footer>
     </div>
