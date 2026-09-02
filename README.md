@@ -340,9 +340,17 @@ bis-assistant/
 
 - **Python 3.10+** (tested on 3.14)
 - **Node.js 18+**
-- **Ollama** (for AI responses) — [Install Ollama](https://ollama.ai)
+- **LLM** (choose one — see below)
 
-### Option 1: Manual Setup
+### Choosing Your LLM
+
+| Option | Internet? | Install? | Quality | Best For |
+|--------|-----------|----------|---------|----------|
+| **Gemini** ⭐ | ✅ Yes | Just API key | Full AI | Demo, presentation, judge's laptop |
+| **Ollama** | ❌ Optional | Full install | Full AI | Offline, air-gapped, production |
+| **None** | ❌ No | Nothing | Text-only | Quick test, no AI needed |
+
+### Option 1: Gemini (Recommended for Demo)
 
 ```bash
 # 1. Clone the repository
@@ -355,25 +363,38 @@ source venv/Scripts/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # 3. Setup React frontend
-cd frontend
-npm install
-cd ..
+cd frontend && npm install && cd ..
 
-# 4. Start Ollama (Terminal 1)
-ollama serve
-# In another terminal: ollama pull llama3.1
+# 4. Set Gemini API key (free: https://aistudio.google.com/apikey)
+echo GEMINI_API_KEY=your_key_here > .env
 
-# 5. Start Backend (Terminal 2)
-source venv/Scripts/activate
+# 5. Start Backend (Terminal 1)
 python main.py
 
-# 6. Start Frontend (Terminal 3)
+# 6. Start Frontend (Terminal 2)
 cd frontend && npm run dev
 
 # 7. Open http://localhost:3000
 ```
 
-### Option 2: Quick Scripts
+### Option 2: Ollama (Offline)
+
+```bash
+# Same as above, but skip step 4 and instead:
+# 4a. Install Ollama: https://ollama.ai
+# 4b. ollama pull llama3.1
+# 4c. ollama serve (in separate terminal)
+```
+
+### Option 3: No LLM (Template Mode)
+
+```bash
+# Same as above, skip LLM setup entirely.
+# System shows retrieved text without AI summary.
+# Still demonstrates search, multilingual, and citation features.
+```
+
+### Option 4: Quick Scripts
 
 ```bash
 # Windows
@@ -400,32 +421,19 @@ docker-compose up --build
 |---------|------|-------------|
 | `frontend` | 3000 | React chat UI |
 | `backend` | 8000 | FastAPI REST API |
-| `ollama` | 11434 | Local LLM inference |
+| `ollama` | 11434 | Local LLM (optional) |
 
-### Dockerfile
+### Deployment Modes
 
-```dockerfile
-# Backend
-FROM python:3.14-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["python", "main.py"]
-
-# Frontend
-FROM node:20-alpine
-WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ .
-RUN npm run build
-```
+| Mode | Command | LLM | Internet |
+|------|---------|-----|----------|
+| **Full (with Ollama)** | `docker-compose up --build` | Ollama | Not needed |
+| **Cloud LLM** | `docker-compose up backend frontend` | Gemini | Required |
+| **No LLM** | `docker-compose up backend frontend` | Template | Not needed |
 
 ### Air-Gapped Deployment
 
-ManakMitra works **100% offline**:
+ManakMitra works **100% offline** with Ollama:
 - Ollama runs locally — no API keys needed
 - FAISS is a local vector store — no cloud database
 - React builds to static files — no server-side rendering

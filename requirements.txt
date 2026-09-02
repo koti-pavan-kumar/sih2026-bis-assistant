@@ -1,0 +1,4 @@
+# BIS Standards AI Assistant — Python Dependencies
+# Full requirements in backend/requirements.txt
+
+-r backend/requirements.txt
