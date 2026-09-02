@@ -7,8 +7,19 @@ import { t } from '../utils/translations'
 
 const REQUEST_TIMEOUT_MS = 45000
 
+const STORAGE_KEY = 'manakmitra_chat_history'
+const MAX_HISTORY_FOR_CONTEXT = 6  // Last 6 messages (3 turns) for LLM context
+
 export default function ChatInterface({ language = 'en' }) {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(() => {
+    // Load persisted chat history
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
@@ -16,6 +27,15 @@ export default function ChatInterface({ language = 'en' }) {
   const messagesEnd = useRef(null)
   const timerRef = useRef(null)
   const abortControllerRef = useRef(null)
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+      } catch {}
+    }
+  }, [messages])
 
   useEffect(() => {
     messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -64,12 +84,18 @@ export default function ChatInterface({ language = 'en' }) {
     }, REQUEST_TIMEOUT_MS)
 
     try {
+      // Build conversation history for multi-turn context
+      const historyForContext = messages
+        .slice(-MAX_HISTORY_FOR_CONTEXT)
+        .map(m => ({ role: m.role, content: m.content }))
+
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: queryToSend,
-          response_language: language  // Pass selected language to backend
+          response_language: language,
+          conversation_history: historyForContext  // Multi-turn context
         }),
         signal: abortControllerRef.current.signal
       })
@@ -163,6 +189,21 @@ export default function ChatInterface({ language = 'en' }) {
             {t('certificationWizard', language)}
           </button>
         </div>
+        {messages.length > 0 && !showWizard && (
+          <button
+            onClick={() => {
+              setMessages([])
+              localStorage.removeItem(STORAGE_KEY)
+            }}
+            className="text-xs text-gray-400 hover:text-red-500 transition flex items-center gap-1"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Clear chat
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">

@@ -49,6 +49,7 @@ class QueryRequest(BaseModel):
     query: str
     filter_standard: Optional[str] = None
     response_language: Optional[str] = "en"  # Language code for response translation
+    conversation_history: Optional[list] = []  # Multi-turn context [{role, content}]
 
 
 class QueryResponse(BaseModel):
@@ -96,8 +97,8 @@ async def query(request: QueryRequest):
         # Assemble context
         context = rag_engine.assemble_context(results)
 
-        # Generate response
-        answer = llm_generator.generate(processed, context, language)
+        # Generate response with multi-turn context
+        answer = llm_generator.generate(processed, context, language, request.conversation_history)
         
         # Always translate response to user's selected language
         # (Gemini sometimes ignores the language instruction in the prompt)

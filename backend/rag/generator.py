@@ -64,12 +64,12 @@ class LLMGenerator:
 
         logger.warning("No LLM available. Using template responses.")
 
-    def generate(self, query: str, context: str, language: str = "en") -> str:
+    def generate(self, query: str, context: str, language: str = "en", conversation_history: list = None) -> str:
         """Generate a response using the available LLM."""
         if self.llm_provider == "ollama":
-            return self._generate_ollama(query, context, language)
+            return self._generate_ollama(query, context, language, conversation_history)
         elif self.llm_provider == "gemini":
-            return self._generate_gemini(query, context, language)
+            return self._generate_gemini(query, context, language, conversation_history)
         else:
             return self._generate_template(query, context, language)
 
@@ -83,10 +83,21 @@ class LLMGenerator:
         "mai": "Maithili"
     }
 
-    def _build_prompt(self, query: str, context: str, language: str) -> str:
-        """Build the system prompt for the LLM."""
+    def _build_prompt(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
+        """Build the system prompt for the LLM with multi-turn context."""
         lang_name = self.LANGUAGE_NAMES.get(language, "English")
         lang_instruction = f"Respond in {lang_name}."
+
+        # Build conversation context from history
+        history_text = ""
+        if conversation_history:
+            history_lines = []
+            for msg in conversation_history[-6:]:  # Last 6 messages (3 turns)
+                role = "User" if msg.get("role") == "user" else "Assistant"
+                content = msg.get("content", "")[:200]  # Truncate long messages
+                history_lines.append(f"{role}: {content}")
+            if history_lines:
+                history_text = "\n\nPrevious conversation:\n" + "\n".join(history_lines)
 
         return f"""You are an expert on Indian Standards (BIS) published by the Bureau of Indian Standards.
 
@@ -101,17 +112,18 @@ IMPORTANT RULES:
 4. Be precise with numbers, percentages, and technical specifications
 5. Structure your answer clearly with Direct Answer, Supporting Details, and Citations
 6. Translate technical terms accurately when responding in non-English languages
+7. If the user asks a follow-up question, use the conversation history to understand context
 
 Context from BIS Standards:
-{context}
+{context}{history_text}
 
 User Question: {query}
 
 Provide a clear, structured answer with source citations."""
 
-    def _generate_ollama(self, query: str, context: str, language: str) -> str:
+    def _generate_ollama(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
         """Generate using Ollama."""
-        prompt = self._build_prompt(query, context, language)
+        prompt = self._build_prompt(query, context, language, conversation_history)
         try:
             resp = httpx.post(
                 f"{self.ollama_url}/api/generate",
@@ -129,9 +141,9 @@ Provide a clear, structured answer with source citations."""
             logger.error(f"Ollama error: {e}")
         return self._generate_template(query, context, language)
 
-    def _generate_gemini(self, query: str, context: str, language: str) -> str:
+    def _generate_gemini(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
         """Generate using Gemini via REST API (avoids deprecated library issues)."""
-        prompt = self._build_prompt(query, context, language)
+        prompt = self._build_prompt(query, context, language, conversation_history)
         gemini_key = os.getenv("GEMINI_API_KEY")
         
         # Try REST API directly (more reliable than deprecated google.generativeai)
