@@ -31,7 +31,7 @@ export default function App() {
     <div className="flex flex-col h-screen bg-gray-50">
       <Header health={health} onHealthUpdate={handleHealthUpdate} />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar standards={standards} />
+        <Sidebar standards={standards} health={health} />
         <ChatInterface />
       </div>
       <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white">
