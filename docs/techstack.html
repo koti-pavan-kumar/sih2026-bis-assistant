@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManakMitra — Tech Stack</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 40px 20px; }
+  .container { width: 900px; }
+  .title { text-align: center; margin-bottom: 30px; }
+  .title h1 { font-size: 28px; color: #1a1a2e; font-weight: 800; }
+  .title p { font-size: 14px; color: #666; margin-top: 4px; }
+  .layer { display: flex; align-items: stretch; margin-bottom: 6px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .layer-label { width: 160px; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-weight: 700; padding: 16px 12px; text-align: center; flex-shrink: 0; }
+  .layer-label .num { font-size: 32px; font-weight: 900; opacity: 0.3; line-height: 1; }
+  .layer-label .text { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .layer-content { flex: 1; background: white; padding: 16px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .tech-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; background: #f8f9fa; border: 1px solid #e9ecef; min-width: 100px; text-align: center; transition: transform 0.2s; }
+  .tech-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .tech-item .icon { font-size: 28px; }
+  .tech-item .name { font-size: 13px; font-weight: 700; color: #1a1a2e; }
+  .tech-item .desc { font-size: 10px; color: #888; }
+  .tech-item.highlight { background: #fff3e0; border-color: #ffb74d; }
+  .tech-item.accent { background: #e8f5e9; border-color: #a5d6a7; }
+  .tech-item.info { background: #e3f2fd; border-color: #90caf9; }
+  .divider { display: flex; align-items: center; justify-content: center; padding: 4px 0; }
+  .divider span { font-size: 11px; color: #999; background: #f0f2f5; padding: 2px 12px; border-radius: 10px; }
+  .arrow { text-align: center; padding: 2px 0; font-size: 16px; color: #ccc; }
+
+  /* Colors */
+  .bg-blue { background: #1565c0; }
+  .bg-green { background: #2e7d32; }
+  .bg-orange { background: #e65100; }
+  .bg-purple { background: #6a1b9a; }
+  .bg-amber { background: #f57f17; }
+  .bg-teal { background: #00695c; }
+  .bg-navy { background: #1a1a2e; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">
+    <h1>🏗️ ManakMitra — Technology Stack</h1>
+    <p>AI-Powered Intelligent Assistant for Indian Standards (SIH26107)</p>
+  </div>
+
+  <!-- Layer 1: User Interface -->
+  <div class="layer">
+    <div class="layer-label bg-blue">
+      <div class="num">01</div>
+      <div class="text">User Interface</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item">
+        <div class="icon">💬</div>
+        <div class="name">Chat Interface</div>
+        <div class="desc">Text-based Q&A</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🎤</div>
+        <div class="name">Voice Input</div>
+        <div class="desc">Web Speech API</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🧭</div>
+        <div class="name">Certification Wizard</div>
+        <div class="desc">7 product categories</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🌐</div>
+        <div class="name">20 Languages</div>
+        <div class="desc">Auto-translate UI + responses</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 2: Frontend -->
+  <div class="layer">
+    <div class="layer-label bg-green">
+      <div class="num">02</div>
+      <div class="text">Frontend</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item highlight">
+        <div class="icon">⚛️</div>
+        <div class="name">React 18</div>
+        <div class="desc">Component-based UI</div>
+      </div>
+      <div class="tech-item highlight">
+        <div class="icon">🎨</div>
+        <div class="name">Tailwind CSS</div>
+        <div class="desc">Utility-first styling</div>
+      </div>
+      <div class="tech-item highlight">
+        <div class="icon">⚡</div>
+        <div class="name">Vite</div>
+        <div class="desc">Fast build tool</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 3: Backend API -->
+  <div class="layer">
+    <div class="layer-label bg-orange">
+      <div class="num">03</div>
+      <div class="text">Backend API</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item accent">
+        <div class="icon">🐍</div>
+        <div class="name">Python</div>
+        <div class="desc">Core language</div>
+      </div>
+      <div class="tech-item accent">
+        <div class="icon">⚡</div>
+        <div class="name">FastAPI</div>
+        <div class="desc">RESTful APIs</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🔄</div>
+        <div class="name">Auto-Fetch</div>
+        <div class="desc">Scrape BIS website</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">📊</div>
+        <div class="name">Analytics</div>
+        <div class="desc">System statistics</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 4: AI / RAG Engine -->
+  <div class="layer">
+    <div class="layer-label bg-purple">
+      <div class="num">04</div>
+      <div class="text">AI / RAG Engine</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item info">
+        <div class="icon">🔍</div>
+        <div class="name">FAISS</div>
+        <div class="desc">Vector similarity search</div>
+      </div>
+      <div class="tech-item info">
+        <div class="icon">🧠</div>
+        <div class="name">all-MiniLM-L6-v2</div>
+        <div class="desc">384-dim embeddings</div>
+      </div>
+      <div class="tech-item info">
+        <div class="icon">📄</div>
+        <div class="name">RAG Pipeline</div>
+        <div class="desc">Retrieve → Augment → Generate</div>
+      </div>
+      <div class="tech-item info">
+        <div class="icon">✅</div>
+        <div class="name">Citation Verification</div>
+        <div class="desc">Cross-check against chunks</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 5: LLM Layer -->
+  <div class="layer">
+    <div class="layer-label bg-amber">
+      <div class="num">05</div>
+      <div class="text">LLM Layer</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item" style="flex: 1;">
+        <div class="icon">🦙</div>
+        <div class="name">Ollama</div>
+        <div class="desc">Local LLM (Primary) — Offline</div>
+      </div>
+      <div style="font-size: 24px; color: #999; padding: 0 8px;">⇌</div>
+      <div class="tech-item" style="flex: 1;">
+        <div class="icon">✨</div>
+        <div class="name">Gemini 3.5 Flash</div>
+        <div class="desc">Cloud LLM (Fallback) — Needs internet</div>
+      </div>
+      <div style="font-size: 24px; color: #999; padding: 0 8px;">⇌</div>
+      <div class="tech-item" style="flex: 1;">
+        <div class="icon">📝</div>
+        <div class="name">Template Mode</div>
+        <div class="desc">Fallback — No LLM needed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 6: Document Ingestion -->
+  <div class="layer">
+    <div class="layer-label bg-teal">
+      <div class="num">06</div>
+      <div class="text">Document Ingestion</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item">
+        <div class="icon">📥</div>
+        <div class="name">PDF Parsing</div>
+        <div class="desc">pdfplumber extraction</div>
+      </div>
+      <div style="font-size: 20px; color: #ccc;">→</div>
+      <div class="tech-item">
+        <div class="icon">✂️</div>
+        <div class="name">Text Chunking</div>
+        <div class="desc">512-char chunks with overlap</div>
+      </div>
+      <div style="font-size: 20px; color: #ccc;">→</div>
+      <div class="tech-item">
+        <div class="icon">🏷️</div>
+        <div class="name">Metadata Enrichment</div>
+        <div class="desc">IS#, Section, Page, Domain</div>
+      </div>
+      <div style="font-size: 20px; color: #ccc;">→</div>
+      <div class="tech-item accent">
+        <div class="icon">💾</div>
+        <div class="name">FAISS Index</div>
+        <div class="desc">104 vectors, 23 standards</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">▼</div>
+
+  <!-- Layer 7: Deployment -->
+  <div class="layer">
+    <div class="layer-label bg-navy">
+      <div class="num">07</div>
+      <div class="text">Deployment</div>
+    </div>
+    <div class="layer-content">
+      <div class="tech-item">
+        <div class="icon">🐳</div>
+        <div class="name">Docker</div>
+        <div class="desc">Backend + Frontend containers</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🐙</div>
+        <div class="name">Docker Compose</div>
+        <div class="desc">One-command deployment</div>
+      </div>
+      <div class="tech-item">
+        <div class="icon">🖥️</div>
+        <div class="name">Localhost</div>
+        <div class="desc">Development mode</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer badges -->
+  <div style="display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+    <span style="background: #1565c0; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">20 Indian Languages</span>
+    <span style="background: #2e7d32; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">Voice Input</span>
+    <span style="background: #e65100; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">Auto-Fetch from BIS</span>
+    <span style="background: #6a1b9a; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">Verified Citations</span>
+    <span style="background: #f57f17; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">Offline-Ready</span>
+    <span style="background: #00695c; color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 600;">Mobile Responsive</span>
+  </div>
+</div>
+</body>
+</html>
