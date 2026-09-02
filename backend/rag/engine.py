@@ -138,10 +138,45 @@ class RAGEngine:
         self.min_relevance_score = 0.2
 
     def retrieve(self, query: str, n_results: int = 5, filter_is_number: str = None) -> List[RetrievalResult]:
-        """Retrieve relevant chunks for a query."""
+        """Retrieve relevant chunks for a query.
+        
+        Uses hybrid approach:
+        1. IS number detection — direct lookup when query contains "IS XXXX"
+        2. Semantic search via FAISS for everything else
+        """
+        import re
+        
+        # Detect IS number in query (e.g., "IS 1786", "IS 1786:2008")
+        is_match = re.search(r'IS\s+(\d{4,5})(?::(\d{4}))?', query, re.IGNORECASE)
+        
+        if is_match and not filter_is_number:
+            # Query contains an IS number — direct lookup in chunks
+            is_num = is_match.group(1)
+            is_year = is_match.group(2)
+            
+            # Find all chunks matching this IS number
+            matched_chunks = []
+            for i, chunk in enumerate(self.vector_store.chunks):
+                # Match IS number (e.g., "IS 1786" matches "IS 1786:2008")
+                chunk_is = chunk.is_number
+                if is_num in chunk_is:
+                    matched_chunks.append(RetrievalResult(
+                        chunk=chunk,
+                        score=0.9,  # High score for direct match
+                        rank=len(matched_chunks) + 1
+                    ))
+            
+            if matched_chunks:
+                logger.info(f"Direct IS lookup: Found {len(matched_chunks)} chunks for IS {is_num}")
+                return matched_chunks[:n_results]
+            else:
+                # Fallback to semantic search if no direct match
+                logger.info(f"No direct match for IS {is_num}, falling back to semantic search")
+        
+        # Standard semantic search
         results = self.vector_store.search(query, n_results=n_results, filter_is_number=filter_is_number)
         filtered_results = [r for r in results if r.score >= self.min_relevance_score]
-        logger.info(f"Retrieved {len(filtered_results)} relevant chunks (from {len(results)} total)")
+        logger.info(f"Retrieved {len(filtered_results)} relevant chunks (from query: {query[:50]})")
         return filtered_results
 
     def assemble_context(self, results: List[RetrievalResult]) -> str:
