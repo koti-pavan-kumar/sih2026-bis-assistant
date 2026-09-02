@@ -99,12 +99,14 @@ async def query(request: QueryRequest):
         # Generate response
         answer = llm_generator.generate(processed, context, language)
         
-        # Translate response to user's selected language if needed
+        # Always translate response to user's selected language
+        # (Gemini sometimes ignores the language instruction in the prompt)
         response_lang = request.response_language or "en"
-        if response_lang != "en" and response_lang in query_processor.supported_languages:
+        if response_lang in query_processor.supported_languages:
             try:
                 from deep_translator import GoogleTranslator
-                answer = GoogleTranslator(source='en', target=response_lang).translate(answer)
+                # Auto-detect source language, translate to user's selected language
+                answer = GoogleTranslator(source='auto', target=response_lang).translate(answer)
             except Exception as e:
                 logger.warning(f"Response translation failed: {e}")
 
