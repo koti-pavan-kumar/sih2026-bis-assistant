@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManakMitra Architecture</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fff; padding: 40px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { text-align: center; color: #1B2A4A; font-size: 28px; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #6C757D; font-size: 14px; margin-bottom: 40px; }
+        
+        .layer { 
+            border: 2px solid #1B2A4A; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .layer-title {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #1B2A4A;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .components {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .component {
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 8px;
+            padding: 16px;
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+        }
+        .component-icon { font-size: 24px; margin-bottom: 8px; }
+        .component-name { font-weight: 600; color: #1B2A4A; font-size: 14px; }
+        .component-tech { color: #6C757D; font-size: 11px; margin-top: 4px; }
+        
+        .arrow {
+            text-align: center;
+            padding: 8px 0;
+            color: #FF6B35;
+            font-size: 20px;
+        }
+        
+        .highlight { background: #E8F5E9; border-color: #4CAF50; }
+        .accent { background: #FFF3E0; border-color: #FF6B35; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #E9ECEF;
+            color: #6C757D;
+            font-size: 12px;
+        }
+        .badge {
+            display: inline-block;
+            background: #FF6B35;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ManakMitra — System Architecture</h1>
+        <p class="subtitle">AI-Powered Intelligent Assistant for Indian Standards (SIH26107)</p>
+        
+        <!-- Layer 1: Presentation -->
+        <div class="layer">
+            <span class="layer-title">Presentation Layer</span>
+            <div class="components">
+                <div class="component">
+                    <div class="component-icon">💬</div>
+                    <div class="component-name">Chat Interface</div>
+                    <div class="component-tech">React + TailwindCSS + Vite</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🎤</div>
+                    <div class="component-name">Voice Input</div>
+                    <div class="component-tech">Web Speech API (Hindi/English)</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🧭</div>
+                    <div class="component-name">Certification Wizard</div>
+                    <div class="component-tech">Guided product → standard flow</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🔌</div>
+                    <div class="component-name">REST API</div>
+                    <div class="component-tech">FastAPI + CORS</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇ User Query ⬇</div>
+        
+        <!-- Layer 2: Processing -->
+        <div class="layer accent">
+            <span class="layer-title">Processing Layer</span>
+            <div class="components">
+                <div class="component">
+                    <div class="component-icon">🌐</div>
+                    <div class="component-name">Language Detection</div>
+                    <div class="component-tech">langdetect (22 languages)</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🔄</div>
+                    <div class="component-name">Translation</div>
+                    <div class="component-tech">deep-translator (auto-detect)</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🤖</div>
+                    <div class="component-name">LLM Generator</div>
+                    <div class="component-tech">Ollama / Gemini / Template</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">✅</div>
+                    <div class="component-name">Confidence Scorer</div>
+                    <div class="component-tech">FAISS scores + citation verify</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇ Embedding + Search ⬇</div>
+        
+        <!-- Layer 3: Intelligence -->
+        <div class="layer highlight">
+            <span class="layer-title">Intelligence Layer</span>
+            <div class="components">
+                <div class="component">
+                    <div class="component-icon">📊</div>
+                    <div class="component-name">Vector Store</div>
+                    <div class="component-tech">FAISS (73 chunks, 18 standards)</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🧠</div>
+                    <div class="component-name">Embeddings</div>
+                    <div class="component-tech">sentence-transformers (384-dim)</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">📄</div>
+                    <div class="component-name">Document Ingestion</div>
+                    <div class="component-tech">pdfplumber + semantic chunking</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇ Chunked Text + Metadata ⬇</div>
+        
+        <!-- Layer 4: Data -->
+        <div class="layer">
+            <span class="layer-title">Data Layer</span>
+            <div class="components">
+                <div class="component">
+                    <div class="component-icon">📚</div>
+                    <div class="component-name">BIS Standards</div>
+                    <div class="component-tech">18 IS standards, 8 domains</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">🏷️</div>
+                    <div class="component-name">Metadata Store</div>
+                    <div class="component-tech">IS# + Section + Page + Chunk ID</div>
+                </div>
+                <div class="component">
+                    <div class="component-icon">💾</div>
+                    <div class="component-name">FAISS Index</div>
+                    <div class="component-tech">Inner product (cosine similarity)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <span class="badge">100% Offline</span>
+                <span class="badge">22 Languages</span>
+                <span class="badge">Voice Input</span>
+                <span class="badge">Anti-Hallucination</span>
+            </p>
+            <p style="margin-top: 12px;">Team Resonant — Smart India Hackathon 2026</p>
+        </div>
+    </div>
+</body>
+</html>

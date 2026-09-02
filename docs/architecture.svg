@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="Segoe UI, sans-serif">
+  <!-- Background -->
+  <rect width="800" height="600" fill="white"/>
+  
+  <!-- Title -->
+  <text x="400" y="35" text-anchor="middle" font-size="22" font-weight="bold" fill="#1B2A4A">ManakMitra — System Architecture</text>
+  <text x="400" y="55" text-anchor="middle" font-size="12" fill="#6C757D">AI-Powered Intelligent Assistant for Indian Standards (SIH26107)</text>
+  
+  <!-- Layer 1: Presentation -->
+  <rect x="40" y="80" width="720" height="100" rx="10" fill="none" stroke="#1B2A4A" stroke-width="2"/>
+  <rect x="60" y="72" width="140" height="20" rx="4" fill="#1B2A4A"/>
+  <text x="130" y="86" text-anchor="middle" font-size="10" fill="white" font-weight="600">PRESENTATION LAYER</text>
+  
+  <rect x="60" y="100" width="150" height="65" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="135" y="128" text-anchor="middle" font-size="20">💬</text>
+  <text x="135" y="148" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Chat Interface</text>
+  <text x="135" y="160" text-anchor="middle" font-size="8" fill="#6C757D">React + TailwindCSS</text>
+  
+  <rect x="225" y="100" width="150" height="65" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="300" y="128" text-anchor="middle" font-size="20">🎤</text>
+  <text x="300" y="148" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Voice Input</text>
+  <text x="300" y="160" text-anchor="middle" font-size="8" fill="#6C757D">Web Speech API</text>
+  
+  <rect x="390" y="100" width="150" height="65" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="465" y="128" text-anchor="middle" font-size="20">🧭</text>
+  <text x="465" y="148" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Wizard</text>
+  <text x="465" y="160" text-anchor="middle" font-size="8" fill="#6C757D">Certification Flow</text>
+  
+  <rect x="555" y="100" width="185" height="65" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="647" y="128" text-anchor="middle" font-size="20">🔌</text>
+  <text x="647" y="148" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">REST API</text>
+  <text x="647" y="160" text-anchor="middle" font-size="8" fill="#6C757D">FastAPI + CORS</text>
+  
+  <!-- Arrow 1 -->
+  <text x="400" y="200" text-anchor="middle" font-size="14" fill="#FF6B35">⬇ User Query ⬇</text>
+  
+  <!-- Layer 2: Processing -->
+  <rect x="40" y="220" width="720" height="100" rx="10" fill="none" stroke="#FF6B35" stroke-width="2"/>
+  <rect x="60" y="212" width="140" height="20" rx="4" fill="#FF6B35"/>
+  <text x="130" y="226" text-anchor="middle" font-size="10" fill="white" font-weight="600">PROCESSING LAYER</text>
+  
+  <rect x="60" y="240" width="150" height="65" rx="6" fill="#FFF3E0" stroke="#FFB74D"/>
+  <text x="135" y="268" text-anchor="middle" font-size="20">🌐</text>
+  <text x="135" y="288" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Lang Detection</text>
+  <text x="135" y="300" text-anchor="middle" font-size="8" fill="#6C757D">22 Indian Languages</text>
+  
+  <rect x="225" y="240" width="150" height="65" rx="6" fill="#FFF3E0" stroke="#FFB74D"/>
+  <text x="300" y="268" text-anchor="middle" font-size="20">🔄</text>
+  <text x="300" y="288" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Translation</text>
+  <text x="300" y="300" text-anchor="middle" font-size="8" fill="#6C757D">deep-translator</text>
+  
+  <rect x="390" y="240" width="150" height="65" rx="6" fill="#FFF3E0" stroke="#FFB74D"/>
+  <text x="465" y="268" text-anchor="middle" font-size="20">🤖</text>
+  <text x="465" y="288" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">LLM Generator</text>
+  <text x="465" y="300" text-anchor="middle" font-size="8" fill="#6C757D">Ollama / Gemini</text>
+  
+  <rect x="555" y="240" width="185" height="65" rx="6" fill="#FFF3E0" stroke="#FFB74D"/>
+  <text x="647" y="268" text-anchor="middle" font-size="20">✅</text>
+  <text x="647" y="288" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Confidence</text>
+  <text x="647" y="300" text-anchor="middle" font-size="8" fill="#6C757D">FAISS + Citation Verify</text>
+  
+  <!-- Arrow 2 -->
+  <text x="400" y="340" text-anchor="middle" font-size="14" fill="#FF6B35">⬇ Embedding + Search ⬇</text>
+  
+  <!-- Layer 3: Intelligence -->
+  <rect x="40" y="360" width="720" height="100" rx="10" fill="none" stroke="#4CAF50" stroke-width="2"/>
+  <rect x="60" y="352" width="140" height="20" rx="4" fill="#4CAF50"/>
+  <text x="130" y="366" text-anchor="middle" font-size="10" fill="white" font-weight="600">INTELLIGENCE LAYER</text>
+  
+  <rect x="100" y="380" width="200" height="65" rx="6" fill="#E8F5E9" stroke="#A5D6A7"/>
+  <text x="200" y="408" text-anchor="middle" font-size="20">📊</text>
+  <text x="200" y="428" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">FAISS Vector Store</text>
+  <text x="200" y="440" text-anchor="middle" font-size="8" fill="#6C757D">73 chunks, 18 standards</text>
+  
+  <rect x="320" y="380" width="160" height="65" rx="6" fill="#E8F5E9" stroke="#A5D6A7"/>
+  <text x="400" y="408" text-anchor="middle" font-size="20">🧠</text>
+  <text x="400" y="428" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Embeddings</text>
+  <text x="400" y="440" text-anchor="middle" font-size="8" fill="#6C757D">all-MiniLM-L6-v2</text>
+  
+  <rect x="500" y="380" width="200" height="65" rx="6" fill="#E8F5E9" stroke="#A5D6A7"/>
+  <text x="600" y="408" text-anchor="middle" font-size="20">📄</text>
+  <text x="600" y="428" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">Document Ingestion</text>
+  <text x="600" y="440" text-anchor="middle" font-size="8" fill="#6C757D">pdfplumber + chunking</text>
+  
+  <!-- Arrow 3 -->
+  <text x="400" y="480" text-anchor="middle" font-size="14" fill="#FF6B35">⬇ Chunked Text + Metadata ⬇</text>
+  
+  <!-- Layer 4: Data -->
+  <rect x="40" y="500" width="720" height="80" rx="10" fill="none" stroke="#1B2A4A" stroke-width="2"/>
+  <rect x="60" y="492" width="100" height="20" rx="4" fill="#1B2A4A"/>
+  <text x="110" y="506" text-anchor="middle" font-size="10" fill="white" font-weight="600">DATA LAYER</text>
+  
+  <rect x="100" y="520" width="180" height="45" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="190" y="540" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">📚 BIS Standards (18)</text>
+  <text x="190" y="555" text-anchor="middle" font-size="8" fill="#6C757D">8 domains</text>
+  
+  <rect x="310" y="520" width="180" height="45" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="400" y="540" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">🏷️ Metadata Store</text>
+  <text x="400" y="555" text-anchor="middle" font-size="8" fill="#6C757D">IS# + Section + Page</text>
+  
+  <rect x="520" y="520" width="180" height="45" rx="6" fill="#F8F9FA" stroke="#E9ECEF"/>
+  <text x="610" y="540" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">💾 FAISS Index</text>
+  <text x="610" y="555" text-anchor="middle" font-size="8" fill="#6C757D">Cosine similarity</text>
+  
+  <!-- Footer badges -->
+  <rect x="200" y="590" width="80" height="18" rx="9" fill="#FF6B35"/>
+  <text x="240" y="603" text-anchor="middle" font-size="8" fill="white" font-weight="600">Offline</text>
+  
+  <rect x="290" y="590" width="80" height="18" rx="9" fill="#FF6B35"/>
+  <text x="330" y="603" text-anchor="middle" font-size="8" fill="white" font-weight="600">22 Languages</text>
+  
+  <rect x="380" y="590" width="80" height="18" rx="9" fill="#FF6B35"/>
+  <text x="420" y="603" text-anchor="middle" font-size="8" fill="white" font-weight="600">Voice</text>
+  
+  <rect x="470" y="590" width="110" height="18" rx="9" fill="#FF6B35"/>
+  <text x="525" y="603" text-anchor="middle" font-size="8" fill="white" font-weight="600">Anti-Hallucination</text>
+</svg>
