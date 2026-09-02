@@ -44,6 +44,7 @@ llm_generator = LLMGenerator()
 class QueryRequest(BaseModel):
     query: str
     filter_standard: Optional[str] = None
+    response_language: Optional[str] = "en"  # Language code for response translation
 
 
 class QueryResponse(BaseModel):
@@ -93,6 +94,15 @@ async def query(request: QueryRequest):
 
         # Generate response
         answer = llm_generator.generate(processed, context, language)
+        
+        # Translate response to user's selected language if needed
+        response_lang = request.response_language or "en"
+        if response_lang != "en" and response_lang in query_processor.supported_languages:
+            try:
+                from deep_translator import GoogleTranslator
+                answer = GoogleTranslator(source='en', target=response_lang).translate(answer)
+            except Exception as e:
+                logger.warning(f"Response translation failed: {e}")
 
         # Extract citations
         citations = llm_generator.extract_citations(answer)

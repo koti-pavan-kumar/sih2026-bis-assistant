@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import ChatInterface from './components/ChatInterface'
+import { t } from './utils/translations'
 
 export default function App() {
   const [standards, setStandards] = useState([])
   const [health, setHealth] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [language, setLanguage] = useState(() => {
+    // Load saved language preference
+    return localStorage.getItem('manakmitra_language') || 'en'
+  })
 
   // Initial load of standards list
   useEffect(() => {
@@ -19,7 +24,6 @@ export default function App() {
   // Callback from ConnectionStatus component
   const handleHealthUpdate = (healthData) => {
     setHealth(healthData)
-    // Also refresh standards when health updates
     if (healthData) {
       fetch('/api/standards')
         .then(r => r.json())
@@ -28,12 +32,19 @@ export default function App() {
     }
   }
 
+  const handleLanguageChange = useCallback((lang) => {
+    setLanguage(lang)
+    localStorage.setItem('manakmitra_language', lang)
+  }, [])
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Header
         health={health}
         onHealthUpdate={handleHealthUpdate}
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        language={language}
+        onLanguageChange={handleLanguageChange}
       />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
@@ -41,11 +52,12 @@ export default function App() {
           health={health}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          language={language}
         />
-        <ChatInterface />
+        <ChatInterface language={language} />
       </div>
       <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white hide-mobile">
-        Ministry of Consumer Affairs &nbsp;|&nbsp; Supports 18 Indian Languages — Powered by RAG + LLM
+        {t('ministry', language)} | {t('poweredBy', language)}
       </footer>
     </div>
   )

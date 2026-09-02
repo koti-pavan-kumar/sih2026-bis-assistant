@@ -1,7 +1,9 @@
 import React from 'react'
 import ConnectionStatus from './ConnectionStatus'
+import LanguageSelector from './LanguageSelector'
+import { t } from '../utils/translations'
 
-export default function Header({ health, onHealthUpdate, onMenuToggle }) {
+export default function Header({ health, onHealthUpdate, onMenuToggle, language, onLanguageChange }) {
   return (
     <header className="bg-navy text-white px-4 md:px-6 py-3 flex items-center justify-between shadow-lg">
       <div className="flex items-center gap-3">
@@ -18,14 +20,18 @@ export default function Header({ health, onHealthUpdate, onMenuToggle }) {
         </button>
         <div className="text-2xl">🇮🇳</div>
         <div>
-          <h1 className="text-base md:text-lg font-bold leading-tight">BIS Standards AI Assistant</h1>
-          <p className="text-[10px] md:text-xs text-blue-200">भारतीय मानकों का AI सहायक — ManakMitra</p>
+          <h1 className="text-base md:text-lg font-bold leading-tight">{t('bisAssistantTitle', language)}</h1>
+          <p className="text-[10px] md:text-xs text-blue-200">{t('subtitle', language)}</p>
         </div>
       </div>
       <div className="flex items-center gap-2 md:gap-4 text-sm">
         <div className="hidden sm:block">
-          <ConnectionStatus onHealthUpdate={onHealthUpdate} />
+          <ConnectionStatus onHealthUpdate={onHealthUpdate} language={language} />
         </div>
+        <LanguageSelector
+          currentLanguage={language}
+          onLanguageChange={onLanguageChange}
+        />
         <span className="bg-saffron text-white px-2 md:px-3 py-1 rounded-full text-xs font-semibold">SIH 2026</span>
       </div>
     </header>
