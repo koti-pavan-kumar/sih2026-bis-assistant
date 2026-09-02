@@ -32,14 +32,16 @@ export default function ConnectionStatus({ onHealthUpdate, language = 'en' }) {
     }
   }, [onHealthUpdate])
 
+  // Check on mount only once
   useEffect(() => {
     checkHealth()
-  }, [checkHealth])
+  }, []) // Empty deps - only on mount
 
+  // Poll every 60 seconds (not 30)
   useEffect(() => {
-    const interval = setInterval(checkHealth, 30000)
+    const interval = setInterval(checkHealth, 60000)
     return () => clearInterval(interval)
-  }, [checkHealth])
+  }, []) // Empty deps - stable interval
 
   const statusConfig = {
     connected: {
