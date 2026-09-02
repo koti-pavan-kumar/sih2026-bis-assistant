@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import AnalyticsDashboard from './AnalyticsDashboard'
 
-export default function Sidebar({ standards, health, isOpen, onClose }) {
+export default function Sidebar({ standards, health, isOpen, onClose, onNavigate }) {
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [activeTab, setActiveTab] = useState('standards')
   const [fetching, setFetching] = useState(false)
@@ -61,6 +61,20 @@ export default function Sidebar({ standards, health, isOpen, onClose }) {
       <aside className={`w-64 bg-white border-r flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
+      {/* Home button */}
+      <div className="p-3 border-b">
+        <button
+          onClick={() => onNavigate?.('landing')}
+          className="w-full flex items-center gap-2 text-xs text-gray-500 hover:text-[#000080] transition py-1.5 px-2 rounded-lg hover:bg-gray-50"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Back to Home
+        </button>
+      </div>
+
       {/* Tab toggles */}
       <div className="flex border-b">
         <button

@@ -8,9 +8,7 @@ import SignupPage from './pages/SignupPage'
 import { t } from './utils/translations'
 
 export default function App() {
-  const [page, setPage] = useState(() => {
-    return localStorage.getItem('manakmitra_page') || 'landing'
-  })
+  const [page, setPage] = useState('landing')
   const [standards, setStandards] = useState([])
   const [health, setHealth] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -20,7 +18,7 @@ export default function App() {
 
   const navigate = useCallback((newPage) => {
     setPage(newPage)
-    localStorage.setItem('manakmitra_page', newPage)
+    // Don't persist page choice — always start at landing
   }, [])
 
   // Initial load of standards list (only when on main app)
@@ -81,6 +79,7 @@ export default function App() {
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           language={language}
+          onNavigate={navigate}
         />
         <ChatInterface language={language} />
       </div>
