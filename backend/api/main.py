@@ -10,10 +10,14 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
+# Load .env BEFORE importing any RAG modules (they read env vars at import time)
+load_dotenv(project_root / '.env')
 
 from backend.rag.engine import RAGEngine
 from backend.rag.query_processor import QueryProcessor
