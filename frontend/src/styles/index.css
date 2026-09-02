@@ -2,10 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Government Color Scheme */
+:root {
+  --govt-navy: #000080;
+  --govt-saffron: #FF9933;
+  --govt-green: #138808;
+  --govt-white: #FFFFFF;
+  --govt-bg: #F5F5F5;
+}
+
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   margin: 0;
-  background: #f8fafc;
+  background: var(--govt-bg);
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Mobile responsive */
@@ -49,4 +61,17 @@ html {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
+}
+
+/* Government-style buttons */
+@layer components {
+  .btn-govt-primary {
+    @apply bg-[#000080] hover:bg-[#000060] text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow-sm;
+  }
+  .btn-govt-secondary {
+    @apply bg-[#FF9933] hover:bg-[#E88A2D] text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow-sm;
+  }
+  .btn-govt-outline {
+    @apply border-2 border-[#000080] text-[#000080] hover:bg-[#000080] hover:text-white font-semibold px-6 py-3 rounded-xl text-sm transition;
+  }
 }
