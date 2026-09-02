@@ -183,7 +183,7 @@ export default function ChatInterface() {
                 <div className="text-5xl mb-4">🏛️</div>
                 <h3 className="text-lg font-semibold text-gray-500">BIS Standards AI Assistant</h3>
                 <p className="text-sm mt-2">Ask any question about Indian Standards in Hindi or English</p>
-                <p className="text-xs mt-1 text-gray-400">Supports 22 Indian languages with voice input</p>
+                <p className="text-xs mt-1 text-gray-400">Supports 18 Indian languages with voice input</p>
               </div>
             )}
             {messages.map((msg, i) => (

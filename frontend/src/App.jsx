@@ -45,7 +45,7 @@ export default function App() {
         <ChatInterface />
       </div>
       <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white hide-mobile">
-        Ministry of Consumer Affairs &nbsp;|&nbsp; Supports 22 Indian Languages — Powered by RAG + LLM
+        Ministry of Consumer Affairs &nbsp;|&nbsp; Supports 18 Indian Languages — Powered by RAG + LLM
       </footer>
     </div>
   )
