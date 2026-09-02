@@ -84,13 +84,27 @@ class DocumentIngestionPipeline:
         else:
             is_num = Path(filename).stem
 
-        # Try to find title
+        # Try to find title (line before Specification/Title or "Title: ..." pattern)
+        # First try with colon: "Specification: ..."
         title_match = re.search(
-            r'(?:Title|Standard|Specification|Code of Practice)[:\s]*(.+?)(?:\n|$)',
+            r'(?:^|\n)\s*(?:Title|Standard|Specification|Code of Practice)\s*:\s*(.+?)(?:\n|$)',
             text[:3000],
             re.IGNORECASE
         )
-        title = title_match.group(1).strip() if title_match else is_num
+        if title_match:
+            title = title_match.group(1).strip()
+        else:
+            # Try to find title as the line BEFORE "Specification" or "Title"
+            lines = text[:3000].split('\n')
+            title = is_num
+            for i, line in enumerate(lines):
+                if re.match(r'^(Specification|Title|Standard|Code of Practice)$', line.strip(), re.IGNORECASE):
+                    # Use the previous line as the title
+                    if i > 0:
+                        prev_line = lines[i-1].strip()
+                        if prev_line and len(prev_line) > 3:
+                            title = prev_line
+                            break
 
         return is_num, title
 

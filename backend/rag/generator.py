@@ -149,15 +149,110 @@ Provide a clear, structured answer with source citations."""
                 citations.append({"standard": is_num, "section": section})
         return citations
 
-    def extract_confidence(self, response: str, context: str) -> str:
-        """Extract confidence level from response."""
-        if any(phrase in response.lower() for phrase in [
+    def compute_confidence(
+        self,
+        response: str,
+        retrieval_results: list,
+        citations: list
+    ) -> dict:
+        """Compute verified confidence score based on actual retrieval data.
+        
+        Uses:
+        1. Average FAISS similarity score from retrieved chunks
+        2. Citation verification against chunk metadata
+        3. Response quality indicators
+        
+        Returns dict with level (HIGH/MEDIUM/LOW), score (0-100), and details.
+        """
+        # 1. Compute average retrieval score (FAISS inner product, normalized)
+        if retrieval_results:
+            avg_score = sum(r.score for r in retrieval_results) / len(retrieval_results)
+            top_score = max(r.score for r in retrieval_results)
+        else:
+            avg_score = 0.0
+            top_score = 0.0
+        
+        # 2. Verify citations against actual retrieved chunks
+        retrieved_is_numbers = set()
+        for r in retrieval_results:
+            # Extract IS number from chunk metadata
+            is_num = r.chunk.is_number  # e.g., "IS 269:2015"
+            is_base = is_num.split(":")[0] if ":" in is_num else is_num  # e.g., "IS 269"
+            retrieved_is_numbers.add(is_base)
+            retrieved_is_numbers.add(is_num)
+        
+        verified_citations = []
+        unverified_citations = []
+        for c in citations:
+            std = c.get("standard", "")
+            # Check if this standard was actually in retrieved chunks
+            if any(std in num or num in std for num in retrieved_is_numbers):
+                verified_citations.append(c)
+            else:
+                unverified_citations.append(c)
+        
+        # 3. Compute score components
+        score = 0.0
+        
+        # Component 1: Retrieval quality (0-40 points)
+        # FAISS inner product scores range from 0 to ~1 for normalized vectors
+        retrieval_score = min(avg_score * 50, 40)  # Cap at 40
+        score += retrieval_score
+        
+        # Component 2: Citation verification (0-30 points)
+        if citations:
+            verified_ratio = len(verified_citations) / len(citations) if citations else 0
+            citation_score = verified_ratio * 30
+        else:
+            # No citations extracted - could be legitimate (no specific clause) or bad
+            citation_score = 10 if avg_score > 0.3 else 5
+        score += citation_score
+        
+        # Component 3: Response quality (0-30 points)
+        quality_score = 0
+        response_lower = response.lower()
+        
+        # Check for honest "no info" responses (boost for honesty)
+        no_info_phrases = [
             "not contain information", "cannot find", "no information",
-            "does not contain", "not available in the context"
-        ]):
-            return "LOW"
-        if len(context) > 500 and any(
-            marker in response for marker in ["[IS", "Section", "Clause"]
-        ):
-            return "HIGH"
-        return "MEDIUM"
+            "does not contain", "not available in the context",
+            "not available", "no relevant"
+        ]
+        if any(phrase in response_lower for phrase in no_info_phrases):
+            # Honest admission of ignorance - HIGH confidence in honesty
+            quality_score = 25  # High for honest responses
+        else:
+            # Has a substantive answer
+            if len(response) > 100:
+                quality_score += 10  # Reasonable length
+            if any(marker in response for marker in ["[IS", "Section", "Clause"]):
+                quality_score += 10  # Has citations
+            if avg_score > 0.4:
+                quality_score += 10  # Strong retrieval match
+        score += min(quality_score, 30)
+        
+        # 4. Determine level
+        score = min(score, 100)
+        if score >= 70:
+            level = "HIGH"
+        elif score >= 40:
+            level = "MEDIUM"
+        else:
+            level = "LOW"
+        
+        # 5. Build details for debugging/display
+        details = {
+            "retrieval_score": round(avg_score, 3),
+            "top_chunk_score": round(top_score, 3),
+            "chunks_found": len(retrieval_results),
+            "citations_extracted": len(citations),
+            "citations_verified": len(verified_citations),
+            "citations_unverified": len(unverified_citations),
+            "final_score": round(score, 1)
+        }
+        
+        return {
+            "level": level,
+            "score": round(score, 1),
+            "details": details
+        }

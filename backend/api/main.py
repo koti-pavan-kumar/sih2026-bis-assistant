@@ -92,9 +92,12 @@ async def query(request: QueryRequest):
         # Generate response
         answer = llm_generator.generate(processed, context, language)
 
-        # Extract citations and confidence
+        # Extract citations
         citations = llm_generator.extract_citations(answer)
-        confidence = llm_generator.extract_confidence(answer, context)
+
+        # Compute verified confidence using real FAISS scores + citation verification
+        confidence_data = llm_generator.compute_confidence(answer, results, citations)
+        confidence = confidence_data["level"]
 
         # Build source cards
         sources = []

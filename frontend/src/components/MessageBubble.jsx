@@ -1,13 +1,15 @@
 import React from 'react'
 
-export default function MessageBubble({ message }) {
+export default function MessageBubble({ message, onRetry }) {
   const isUser = message.role === 'user'
+  const isError = message.isError
 
   const confidenceColor = {
     HIGH: 'bg-green-100 text-green-700',
     MEDIUM: 'bg-yellow-100 text-yellow-700',
     LOW: 'bg-red-100 text-red-700',
-    COMPLETE: 'bg-green-100 text-green-700'
+    COMPLETE: 'bg-green-100 text-green-700',
+    UNKNOWN: 'bg-gray-100 text-gray-600'
   }[message.confidence] || 'bg-gray-100 text-gray-600'
 
   return (
@@ -16,7 +18,9 @@ export default function MessageBubble({ message }) {
         <div className={`rounded-2xl px-5 py-4 shadow-sm ${
           isUser
             ? 'bg-navy text-white'
-            : 'bg-white border text-gray-800'
+            : isError
+              ? 'bg-red-50 border border-red-200 text-red-800'
+              : 'bg-white border text-gray-800'
         }`}>
           {isUser ? (
             <p>{message.content}</p>
@@ -35,15 +39,21 @@ export default function MessageBubble({ message }) {
           )}
         </div>
 
-        {!isUser && message.sources && (
+        {/* Confidence badge */}
+        {!isUser && message.confidence && (
           <div className="mt-2 flex items-center gap-2 flex-wrap">
             <span className={`text-xs px-2 py-1 rounded-full font-semibold ${confidenceColor}`}>
               {message.confidence} confidence
             </span>
-            <span className="text-xs text-gray-400">🇬🇧 English</span>
+            {message.language && message.language !== 'en' && (
+              <span className="text-xs text-gray-400">
+                {message.language === 'hi' ? '🇮🇳 Hindi' : message.language}
+              </span>
+            )}
           </div>
         )}
 
+        {/* Source cards */}
         {!isUser && message.sources && message.sources.length > 0 && (
           <div className="mt-2 space-y-1">
             <div className="text-xs text-gray-400 font-medium">📄 Sources:</div>
@@ -55,6 +65,18 @@ export default function MessageBubble({ message }) {
                 <div className="text-gray-400">Page {s.page} • {Math.round(s.score * 100)}% match</div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Retry button for errors */}
+        {isError && onRetry && (
+          <div className="mt-2">
+            <button
+              onClick={onRetry}
+              className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition"
+            >
+              🔄 Try Again
+            </button>
           </div>
         )}
       </div>
