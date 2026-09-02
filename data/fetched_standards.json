@@ -1,0 +1,54 @@
+{
+  "fetched": [
+    {
+      "id": "c25245c88004",
+      "is_number": "IS 5175",
+      "fetched_at": "2026-09-02T19:11:39.677845",
+      "pdf_downloaded": false,
+      "reason": "No direct PDF URL found on BIS page"
+    },
+    {
+      "id": "60220d8f76b1",
+      "is_number": "IS 19497",
+      "fetched_at": "2026-09-02T19:11:53.326526",
+      "pdf_downloaded": true,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    },
+    {
+      "id": "b9aae76eaf2e",
+      "is_number": "IS 17440",
+      "fetched_at": "2026-09-02T19:11:53.326540",
+      "pdf_downloaded": true,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    },
+    {
+      "id": "6556bc8b8eab",
+      "is_number": "IS 6307",
+      "fetched_at": "2026-09-02T19:11:53.326547",
+      "pdf_downloaded": true,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    },
+    {
+      "id": "8adf60df2701",
+      "is_number": "IS 1867",
+      "fetched_at": "2026-09-02T19:11:53.326551",
+      "pdf_downloaded": true,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    },
+    {
+      "id": "c84a692aa283",
+      "is_number": "IS 18841",
+      "fetched_at": "2026-09-02T19:11:53.326555",
+      "pdf_downloaded": true,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    },
+    {
+      "id": "0910f05d2ab1",
+      "is_number": "IS 5175",
+      "fetched_at": "2026-09-02T19:11:53.326560",
+      "pdf_downloaded": false,
+      "source_url": "https://www.bis.gov.in/whats-new/?lang=en"
+    }
+  ],
+  "last_check": "2026-09-02T19:11:53.326562"
+}

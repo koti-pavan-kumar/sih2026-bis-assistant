@@ -19,6 +19,7 @@ from backend.rag.engine import RAGEngine
 from backend.rag.query_processor import QueryProcessor
 from backend.rag.generator import LLMGenerator
 from backend.ingestion.pipeline import DocumentIngestionPipeline
+from backend.ingestion.auto_fetcher import BISAutoFetcher
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -137,6 +138,58 @@ async def ingest_pdfs(directory: Optional[str] = None):
         if chunks:
             rag_engine.vector_store.add_chunks(chunks)
         return {"ingested": len(chunks), "message": f"Ingested {len(chunks)} chunks"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/fetch-new-standards")
+async def fetch_new_standards():
+    """Fetch new BIS standards from bis.gov.in and ingest them.
+    
+    This is the key automation feature — scrapes BIS website for new
+    standard announcements, downloads PDFs, and adds them to the index.
+    """
+    try:
+        fetcher = BISAutoFetcher()
+        result = fetcher.fetch_and_ingest()
+        
+        # Refresh the RAG engine to pick up new standards
+        global rag_engine
+        rag_engine = RAGEngine()
+        
+        return {
+            "status": "success",
+            "new_standards_found": result["new_standards_found"],
+            "downloaded": result["downloaded"],
+            "ingested_chunks": result["ingested"],
+            "already_existed": result["already_existed"],
+            "standards": result["standards"],
+            "errors": result["errors"],
+            "total_indexed": len(rag_engine.get_available_standards()),
+        }
+    except Exception as e:
+        logger.error(f"Auto-fetch error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/fetch-check")
+async def check_for_new_standards():
+    """Quick check — what new standards are available on BIS?"""
+    try:
+        fetcher = BISAutoFetcher()
+        result = fetcher.check_for_updates()
+        return result
+    except Exception as e:
+        logger.error(f"Fetch check error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/fetch-history")
+async def fetch_history():
+    """Get history of all auto-fetched standards."""
+    try:
+        fetcher = BISAutoFetcher()
+        return {"history": fetcher.get_fetched_history()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
