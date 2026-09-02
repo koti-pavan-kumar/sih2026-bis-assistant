@@ -1113,6 +1113,213 @@ def create_is_456():
     return filename
 
 
+def create_is_10500():
+    """IS 10500:2012 - Drinking Water Specifications."""
+    pdf = BISDocument()
+    pdf.is_number = "IS 10500:2012"
+    pdf.title_page("IS 10500:2012", "Drinking Water Specifications", 2012, "13.060")
+
+    pdf.section_heading("1", "SCOPE")
+    pdf.body_text(
+        "This standard specifies the requirements for drinking water. "
+        "It covers physical, chemical, and bacteriological parameters."
+    )
+
+    pdf.section_heading("2", "PHYSICAL REQUIREMENTS")
+    table_data = [
+        ["Parameter", "Acceptable", "Permissible"],
+        ["Color (TCU)", "5", "15"],
+        ["Odor", "Absent", "Absent"],
+        ["Taste", "Absence of", "Absence of"],
+        ["Turbidity (NTU)", "1", "5"],
+        ["pH Value", "6.5-8.5", "No relaxation"],
+        ["Total Dissolved Solids (mg/L)", "500", "2000"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("3", "CHEMICAL REQUIREMENTS")
+    table_data = [
+        ["Parameter", "Acceptable (mg/L)", "Permissible (mg/L)"],
+        ["Iron", "0.3", "No relaxation"],
+        ["Manganese", "0.1", "0.3"],
+        ["Chlorides", "250", "1000"],
+        ["Sulphates", "200", "400"],
+        ["Nitrate", "45", "No relaxation"],
+        ["Fluoride", "1.0", "1.5"],
+        ["Arsenic", "0.01", "No relaxation"],
+        ["Lead", "0.01", "No relaxation"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("4", "BACTERIOLOGICAL REQUIREMENTS")
+    table_data = [
+        ["Parameter", "Requirement"],
+        ["Total Coliform (MPN/100mL)", "Absent in 100mL"],
+        ["Fecal Coliform", "Absent in 100mL"],
+        ["E. Coli", "Absent in 100mL"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    filename = OUTPUT_DIR / "IS_10500_Drinking_Water.pdf"
+    pdf.output(str(filename))
+    print(f"  Created: {filename.name}")
+    return filename
+
+
+def create_is_15258():
+    """IS 15258:2016 - Household Refrigerating Appliances."""
+    pdf = BISDocument()
+    pdf.is_number = "IS 15258:2016"
+    pdf.title_page("IS 15258:2016", "Household Refrigerating Appliances", 2016, "97.040.30")
+
+    pdf.section_heading("1", "SCOPE")
+    pdf.body_text(
+        "This standard specifies safety requirements for household refrigerating "
+        "appliances operated from the mains. It covers energy efficiency, "
+        "temperature performance, and safety requirements."
+    )
+
+    pdf.section_heading("2", "ENERGY EFFICIENCY")
+    table_data = [
+        ["Class", "Energy Efficiency Index (EEI)"],
+        ["A+++", "EEI < 22"],
+        ["A++", "22 <= EEI < 33"],
+        ["A+", "33 <= EEI < 44"],
+        ["A", "44 <= EEI < 55"],
+        ["B", "55 <= EEI < 66"],
+        ["C", "66 <= EEI < 88"],
+        ["D", "EEI >= 88"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("3", "TEMPERATURE REQUIREMENTS")
+    pdf.bullet("Fresh food compartment: 0 deg C to 5 deg C")
+    pdf.bullet("Freezer compartment: -18 deg C or below")
+    pdf.bullet("Maximum ambient temperature for operation: 32 deg C")
+
+    pdf.section_heading("4", "SAFETY REQUIREMENTS")
+    pdf.bullet("Electrical insulation: Class I or Class II")
+    pdf.bullet("Leakage current: Max 0.75 mA")
+    pdf.bullet("Earth continuity: Max 0.1 ohm")
+    pdf.bullet("Defrosting: Automatic or manual")
+
+    filename = OUTPUT_DIR / "IS_15258_Household_Refrigerators.pdf"
+    pdf.output(str(filename))
+    print(f"  Created: {filename.name}")
+    return filename
+
+
+def create_is_13726():
+    """IS 13726:2016 - Corrugated Fibreboard Boxes."""
+    pdf = BISDocument()
+    pdf.is_number = "IS 13726:2016"
+    pdf.title_page("IS 13726:2016", "Corrugated Fibreboard Boxes", 2016, "55.160")
+
+    pdf.section_heading("1", "SCOPE")
+    pdf.body_text(
+        "This standard specifies requirements for corrugated fibreboard boxes "
+        "used for packaging. It covers board grade, box construction, "
+        "and testing requirements."
+    )
+
+    pdf.section_heading("2", "BOARD GRADES")
+    table_data = [
+        ["Grade", "Edge Crush Test (kgf/cm)", "Bursting Strength (kgf/cm2)"],
+        ["AA", "Min 8.0", "Min 12.0"],
+        ["A", "Min 6.0", "Min 10.0"],
+        ["B", "Min 4.0", "Min 8.0"],
+        ["C", "Min 3.0", "Min 6.0"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("3", "TEST REQUIREMENTS")
+    pdf.bullet("Compression Test: IS 13726 Part 4")
+    pdf.bullet("Drop Test: IS 13726 Part 5")
+    pdf.bullet("Moisture Content: Max 8% by weight")
+    pdf.bullet("Flat Crush Test: IS 13726 Part 2")
+
+    filename = OUTPUT_DIR / "IS_13726_Corrugated_Boxes.pdf"
+    pdf.output(str(filename))
+    print(f"  Created: {filename.name}")
+    return filename
+
+
+def create_is_2932():
+    """IS 2932:2019 - Synthetic Resin Emulsion Paints."""
+    pdf = BISDocument()
+    pdf.is_number = "IS 2932:2019"
+    pdf.title_page("IS 2932:2019", "Synthetic Resin Emulsion Paints", 2019, "87.040")
+
+    pdf.section_heading("1", "SCOPE")
+    pdf.body_text(
+        "This standard specifies requirements for synthetic resin emulsion "
+        "paints for interior and exterior use. It covers consistency, "
+        "covering power, and durability requirements."
+    )
+
+    pdf.section_heading("2", "REQUIREMENTS")
+    table_data = [
+        ["Property", "Requirement", "Test Method"],
+        ["Volume of Solids", "Min 30%", "IS 2932 Part 1"],
+        ["Hiding Power", "Min 90%", "IS 2932 Part 2"],
+        ["Drying Time (surface)", "Max 2 hours", "IS 2932 Part 3"],
+        ["Washability", "Min 500 cycles", "IS 2932 Part 4"],
+        ["Adhesion", "Max 2B", "IS 2932 Part 5"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("3", "APPLICATION")
+    pdf.bullet("Surface preparation: Clean, dry, free from loose particles")
+    pdf.bullet("Primer: One coat of recommended primer")
+    pdf.bullet("Application: Brush, roller, or spray")
+    pdf.bullet("Coverage: 100-120 sq ft per litre per coat")
+
+    filename = OUTPUT_DIR / "IS_2932_Synthetic_Resin_Paints.pdf"
+    pdf.output(str(filename))
+    print(f"  Created: {filename.name}")
+    return filename
+
+
+def create_is_17091():
+    """IS 17091:2018 - Full Grain Leather for Footwear."""
+    pdf = BISDocument()
+    pdf.is_number = "IS 17091:2018"
+    pdf.title_page("IS 17091:2018", "Full Grain Leather for Footwear", 2018, "59.140.30")
+
+    pdf.section_heading("1", "SCOPE")
+    pdf.body_text(
+        "This standard specifies requirements for full grain leather "
+        "used in footwear manufacturing. It covers physical and "
+        "chemical properties."
+    )
+
+    pdf.section_heading("2", "PHYSICAL REQUIREMENTS")
+    table_data = [
+        ["Property", "Requirement", "Test Method"],
+        ["Tensile Strength", "Min 15 N/mm2", "IS 17091 Part 1"],
+        ["Elongation at Break", "Min 30%", "IS 17091 Part 1"],
+        ["Tear Strength", "Min 25 N", "IS 17091 Part 2"],
+        ["Flex Resistance", "Min 50,000 cycles", "IS 17091 Part 3"],
+        ["Colour Fastness to Rubbing", "Min 3 (dry), 2 (wet)", "IS 17091 Part 4"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    pdf.section_heading("3", "CHEMICAL REQUIREMENTS")
+    table_data = [
+        ["Parameter", "Requirement"],
+        ["pH Value", "3.5-6.0"],
+        ["Chromium(VI) Content", "Max 3 mg/kg"],
+        ["Formaldehyde", "Max 75 mg/kg"],
+        ["Azodyes (Aromatic Amines)", "Max 30 mg/kg"],
+    ]
+    pdf.table(table_data[0], table_data[1:])
+
+    filename = OUTPUT_DIR / "IS_17091_Leather_Footwear.pdf"
+    pdf.output(str(filename))
+    print(f"  Created: {filename.name}")
+    return filename
+
+
 def main():
     print("Generating BIS sample PDFs for ManakMitra knowledge base...")
     print(f"Output directory: {OUTPUT_DIR}\n")
@@ -1131,6 +1338,11 @@ def main():
     files.append(create_is_12040())
     files.append(create_is_16001())
     files.append(create_is_455())
+    files.append(create_is_10500())
+    files.append(create_is_15258())
+    files.append(create_is_13726())
+    files.append(create_is_2932())
+    files.append(create_is_17091())
 
     print(f"\nDone! Generated {len(files)} PDFs.")
     print("Files:")
