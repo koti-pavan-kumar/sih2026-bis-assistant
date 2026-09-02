@@ -113,6 +113,10 @@ async def query(request: QueryRequest):
         # Compute verified confidence using real FAISS scores + citation verification
         confidence_data = llm_generator.compute_confidence(answer, results, citations)
         confidence = confidence_data["level"]
+        
+        # If no LLM is available, mark as template mode instead of fake confidence
+        if llm_generator.llm_provider is None:
+            confidence = "TEMPLATE"
 
         # Build source cards
         sources = []
@@ -130,7 +134,7 @@ async def query(request: QueryRequest):
             answer=answer,
             sources=sources,
             confidence=confidence,
-            language=language,
+            language=response_lang,  # Return user's selected language, not detected language
             citations=citations,
             citation_verification=citation_verification
         )

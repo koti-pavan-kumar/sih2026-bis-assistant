@@ -16,19 +16,26 @@ const LANGUAGE_LABELS = {
   or: '🇮🇳 ଓଡ଼ିଆ',
   as: '🇮🇳 অসমীয়া',
   ne: '🇮🇳 नेपाली',
+  sa: '🇮🇳 संस्कृतम्',
+  ks: '🇮🇳 कॉशुर',
+  bo: '🇮🇳 बड़ो',
+  sd: '🇮🇳 سنڌي',
+  doi: '🇮🇳 डोगरी',
+  ki: '🇮🇳 कोंकणी',
+  mai: '🇮🇳 मैथिली',
 }
 
 export default function MessageBubble({ message, onRetry }) {
   const isUser = message.role === 'user'
   const isError = message.isError
 
-  const confidenceColor = {
-    HIGH: 'bg-green-100 text-green-700',
-    MEDIUM: 'bg-yellow-100 text-yellow-700',
-    LOW: 'bg-red-100 text-red-700',
-    COMPLETE: 'bg-green-100 text-green-700',
-    UNKNOWN: 'bg-gray-100 text-gray-600'
-  }[message.confidence] || 'bg-gray-100 text-gray-600'
+  const confidenceDisplay = {
+    HIGH: { text: 'HIGH confidence', color: 'bg-green-100 text-green-700' },
+    MEDIUM: { text: 'MEDIUM confidence', color: 'bg-yellow-100 text-yellow-700' },
+    LOW: { text: 'LOW confidence', color: 'bg-red-100 text-red-700' },
+    TEMPLATE: { text: '⚡ Template Mode', color: 'bg-purple-100 text-purple-700' },
+    UNKNOWN: { text: 'UNKNOWN', color: 'bg-gray-100 text-gray-600' }
+  }[message.confidence] || { text: message.confidence, color: 'bg-gray-100 text-gray-600' }
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -62,8 +69,8 @@ export default function MessageBubble({ message, onRetry }) {
           <div className="mt-2 flex items-center gap-2 flex-wrap">
             {/* Confidence badge */}
             {message.confidence && (
-              <span className={`text-xs px-2 py-1 rounded-full font-semibold ${confidenceColor}`}>
-                {message.confidence} confidence
+              <span className={`text-xs px-2 py-1 rounded-full font-semibold ${confidenceDisplay.color}`}>
+                {confidenceDisplay.text}
               </span>
             )}
             {/* Language indicator */}
