@@ -44,16 +44,21 @@ class LLMGenerator:
                     import time
                     time.sleep(2)
 
-        # Try Gemini
+        # Try Gemini (with model fallback chain)
         gemini_key = os.getenv("GEMINI_API_KEY")
         if gemini_key:
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=gemini_key)
-                self.llm_provider = "gemini"
-                self.gemini_model = genai.GenerativeModel("gemini-2.0-flash")
-                logger.info("Using Gemini 2.0 Flash")
-                return
+                # Try models in order of preference
+                for model_name in ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]:
+                    try:
+                        self.gemini_model = genai.GenerativeModel(model_name)
+                        self.llm_provider = "gemini"
+                        logger.info(f"Using Gemini ({model_name})")
+                        return
+                    except Exception:
+                        continue
             except Exception as e:
                 logger.warning(f"Gemini init failed: {e}")
 
@@ -68,9 +73,20 @@ class LLMGenerator:
         else:
             return self._generate_template(query, context, language)
 
+    # Language code to language name mapping
+    LANGUAGE_NAMES = {
+        "en": "English", "hi": "Hindi", "bn": "Bengali", "ta": "Tamil",
+        "te": "Telugu", "mr": "Marathi", "gu": "Gujarati", "ur": "Urdu",
+        "kn": "Kannada", "ml": "Malayalam", "pa": "Punjabi", "or": "Odia",
+        "as": "Assamese", "ne": "Nepali", "sa": "Sanskrit", "ks": "Kashmiri",
+        "bo": "Bodo", "sd": "Sindhi", "doi": "Dogri", "ki": "Konkani",
+        "mai": "Maithili"
+    }
+
     def _build_prompt(self, query: str, context: str, language: str) -> str:
         """Build the system prompt for the LLM."""
-        lang_instruction = "Respond in Hindi." if language == "hi" else "Respond in English."
+        lang_name = self.LANGUAGE_NAMES.get(language, "English")
+        lang_instruction = f"Respond in {lang_name}."
 
         return f"""You are an expert on Indian Standards (BIS) published by the Bureau of Indian Standards.
 
@@ -84,6 +100,7 @@ IMPORTANT RULES:
 3. If information is not in the provided context, say "The provided context does not contain information about this topic"
 4. Be precise with numbers, percentages, and technical specifications
 5. Structure your answer clearly with Direct Answer, Supporting Details, and Citations
+6. Translate technical terms accurately when responding in non-English languages
 
 Context from BIS Standards:
 {context}
@@ -113,13 +130,28 @@ Provide a clear, structured answer with source citations."""
         return self._generate_template(query, context, language)
 
     def _generate_gemini(self, query: str, context: str, language: str) -> str:
-        """Generate using Gemini."""
+        """Generate using Gemini via REST API (avoids deprecated library issues)."""
         prompt = self._build_prompt(query, context, language)
-        try:
-            response = self.gemini_model.generate_content(prompt)
-            return response.text
-        except Exception as e:
-            logger.error(f"Gemini error: {e}")
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        
+        # Try REST API directly (more reliable than deprecated google.generativeai)
+        for model_name in ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                data = {"contents": [{"parts": [{"text": prompt}]}]}
+                resp = httpx.post(url, json=data, timeout=60.0)
+                if resp.status_code == 200:
+                    result = resp.json()
+                    text = result["candidates"][0]["content"]["parts"][0]["text"]
+                    if model_name != self.gemini_model.model_name if self.gemini_model else True:
+                        logger.info(f"Using Gemini ({model_name})")
+                    return text
+                else:
+                    logger.warning(f"Gemini {model_name} returned {resp.status_code}: {resp.text[:200]}")
+            except Exception as e:
+                logger.warning(f"Gemini {model_name} error: {e}")
+                continue
+        
         return self._generate_template(query, context, language)
 
     def _generate_template(self, query: str, context: str, language: str) -> str:
