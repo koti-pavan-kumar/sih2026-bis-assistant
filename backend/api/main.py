@@ -51,6 +51,7 @@ class QueryResponse(BaseModel):
     confidence: str
     language: str
     citations: list
+    citation_verification: list = []  # Verified status for each citation
 
 
 @app.get("/api/health")
@@ -95,6 +96,9 @@ async def query(request: QueryRequest):
         # Extract citations
         citations = llm_generator.extract_citations(answer)
 
+        # Verify citations against retrieved chunks
+        citation_verification = llm_generator.verify_citations(citations, results)
+
         # Compute verified confidence using real FAISS scores + citation verification
         confidence_data = llm_generator.compute_confidence(answer, results, citations)
         confidence = confidence_data["level"]
@@ -116,7 +120,8 @@ async def query(request: QueryRequest):
             sources=sources,
             confidence=confidence,
             language=language,
-            citations=citations
+            citations=citations,
+            citation_verification=citation_verification
         )
     except Exception as e:
         logger.error(f"Query error: {e}", exc_info=True)

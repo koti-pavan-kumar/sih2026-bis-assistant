@@ -149,6 +149,51 @@ Provide a clear, structured answer with source citations."""
                 citations.append({"standard": is_num, "section": section})
         return citations
 
+    def verify_citations(self, citations: list, retrieval_results: list) -> list:
+        """Verify extracted citations against actual retrieved chunks.
+        
+        Returns list of citations with verified status:
+        [{standard, section, verified: bool, reason: str}]
+        """
+        # Build set of retrieved IS numbers
+        retrieved_is_numbers = set()
+        for r in retrieval_results:
+            is_num = r.chunk.is_number  # e.g., "IS 269:2015"
+            is_base = is_num.split(":")[0] if ":" in is_num else is_num  # e.g., "IS 269"
+            retrieved_is_numbers.add(is_base)
+            retrieved_is_numbers.add(is_num)
+        
+        verified = []
+        for c in citations:
+            std = c.get("standard", "")
+            section = c.get("section", "")
+            
+            # Check if this standard was in retrieved chunks
+            is_verified = any(std in num or num in std for num in retrieved_is_numbers)
+            
+            # Check if section exists in any retrieved chunk (if specified)
+            section_verified = True
+            if section and is_verified:
+                # Look for section in chunk text
+                for r in retrieval_results:
+                    is_match = std in r.chunk.is_number or r.chunk.is_number in std
+                    if is_match and section in r.chunk.text:
+                        section_verified = True
+                        break
+                else:
+                    section_verified = False
+            
+            verified.append({
+                "standard": std,
+                "section": section,
+                "verified": is_verified and section_verified,
+                "reason": "Found in retrieved chunks" if (is_verified and section_verified) 
+                          else "Standard not in retrieved chunks" if not is_verified
+                          else f"Section {section} not found in text"
+            })
+        
+        return verified
+
     def compute_confidence(
         self,
         response: str,
