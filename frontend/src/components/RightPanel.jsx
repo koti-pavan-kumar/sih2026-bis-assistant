@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react'
 import AnalyticsDashboard from './AnalyticsDashboard'
+import CertificationWizard from './CertificationWizard'
 
 /**
  * RightPanel — Right sidebar with Standards list, Auto-Fetch, and Analytics.
  * Contains the same functionality as the old left sidebar but on the right.
  */
-export default function RightPanel({ standards, health, isOpen, onClose }) {
+export default function RightPanel({ standards, health, isOpen, onClose, onWizardQuestion }) {
   const [activeTab, setActiveTab] = useState('standards')
   const [fetching, setFetching] = useState(false)
   const [fetchResult, setFetchResult] = useState(null)
@@ -79,13 +80,21 @@ export default function RightPanel({ standards, health, isOpen, onClose }) {
             }`}
           >
             Auto-Fetch
-          </button>
-          <button
-            onClick={() => setActiveTab('analytics')}              className={`flex-1 py-2.5 text-xs font-medium transition ${
+          </button>          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`flex-1 py-2.5 text-xs font-medium transition ${
               activeTab === 'analytics' ? 'text-[#000080] dark:text-blue-300 border-b-2 border-[#000080] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             }`}
           >
             Analytics
+          </button>
+          <button
+            onClick={() => setActiveTab('wizard')}
+            className={`flex-1 py-2.5 text-xs font-medium transition ${
+              activeTab === 'wizard' ? 'text-[#FF9933] border-b-2 border-[#FF9933]' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+            }`}
+          >
+            Wizard
           </button>
         </div>
 
@@ -231,6 +240,13 @@ export default function RightPanel({ standards, health, isOpen, onClose }) {
         {activeTab === 'analytics' && (
           <div className="p-2">
             <AnalyticsDashboard health={health} />
+          </div>
+        )}
+
+        {/* Wizard Tab */}
+        {activeTab === 'wizard' && (
+          <div className="p-2">
+            <CertificationWizard onAskQuestion={onWizardQuestion} language="en" />
           </div>
         )}
       </aside>

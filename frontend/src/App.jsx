@@ -25,9 +25,16 @@ export default function App() {
     return localStorage.getItem(ACTIVE_CHAT_KEY) || null
   })
   const [chatRefreshKey, setChatRefreshKey] = useState(0)
+  const [openWizard, setOpenWizard] = useState(false)
 
   const handleChatUpdated = useCallback(() => {
     setChatRefreshKey(k => k + 1)
+  }, [])
+
+  const handleOpenWizard = useCallback(() => {
+    setOpenWizard(true)
+    // Reset after a tick so it can be triggered again
+    setTimeout(() => setOpenWizard(false), 100)
   }, [])
 
   const navigate = useCallback((newPage) => {
@@ -106,6 +113,7 @@ export default function App() {
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}
             refreshKey={chatRefreshKey}
+            onWizardOpen={handleOpenWizard}
           />
         </div>
 
@@ -114,6 +122,7 @@ export default function App() {
           language={language}
           chatId={activeChatId}
           onChatUpdated={handleChatUpdated}
+          openWizard={openWizard}
         />
 
         {/* Right Sidebar — Standards / Auto-Fetch / Analytics */}
@@ -123,6 +132,10 @@ export default function App() {
             health={health}
             isOpen={rightPanelOpen}
             onClose={() => setRightPanelOpen(false)}
+            onWizardQuestion={(q) => {
+              // Switch to a new chat and ask the wizard question
+              handleOpenWizard()
+            }}
           />
         </div>
       </div>

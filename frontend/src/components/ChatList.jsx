@@ -39,7 +39,7 @@ function createNewChat() {
  * ChatList — Left sidebar showing all chat sessions.
  * Supports creating new chats, deleting existing ones, and switching between them.
  */
-export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
+export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWizardOpen }) {
   const [chats, setChats] = useState(() => loadChats())
   const [hoveredId, setHoveredId] = useState(null)
 
@@ -166,10 +166,34 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
         })}
       </div>
 
-      {/* Footer info */}
-      <div className="p-3 border-t border-gray-300 dark:border-[#2a2d35]">
-        <div className="text-[10px] text-gray-400 dark:text-gray-500 text-center">
-          {currentChats.length} chat{currentChats.length !== 1 ? 's' : ''}
+      {/* Footer — Quick Stats + Wizard */}
+      <div className="border-t border-gray-300 dark:border-[#2a2d35]">
+        {/* Certification Wizard shortcut */}
+        <div className="p-3">
+          <button
+            onClick={() => onWizardOpen?.()}
+            className="w-full flex items-center gap-2 bg-[#FF9933] dark:bg-[#7c4a1e] hover:bg-[#E88A2D] dark:hover:bg-[#9a5f2a] text-white py-2 px-3 rounded-xl text-xs font-semibold transition"
+          >
+            <span>📋</span>
+            Certification Wizard
+          </button>
+        </div>
+        {/* Quick stats */}
+        <div className="px-3 pb-3">
+          <div className="bg-white/50 dark:bg-[#1a1d23] rounded-xl p-3 space-y-2">
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-gray-500 dark:text-gray-400">Standards Indexed</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">23</span>
+            </div>
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-gray-500 dark:text-gray-400">Languages</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">20</span>
+            </div>
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-gray-500 dark:text-gray-400">Your Chats</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">{currentChats.length}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

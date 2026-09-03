@@ -31,7 +31,7 @@ function saveChats(chats) {
  * ChatInterface — Displays messages for a specific chat session.
  * Each chat has its own message history stored in the chats array.
  */
-export default function ChatInterface({ language = 'en', chatId, onChatUpdated }) {
+export default function ChatInterface({ language = 'en', chatId, onChatUpdated, openWizard }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -51,6 +51,11 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated }
     setLoading(false)
     setShowWizard(false)
   }, [chatId])
+
+  // External wizard trigger (from sidebar button)
+  useEffect(() => {
+    if (openWizard) setShowWizard(true)
+  }, [openWizard])
 
   // Save messages to the specific chat whenever they change
   useEffect(() => {
@@ -244,12 +249,72 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated }
           <CertificationWizard onAskQuestion={handleWizardQuestion} language={language} />
         ) : (
           <>
-            {messages.length === 0 && (
-              <div className="text-center text-gray-400 dark:text-gray-500 mt-20">
-                <div className="text-5xl mb-4">🏛️</div>
-                <h3 className="text-lg font-semibold text-gray-500 dark:text-gray-400">{t('bisAssistantTitle', language)}</h3>
-                <p className="text-sm mt-2">{t('askAnyQuestion', language)}</p>
-                <p className="text-xs mt-1 text-gray-400">{t('supportsLanguages', language)}</p>
+            {messages.length === 0 && !showWizard && (
+              <div className="mt-8 space-y-6">
+                {/* Hero section */}
+                <div className="text-center">
+                  <div className="text-5xl mb-3">🏛️</div>
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">BIS Standards AI Assistant</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ask any question about Indian Standards in 20 languages</p>
+                </div>
+
+                {/* Two main options */}
+                <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Free Chat */}
+                  <div className="bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-2xl p-5 hover:shadow-md transition cursor-default">
+                    <div className="text-3xl mb-3">💬</div>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">Ask a Question</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Type or speak in any language about any BIS standard</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { q: 'What is min yield stress for Fe 500?', lang: 'EN' },
+                        { q: 'सीमेंट में क्लोराइड की अधिकतम मात्रा?', lang: 'HI' },
+                      ].map((item, i) => (
+                        <div key={i} className="text-[11px] bg-gray-50 dark:bg-[#252830] text-gray-600 dark:text-gray-400 px-3 py-1.5 rounded-lg">
+                          <span className="font-semibold text-[#000080] dark:text-blue-300">[{item.lang}]</span> {item.q}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Certification Wizard */}
+                  <div
+                    onClick={() => setShowWizard(true)}
+                    className="bg-gradient-to-br from-[#FF9933] to-[#E88A2D] dark:from-[#7c4a1e] dark:to-[#5a3615] text-white rounded-2xl p-5 hover:shadow-md transition cursor-pointer group"
+                  >
+                    <div className="text-3xl mb-3">📋</div>
+                    <h4 className="font-bold mb-1">Certification Wizard</h4>
+                    <p className="text-xs text-white/80 mb-3">Don't know which standard applies? Let us guide you step by step</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { cat: '🏗️ Cement & Concrete', count: '5 standards' },
+                        { cat: '⚙️ Steel & Metals', count: '2 standards' },
+                        { cat: '🥛 Food & Dairy', count: '2 standards' },
+                      ].map((item, i) => (
+                        <div key={i} className="text-[11px] bg-white/15 px-3 py-1.5 rounded-lg flex items-center justify-between">
+                          <span>{item.cat}</span>
+                          <span className="text-white/60 text-[10px]">{item.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Start Wizard →
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick tips */}
+                <div className="max-w-2xl mx-auto text-center">
+                  <div className="flex items-center justify-center gap-4 text-[10px] text-gray-400 dark:text-gray-500">
+                    <span>🎤 Voice input</span>
+                    <span>•</span>
+                    <span>🌐 20 languages</span>
+                    <span>•</span>
+                    <span>📎 Source citations</span>
+                    <span>•</span>
+                    <span>🔗 Official BIS links</span>
+                  </div>
+                </div>
               </div>
             )}
             {messages.map((msg, i) => (
