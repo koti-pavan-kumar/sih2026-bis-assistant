@@ -7,8 +7,7 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import { t } from './utils/translations'
-
-const ACTIVE_CHAT_KEY = 'manakmitra_active_chat'
+import { getActiveChatId, setActiveChatId } from './utils/chatStorage'
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -21,8 +20,8 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('manakmitra_dark') === 'true'
   })
-  const [activeChatId, setActiveChatId] = useState(() => {
-    return localStorage.getItem(ACTIVE_CHAT_KEY) || null
+  const [activeChatId, setActiveChatIdState] = useState(() => {
+    return getActiveChatId()
   })
   const [chatRefreshKey, setChatRefreshKey] = useState(0)
   const [openWizard, setOpenWizard] = useState(false)
@@ -74,8 +73,8 @@ export default function App() {
   }, [])
 
   const handleChatSelect = useCallback((chatId) => {
+    setActiveChatIdState(chatId)
     setActiveChatId(chatId)
-    localStorage.setItem(ACTIVE_CHAT_KEY, chatId)
   }, [])
 
   // Landing page

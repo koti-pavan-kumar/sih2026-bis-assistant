@@ -114,7 +114,9 @@ export function login(email, password) {
  * Logout — clears current user and chat history.
  */
 export function logout() {
+  // Clear user session (chats are per-user and stay in storage)
   localStorage.removeItem(CURRENT_USER_KEY)
+  // Clear the old shared chat key (legacy cleanup)
   localStorage.removeItem('manakmitra_chat_history')
 }
 

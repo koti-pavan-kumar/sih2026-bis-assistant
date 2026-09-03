@@ -4,32 +4,14 @@ import LoadingDots from './LoadingDots'
 import VoiceInput from './VoiceInput'
 import CertificationWizard from './CertificationWizard'
 import { t } from '../utils/translations'
+import { loadChats, saveChats, getActiveChatId, setActiveChatId } from '../utils/chatStorage'
 
 const REQUEST_TIMEOUT_MS = 45000
-const CHATS_KEY = 'manakmitra_chats'
 const MAX_HISTORY_FOR_CONTEXT = 6
 
 /**
- * Load all chats from localStorage.
- */
-function loadChats() {
-  try {
-    return JSON.parse(localStorage.getItem(CHATS_KEY) || '[]')
-  } catch {
-    return []
-  }
-}
-
-/**
- * Save all chats to localStorage.
- */
-function saveChats(chats) {
-  localStorage.setItem(CHATS_KEY, JSON.stringify(chats))
-}
-
-/**
  * ChatInterface — Displays messages for a specific chat session.
- * Each chat has its own message history stored in the chats array.
+ * Each user has their own independent chat storage.
  */
 export default function ChatInterface({ language = 'en', chatId, onChatUpdated, openWizard }) {
   const [messages, setMessages] = useState([])
@@ -52,7 +34,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
     setShowWizard(false)
   }, [chatId])
 
-  // External wizard trigger (from sidebar button)
+  // External wizard trigger
   useEffect(() => {
     if (openWizard) setShowWizard(true)
   }, [openWizard])
@@ -75,7 +57,6 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
     }
 
     saveChats(chats)
-    // Notify parent so ChatList re-renders with updated titles
     onChatUpdated?.()
   }, [messages, chatId])
 
@@ -224,7 +205,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
           <button
             onClick={() => setShowWizard(true)}
             className={`text-sm font-medium transition ${
-              showWizard ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
+              showWizard ? 'text-[#FF9933] border-b-2 border-[#FF9933]' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             } pb-1`}
           >
             {t('certificationWizard', language)}
@@ -355,7 +336,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !loading && handleSend()}
               placeholder={t('askPlaceholder', language)}
-              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] disabled:bg-gray-100"
+              className="flex-1 border border-gray-300 dark:border-[#3a3d45] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] dark:bg-[#1a1d23] dark:text-gray-200 disabled:bg-gray-100 dark:disabled:bg-[#252830]"
               disabled={loading}
             />
             <button

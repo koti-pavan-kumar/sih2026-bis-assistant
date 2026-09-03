@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { clearUserChats } from '../utils/chatStorage'
 
 const USER_TYPE_LABELS = {
   msme: { label: 'MSME', icon: '🏭', color: 'text-[#FF9933]' },
@@ -32,17 +33,15 @@ export default function ProfileMenu({ onNavigate }) {
   }, [])
 
   const handleLogout = () => {
-    // Clear all user data and chat history
+    // Clear user data (chats stay per-user in storage)
     localStorage.removeItem('manakmitra_user')
-    localStorage.removeItem('manakmitra_chat_history')
     setOpen(false)
     onNavigate('landing')
   }
 
   const handleClearChat = () => {
-    localStorage.removeItem('manakmitra_chat_history')
+    clearUserChats()
     setOpen(false)
-    // Force page reload to reset ChatInterface state
     window.location.reload()
   }
 

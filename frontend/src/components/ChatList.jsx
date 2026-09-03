@@ -1,26 +1,5 @@
-import React, { useState } from 'react'
-
-const CHATS_KEY = 'manakmitra_chats'
-const ACTIVE_CHAT_KEY = 'manakmitra_active_chat'
-
-/**
- * Get all chat sessions from localStorage.
- */
-function loadChats() {
-  try {
-    const stored = localStorage.getItem(CHATS_KEY)
-    return stored ? JSON.parse(stored) : []
-  } catch {
-    return []
-  }
-}
-
-/**
- * Save all chat sessions to localStorage.
- */
-function saveChats(chats) {
-  localStorage.setItem(CHATS_KEY, JSON.stringify(chats))
-}
+import React, { useState, useEffect } from 'react'
+import { loadChats, saveChats, getActiveChatId, setActiveChatId } from '../utils/chatStorage'
 
 /**
  * Create a new empty chat session.
@@ -36,22 +15,27 @@ function createNewChat() {
 }
 
 /**
- * ChatList — Left sidebar showing all chat sessions.
- * Supports creating new chats, deleting existing ones, and switching between them.
+ * ChatList — Left sidebar showing all chat sessions for the current user.
+ * Each user has their own independent chat list.
  */
 export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWizardOpen }) {
-  const [chats, setChats] = useState(() => loadChats())
+  const [chats, setChats] = useState([])
   const [hoveredId, setHoveredId] = useState(null)
 
-  // Re-load chats when refreshKey changes (triggered by ChatInterface updates)
-  React.useEffect(() => {
-    setChats(loadChats())
+  // Reload chats on mount and when refreshKey changes
+  useEffect(() => {
+    const loaded = loadChats()
+    setChats(loaded.length > 0 ? loaded : [])
   }, [refreshKey])
 
-  // Reload chats when component re-renders (after ChatInterface updates)
-  const refreshChats = () => {
-    setChats(loadChats())
-  }
+  // Reload when user changes (listen to storage events)
+  useEffect(() => {
+    const handleStorage = () => {
+      setChats(loadChats())
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
 
   // Create a new chat
   const handleNewChat = () => {
@@ -59,7 +43,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
     const updated = [newChat, ...chats]
     saveChats(updated)
     setChats(updated)
-    localStorage.setItem(ACTIVE_CHAT_KEY, newChat.id)
+    setActiveChatId(newChat.id)
     onChatSelect(newChat.id)
   }
 
@@ -70,14 +54,12 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
     saveChats(updated)
     setChats(updated)
 
-    // If deleted the active chat, select the first remaining one
     if (chatId === activeChatId) {
       const nextChat = updated[0] || null
       if (nextChat) {
-        localStorage.setItem(ACTIVE_CHAT_KEY, nextChat.id)
+        setActiveChatId(nextChat.id)
         onChatSelect(nextChat.id)
       } else {
-        // No chats left — create a new one
         handleNewChat()
       }
     }
@@ -85,20 +67,20 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
 
   // Select a chat
   const handleSelectChat = (chatId) => {
-    localStorage.setItem(ACTIVE_CHAT_KEY, chatId)
+    setActiveChatId(chatId)
     onChatSelect(chatId)
   }
 
   // Auto-create first chat if none exist
-  if (chats.length === 0) {
-    const newChat = createNewChat()
-    saveChats([newChat])
-    setChats([newChat])
-    localStorage.setItem(ACTIVE_CHAT_KEY, newChat.id)
-    // Don't call onChatSelect here to avoid loop — just render
-  }
-
-  const currentChats = loadChats()
+  useEffect(() => {
+    if (chats.length === 0) {
+      const newChat = createNewChat()
+      saveChats([newChat])
+      setChats([newChat])
+      setActiveChatId(newChat.id)
+      onChatSelect(newChat.id)
+    }
+  }, [chats.length])
 
   return (
     <div className="flex flex-col h-full">
@@ -118,7 +100,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {currentChats.map((chat) => {
+        {chats.map((chat) => {
           const isActive = chat.id === activeChatId
           const isHovered = hoveredId === chat.id
           const messageCount = chat.messages?.length || 0
@@ -136,7 +118,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
               }`}
             >
               {/* Chat icon */}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={isActive ? 'text-[#000080]' : 'text-gray-400'}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={isActive ? 'text-[#000080] dark:text-blue-300' : 'text-gray-400'}>
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
 
@@ -152,7 +134,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
               {isHovered && (
                 <button
                   onClick={(e) => handleDeleteChat(e, chat.id)}
-                  className="p-1 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition"
+                  className="p-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 transition"
                   title="Delete chat"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -191,7 +173,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
             </div>
             <div className="flex items-center justify-between text-[10px]">
               <span className="text-gray-500 dark:text-gray-400">Your Chats</span>
-              <span className="font-bold text-[#000080] dark:text-blue-300">{currentChats.length}</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">{chats.length}</span>
             </div>
           </div>
         </div>
