@@ -242,10 +242,10 @@ export default function MessageBubble({ message, onRetry }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block bg-blue-50/80 dark:bg-[#1a1d23] border border-blue-200 dark:border-[#2a2d35] rounded-xl px-3 py-2.5 text-xs hover:bg-blue-100/80 dark:hover:bg-[#1e2028] hover:border-blue-400 dark:hover:border-blue-700 transition group"
+                  className="block source-card px-3 py-2.5 text-xs transition group"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="font-bold text-navy dark:text-blue-300 group-hover:text-[#000080] dark:group-hover:text-blue-200">
+                    <div className="font-bold text-[#1a2744] dark:text-blue-300 group-hover:text-[#2c5282] dark:group-hover:text-blue-200">
                       <span className="inline-flex items-center gap-1">
                         {s.is_number}
                         <svg className="w-3 h-3 text-gray-400 dark:text-gray-500 group-hover:text-[#000080] dark:group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

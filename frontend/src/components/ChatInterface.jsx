@@ -231,69 +231,89 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
         ) : (
           <>
             {messages.length === 0 && !showWizard && (
-              <div className="mt-8 space-y-6">
+              <div className="mt-12 space-y-8 px-4">
                 {/* Hero section */}
                 <div className="text-center">
-                  <div className="text-5xl mb-3">🏛️</div>
-                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-200">BIS Standards AI Assistant</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Ask any question about Indian Standards in 20 languages</p>
+                  <div className="w-16 h-16 bg-[#1a2744] dark:bg-[#2c5282] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <span className="text-2xl">🏛️</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-[#1a2744] dark:text-gray-100">BIS Standards AI Assistant</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-md mx-auto">Ask any question about Indian Standards in 20 languages. Get instant, cited answers from official BIS documents.</p>
                 </div>
 
                 {/* Two main options */}
-                <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Free Chat */}
-                  <div className="bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-2xl p-5 hover:shadow-md transition cursor-default">
-                    <div className="text-3xl mb-3">💬</div>
-                    <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-1">Ask a Question</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">Type or speak in any language about any BIS standard</p>
-                    <div className="space-y-1.5">
+                <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Free Chat Card */}
+                  <div className="card-govt p-6 hover:shadow-card-hover transition-shadow">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-[#1a2744] dark:bg-[#2c5282] rounded-xl flex items-center justify-center">
+                        <span className="text-lg">💬</span>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">Ask a Question</h3>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">Free-text or voice query</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">Type or speak in any language about any BIS standard</p>
+                    <div className="space-y-2">
                       {[
                         { q: 'What is min yield stress for Fe 500?', lang: 'EN' },
                         { q: 'सीमेंट में क्लोराइड की अधिकतम मात्रा?', lang: 'HI' },
                       ].map((item, i) => (
-                        <div key={i} className="text-[11px] bg-gray-50 dark:bg-[#252830] text-gray-600 dark:text-gray-400 px-3 py-1.5 rounded-lg">
-                          <span className="font-semibold text-[#000080] dark:text-blue-300">[{item.lang}]</span> {item.q}
+                        <div key={i} className="text-[11px] bg-[#f0f2f5] dark:bg-[#252830] text-gray-600 dark:text-gray-400 px-3 py-2 rounded-lg border border-gray-200 dark:border-[#3a3d45]">
+                          <span className="font-bold text-[#1a2744] dark:text-blue-300">[{item.lang}]</span> {item.q}
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Certification Wizard */}
+                  {/* Certification Wizard Card */}
                   <div
                     onClick={() => setShowWizard(true)}
-                    className="bg-gradient-to-br from-[#FF9933] to-[#E88A2D] dark:from-[#7c4a1e] dark:to-[#5a3615] text-white rounded-2xl p-5 hover:shadow-md transition cursor-pointer group"
+                    className="card-govt p-6 hover:shadow-card-hover transition-shadow cursor-pointer group border-l-4 border-l-[#dd6b20]"
                   >
-                    <div className="text-3xl mb-3">📋</div>
-                    <h4 className="font-bold mb-1">Certification Wizard</h4>
-                    <p className="text-xs text-white/80 mb-3">Don't know which standard applies? Let us guide you step by step</p>
-                    <div className="space-y-1.5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-[#dd6b20] rounded-xl flex items-center justify-center">
+                        <span className="text-lg">📋</span>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">Certification Wizard</h3>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">Guided standard lookup</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">Don't know which standard applies? Let us guide you step by step.</p>
+                    <div className="space-y-2">
                       {[
                         { cat: '🏗️ Cement & Concrete', count: '5 standards' },
                         { cat: '⚙️ Steel & Metals', count: '2 standards' },
                         { cat: '🥛 Food & Dairy', count: '2 standards' },
                       ].map((item, i) => (
-                        <div key={i} className="text-[11px] bg-white/15 px-3 py-1.5 rounded-lg flex items-center justify-between">
-                          <span>{item.cat}</span>
-                          <span className="text-white/60 text-[10px]">{item.count}</span>
+                        <div key={i} className="text-[11px] bg-[#f0f2f5] dark:bg-[#252830] px-3 py-2 rounded-lg flex items-center justify-between border border-gray-200 dark:border-[#3a3d45]">
+                          <span className="text-gray-700 dark:text-gray-300">{item.cat}</span>
+                          <span className="text-gray-400 dark:text-gray-500 text-[10px]">{item.count}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="mt-3 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                    <div className="mt-4 text-xs font-semibold text-[#dd6b20] flex items-center gap-1 group-hover:gap-2 transition-all">
                       Start Wizard →
                     </div>
                   </div>
                 </div>
 
-                {/* Quick tips */}
-                <div className="max-w-2xl mx-auto text-center">
-                  <div className="flex items-center justify-center gap-4 text-[10px] text-gray-400 dark:text-gray-500">
-                    <span>🎤 Voice input</span>
-                    <span>•</span>
-                    <span>🌐 20 languages</span>
-                    <span>•</span>
-                    <span>📎 Source citations</span>
-                    <span>•</span>
-                    <span>🔗 Official BIS links</span>
+                {/* Feature badges */}
+                <div className="max-w-3xl mx-auto">
+                  <div className="flex items-center justify-center gap-6 text-[11px] text-gray-400 dark:text-gray-500">
+                    {[
+                      { icon: '🎤', label: 'Voice Input' },
+                      { icon: '🌐', label: '20 Languages' },
+                      { icon: '📎', label: 'Source Citations' },
+                      { icon: '🔗', label: 'Official BIS Links' },
+                    ].map((f, i) => (
+                      <span key={i} className="flex items-center gap-1.5">
+                        <span>{f.icon}</span>
+                        <span>{f.label}</span>
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>

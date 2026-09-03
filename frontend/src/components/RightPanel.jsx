@@ -117,7 +117,7 @@ export default function RightPanel({ standards, health, isOpen, onClose, onWizar
               </h2>
               <div className="space-y-2">
                 {standards.map((s, i) => (
-                  <div key={i} className="bg-[#000080] dark:bg-[#1e3a5f] text-white px-3 py-2 rounded-lg text-xs">
+                  <div key={i} className="standard-card">
                     <div className="font-semibold">{s.is_number}</div>
                     <div className="text-blue-200 text-[10px] truncate">{s.title}</div>
                   </div>

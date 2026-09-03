@@ -8,17 +8,13 @@ export default function Header({ health, onHealthUpdate, onMenuToggle, language,
   return (
     <>
       {/* Tricolor accent bar */}
-      <div className="h-1 flex">
-        <div className="flex-1 bg-[#FF9933]"></div>
-        <div className="flex-1 bg-white"></div>
-        <div className="flex-1 bg-[#138808]"></div>
-      </div>
-      <header className="bg-[#000080] text-white px-4 md:px-6 py-2.5 flex items-center justify-between shadow-lg">
+      <div className="tricolor-bar"></div>
+      <header className="bg-[#1a2744] dark:bg-[#0f1a2e] text-white px-4 md:px-6 py-2.5 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
           {/* Mobile menu button */}
           <button
             onClick={onMenuToggle}
-            className="md:hidden p-1 rounded hover:bg-white/10 transition"
+            className="md:hidden p-1.5 rounded-lg hover:bg-white/10 transition"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -29,11 +25,11 @@ export default function Header({ health, onHealthUpdate, onMenuToggle, language,
           {/* Logo */}
           <button onClick={() => onNavigate('landing')} className="flex items-center gap-2.5 hover:opacity-90 transition">
             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-[#000080] text-xs font-extrabold">BIS</span>
+              <span className="text-[#1a2744] text-xs font-extrabold">BIS</span>
             </div>
             <div>
-              <h1 className="text-sm font-bold leading-tight">ManakMitra</h1>
-              <p className="text-[9px] text-blue-200 leading-tight">मानक मित्र — AI Assistant</p>
+              <h1 className="text-sm font-bold leading-tight tracking-wide">ManakMitra</h1>
+              <p className="text-[9px] text-blue-200/70 leading-tight">मानक मित्र — AI Assistant</p>
             </div>
           </button>
         </div>
@@ -69,7 +65,7 @@ export default function Header({ health, onHealthUpdate, onMenuToggle, language,
               </svg>
             )}
           </button>
-          <span className="hidden md:inline-block bg-[#FF9933] text-white px-2.5 py-1 rounded-md text-[10px] font-bold">SIH 2026</span>
+          <span className="hidden md:inline-block bg-[#dd6b20] text-white px-2.5 py-1 rounded text-[10px] font-semibold">SIH 2026</span>
           <ProfileMenu onNavigate={onNavigate} />
         </div>
       </header>

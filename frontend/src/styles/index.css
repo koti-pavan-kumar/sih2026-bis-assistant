@@ -4,80 +4,126 @@
 
 /* Government Color Scheme */
 :root {
-  --govt-navy: #000080;
-  --govt-saffron: #FF9933;
-  --govt-green: #138808;
-  --govt-white: #FFFFFF;
-  --govt-bg: #F5F5F5;
+  --govt-navy: #1a2744;
+  --govt-blue: #2c5282;
+  --govt-accent: #c53030;
+  --govt-green: #276749;
+  --govt-saffron: #dd6b20;
+  --govt-bg: #f0f2f5;
+  --govt-sidebar: #e8eaef;
+  --govt-panel: #f5f6f8;
 }
 
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   margin: 0;
   background: var(--govt-bg);
-  color: #1a1a2e;
+  color: #2d3748;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dark mode body */
+/* Dark mode */
 .dark body,
 .dark {
-  background: #0f1115;
+  background: #0f1218;
   color: #e2e8f0;
 }
 
-/* Panel backgrounds — light mode uses distinct grays for clear separation */
+/* Panel backgrounds — clear separation */
 .panel-left {
   background: #e8eaef;
-  border-right: 1px solid #d0d3da;
+  border-right: 1px solid #cbd5e0;
 }
 .dark .panel-left {
   background: #111318;
-  border-right: 1px solid #2a2d35;
+  border-right: 1px solid #2d3748;
 }
 
 .panel-center {
   background: #ffffff;
 }
 .dark .panel-center {
-  background: #0f1115;
+  background: #0f1218;
 }
 
 .panel-right {
   background: #f0f2f5;
-  border-left: 1px solid #d0d3da;
+  border-left: 1px solid #cbd5e0;
 }
 .dark .panel-right {
   background: #14161c;
-  border-left: 1px solid #2a2d35;
+  border-left: 1px solid #2d3748;
 }
 
-/* Chat bubble backgrounds */
-.dark .chat-bubble-user {
-  background: #1e3a5f;
-  color: #e2e8f0;
+/* Professional card styling */
+.card-govt {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
-.dark .chat-bubble-assistant {
+.dark .card-govt {
   background: #1a1d23;
-  color: #e2e8f0;
-  border-color: #2a2d35;
+  border-color: #2d3748;
 }
 
-/* Dark mode cards */
+.card-govt:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Chat bubbles */
+.chat-user {
+  background: #1a2744;
+  color: #ffffff;
+}
+.dark .chat-user {
+  background: #2c5282;
+}
+
+.chat-assistant {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.dark .chat-assistant {
+  background: #1a1d23;
+  border-color: #2d3748;
+}
+
+/* Source cards */
+.source-card {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+.source-card:hover {
+  border-color: #2c5282;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
 .dark .source-card {
   background: #1a1d23;
-  border-color: #2a2d35;
-  color: #e2e8f0;
+  border-color: #2d3748;
+}
+.dark .source-card:hover {
+  border-color: #4299e1;
 }
 
-/* Dark mode inputs */
-.dark input,
-.dark textarea,
-.dark select {
-  background: #1a1d23;
-  border-color: #3a3d45;
-  color: #e2e8f0;
+/* Standards sidebar cards */
+.standard-card {
+  background: #1a2744;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+}
+.standard-card:hover {
+  background: #2c5282;
+}
+.dark .standard-card {
+  background: #2c5282;
+}
+.dark .standard-card:hover {
+  background: #3182ce;
 }
 
 /* Dark scrollbar */
@@ -108,25 +154,31 @@ html {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #edf2f7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #a0aec0;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #718096;
 }
 
 /* Government-style buttons */
 @layer components {
   .btn-govt-primary {
-    @apply bg-[#000080] hover:bg-[#000060] text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow-sm;
+    @apply bg-[#1a2744] hover:bg-[#2c5282] text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition shadow-sm;
   }
   .btn-govt-secondary {
-    @apply bg-[#FF9933] hover:bg-[#E88A2D] text-white font-bold px-6 py-3 rounded-xl text-sm transition shadow-sm;
+    @apply bg-[#dd6b20] hover:bg-[#c05621] text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition shadow-sm;
   }
   .btn-govt-outline {
-    @apply border-2 border-[#000080] text-[#000080] hover:bg-[#000080] hover:text-white font-semibold px-6 py-3 rounded-xl text-sm transition;
+    @apply border-2 border-[#1a2744] text-[#1a2744] hover:bg-[#1a2744] hover:text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition;
   }
+}
+
+/* Tricolor accent bar */
+.tricolor-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #dd6b20 0%, #dd6b20 33%, #ffffff 33%, #ffffff 66%, #276749 66%, #276749 100%);
 }

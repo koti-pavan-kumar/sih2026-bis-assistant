@@ -88,7 +88,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
       <div className="p-3 border-b border-gray-300 dark:border-[#2a2d35]">
         <button
           onClick={handleNewChat}
-          className="w-full flex items-center justify-center gap-2 bg-[#000080] hover:bg-[#000060] dark:bg-[#1e3a5f] dark:hover:bg-[#2a4a7f] text-white py-2.5 px-3 rounded-xl text-sm font-semibold transition shadow-sm"
+          className="w-full flex items-center justify-center gap-2 bg-[#1a2744] hover:bg-[#2c5282] dark:bg-[#2c5282] dark:hover:bg-[#3182ce] text-white py-2.5 px-3 rounded-lg text-sm font-semibold transition shadow-sm"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/>
@@ -154,7 +154,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
         <div className="p-3">
           <button
             onClick={() => onWizardOpen?.()}
-            className="w-full flex items-center gap-2 bg-[#FF9933] dark:bg-[#7c4a1e] hover:bg-[#E88A2D] dark:hover:bg-[#9a5f2a] text-white py-2 px-3 rounded-xl text-xs font-semibold transition"
+            className="w-full flex items-center gap-2 bg-[#dd6b20] dark:bg-[#7c4a1e] hover:bg-[#c05621] dark:hover:bg-[#9a5f2a] text-white py-2 px-3 rounded-lg text-xs font-semibold transition"
           >
             <span>📋</span>
             Certification Wizard
