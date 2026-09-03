@@ -39,9 +39,14 @@ function createNewChat() {
  * ChatList — Left sidebar showing all chat sessions.
  * Supports creating new chats, deleting existing ones, and switching between them.
  */
-export default function ChatList({ onChatSelect, activeChatId }) {
+export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
   const [chats, setChats] = useState(() => loadChats())
   const [hoveredId, setHoveredId] = useState(null)
+
+  // Re-load chats when refreshKey changes (triggered by ChatInterface updates)
+  React.useEffect(() => {
+    setChats(loadChats())
+  }, [refreshKey])
 
   // Reload chats when component re-renders (after ChatInterface updates)
   const refreshChats = () => {

@@ -21,6 +21,11 @@ export default function App() {
   const [activeChatId, setActiveChatId] = useState(() => {
     return localStorage.getItem(ACTIVE_CHAT_KEY) || null
   })
+  const [chatRefreshKey, setChatRefreshKey] = useState(0)
+
+  const handleChatUpdated = useCallback(() => {
+    setChatRefreshKey(k => k + 1)
+  }, [])
 
   const navigate = useCallback((newPage) => {
     setPage(newPage)
@@ -88,6 +93,7 @@ export default function App() {
           <ChatList
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}
+            refreshKey={chatRefreshKey}
           />
         </div>
 
@@ -95,6 +101,7 @@ export default function App() {
         <ChatInterface
           language={language}
           chatId={activeChatId}
+          onChatUpdated={handleChatUpdated}
         />
 
         {/* Right Sidebar — Standards / Auto-Fetch / Analytics */}

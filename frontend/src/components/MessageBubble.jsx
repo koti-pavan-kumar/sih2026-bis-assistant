@@ -81,8 +81,8 @@ function parseSections(text) {
     const isCitationSection = /^(Citations|References|Sources)/i.test(line.replace(/\*\*/g, ''))
     
     if (isCitationSection) {
-      currentSection = { type: 'citations', title: 'Citations', items: [] }
-      sections.push(currentSection)
+      // Skip citations section — source cards at the bottom handle this
+      currentSection = null
       continue
     }
     

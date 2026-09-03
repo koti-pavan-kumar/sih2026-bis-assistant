@@ -31,7 +31,7 @@ function saveChats(chats) {
  * ChatInterface — Displays messages for a specific chat session.
  * Each chat has its own message history stored in the chats array.
  */
-export default function ChatInterface({ language = 'en', chatId }) {
+export default function ChatInterface({ language = 'en', chatId, onChatUpdated }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -70,6 +70,8 @@ export default function ChatInterface({ language = 'en', chatId }) {
     }
 
     saveChats(chats)
+    // Notify parent so ChatList re-renders with updated titles
+    onChatUpdated?.()
   }, [messages, chatId])
 
   useEffect(() => {
