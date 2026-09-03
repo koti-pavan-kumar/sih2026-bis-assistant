@@ -192,7 +192,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
   return (
     <div className="flex-1 flex flex-col">
       {/* Wizard toggle */}
-      <div className="px-4 py-2 bg-white dark:bg-[#14161c] border-b border-gray-300 dark:border-[#2a2d35] flex items-center justify-between">
+      <div className="px-4 py-2 bg-white dark:bg-[#14161c] border-b border-gray-200 dark:border-[#2a2d35] flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowWizard(false)}
@@ -345,7 +345,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
 
       {/* Input bar */}
       {!showWizard && (
-        <div className="p-4 bg-white dark:bg-[#14161c] border-t border-gray-300 dark:border-[#2a2d35]">
+        <div className="p-4 bg-white dark:bg-[#14161c] border-t border-gray-200 dark:border-[#2a2d35]">
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             <VoiceInput
               onResult={(text) => setInput(prev => prev ? `${prev} ${text}` : text)}
