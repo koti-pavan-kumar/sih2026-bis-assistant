@@ -27,10 +27,10 @@ body {
   color: #e2e8f0;
 }
 
-/* Panel backgrounds */
+/* Panel backgrounds — light mode uses distinct grays for clear separation */
 .panel-left {
-  background: #f0f1f4;
-  border-right: 1px solid #e2e4e8;
+  background: #e8eaef;
+  border-right: 1px solid #d0d3da;
 }
 .dark .panel-left {
   background: #111318;
@@ -38,15 +38,15 @@ body {
 }
 
 .panel-center {
-  background: #f9fafb;
+  background: #ffffff;
 }
 .dark .panel-center {
   background: #0f1115;
 }
 
 .panel-right {
-  background: #f5f6f8;
-  border-left: 1px solid #e2e4e8;
+  background: #f0f2f5;
+  border-left: 1px solid #d0d3da;
 }
 .dark .panel-right {
   background: #14161c;

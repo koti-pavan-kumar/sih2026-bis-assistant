@@ -61,7 +61,7 @@ export default function RightPanel({ standards, health, isOpen, onClose }) {
           onClick={onClose}
         ></div>
       )}
-      <aside className={`w-72 bg-white dark:bg-[#14161c] border-l border-gray-200 dark:border-[#2a2d35] flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
+      <aside className={`w-72 flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
       }`}>
         {/* Tab toggles */}

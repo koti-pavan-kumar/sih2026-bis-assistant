@@ -142,10 +142,9 @@ export default function MessageBubble({ message, onRetry }) {
       <div className={`max-w-3xl ${isUser ? 'order-2' : ''}`}>
         <div className={`rounded-2xl px-5 py-4 shadow-sm ${
           isUser
-            ? 'bg-[#000080] dark:bg-[#1e3a5f] text-white'
-            : isError
-              ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300'
-              : 'bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] text-gray-800 dark:text-gray-200'
+            ? 'bg-[#000080] dark:bg-[#1e3a5f] text-white'              : isError
+              ? 'bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-300'
+              : 'bg-white dark:bg-[#1a1d23] border border-gray-300 dark:border-[#2a2d35] text-gray-800 dark:text-gray-200'
         }`}>
           {isUser ? (
             <p className="text-sm">{message.content}</p>
@@ -243,7 +242,7 @@ export default function MessageBubble({ message, onRetry }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block bg-blue-50/80 dark:bg-[#1a1d23] border border-blue-100 dark:border-[#2a2d35] rounded-xl px-3 py-2.5 text-xs hover:bg-blue-50 dark:hover:bg-[#1e2028] hover:border-blue-300 dark:hover:border-blue-700 transition group"
+                  className="block bg-blue-50/80 dark:bg-[#1a1d23] border border-blue-200 dark:border-[#2a2d35] rounded-xl px-3 py-2.5 text-xs hover:bg-blue-100/80 dark:hover:bg-[#1e2028] hover:border-blue-400 dark:hover:border-blue-700 transition group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="font-bold text-navy dark:text-blue-300 group-hover:text-[#000080] dark:group-hover:text-blue-200">

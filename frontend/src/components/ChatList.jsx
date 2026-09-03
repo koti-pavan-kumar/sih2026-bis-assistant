@@ -101,9 +101,9 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
   const currentChats = loadChats()
 
   return (
-    <div className="flex flex-col h-full bg-[#f0f1f4] dark:bg-[#111318]">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-3 border-b border-gray-200">
+      <div className="p-3 border-b border-gray-300 dark:border-[#2a2d35]">
         <button
           onClick={handleNewChat}
           className="w-full flex items-center justify-center gap-2 bg-[#000080] hover:bg-[#000060] dark:bg-[#1e3a5f] dark:hover:bg-[#2a4a7f] text-white py-2.5 px-3 rounded-xl text-sm font-semibold transition shadow-sm"
@@ -131,8 +131,8 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
               onMouseLeave={() => setHoveredId(null)}
               className={`group relative flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition text-sm ${
                 isActive
-                  ? 'bg-white dark:bg-[#1a1d23] shadow-sm border border-gray-200 dark:border-[#2a2d35] text-[#000080] dark:text-blue-300 font-medium'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-white/60 dark:hover:bg-[#1a1d23]/60 hover:text-gray-800 dark:hover:text-gray-200'
+                  ? 'bg-white dark:bg-[#1a1d23] shadow-sm border border-gray-300 dark:border-[#2a2d35] text-[#000080] dark:text-blue-300 font-medium'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-white/80 dark:hover:bg-[#1a1d23]/60 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
             >
               {/* Chat icon */}
@@ -167,7 +167,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey }) {
       </div>
 
       {/* Footer info */}
-      <div className="p-3 border-t border-gray-200 dark:border-[#2a2d35]">
+      <div className="p-3 border-t border-gray-300 dark:border-[#2a2d35]">
         <div className="text-[10px] text-gray-400 dark:text-gray-500 text-center">
           {currentChats.length} chat{currentChats.length !== 1 ? 's' : ''}
         </div>
