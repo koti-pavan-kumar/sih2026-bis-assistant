@@ -27,40 +27,28 @@ class LLMGenerator:
         if not ollama_host.startswith("http"):
             ollama_host = f"http://{ollama_host}"
 
-        for attempt in range(3):
-            try:
-                resp = httpx.get(f"{ollama_host}/api/tags", timeout=5.0)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    models = data.get("models", [])
-                    if models:
-                        self.llm_provider = "ollama"
-                        self.ollama_url = ollama_host
-                        self.ollama_model = models[0]["name"]
-                        logger.info(f"Using Ollama ({self.ollama_model}) at {ollama_host}")
-                        return
-            except Exception:
-                if attempt < 2:
-                    import time
-                    time.sleep(2)
+        try:
+            resp = httpx.get(f"{ollama_host}/api/tags", timeout=3.0)
+            if resp.status_code == 200:
+                data = resp.json()
+                models = data.get("models", [])
+                if models:
+                    self.llm_provider = "ollama"
+                    self.ollama_url = ollama_host
+                    self.ollama_model = models[0]["name"]
+                    logger.info(f"Using Ollama ({self.ollama_model}) at {ollama_host}")
+                    return
+        except Exception:
+            pass
 
-        # Try Gemini (with model fallback chain)
+        # Try Gemini — just check if API key exists
+        # Actual model testing happens in _generate_gemini via REST API
         gemini_key = os.getenv("GEMINI_API_KEY")
         if gemini_key:
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=gemini_key)
-                # Try models in order of preference
-                for model_name in ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]:
-                    try:
-                        self.gemini_model = genai.GenerativeModel(model_name)
-                        self.llm_provider = "gemini"
-                        logger.info(f"Using Gemini ({model_name})")
-                        return
-                    except Exception:
-                        continue
-            except Exception as e:
-                logger.warning(f"Gemini init failed: {e}")
+            self.llm_provider = "gemini"
+            self.gemini_model = None  # REST API doesn't need a model object
+            logger.info("Using Gemini (REST API) — key detected")
+            return
 
         logger.warning("No LLM available. Using template responses.")
 
@@ -155,8 +143,7 @@ Provide a clear, structured answer with source citations."""
                 if resp.status_code == 200:
                     result = resp.json()
                     text = result["candidates"][0]["content"]["parts"][0]["text"]
-                    if model_name != self.gemini_model.model_name if self.gemini_model else True:
-                        logger.info(f"Using Gemini ({model_name})")
+                    logger.info(f"Using Gemini ({model_name})")
                     return text
                 else:
                     logger.warning(f"Gemini {model_name} returned {resp.status_code}: {resp.text[:200]}")
@@ -173,9 +160,7 @@ Provide a clear, structured answer with source citations."""
 **Query:** {query}
 
 **Context found:**
-{context[:1500]}{'...' if len(context) > 1500 else ''}
-
-*Note: Start Ollama (ollama serve) for AI-powered responses.*"""
+{context[:1500]}{'...' if len(context) > 1500 else ''}"""
 
     def extract_citations(self, response: str) -> list:
         """Extract IS citations from the response."""
