@@ -1,27 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Header from './components/Header'
-import Sidebar from './components/Sidebar'
+import ChatList from './components/ChatList'
 import ChatInterface from './components/ChatInterface'
+import RightPanel from './components/RightPanel'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import { t } from './utils/translations'
 
+const ACTIVE_CHAT_KEY = 'manakmitra_active_chat'
+
 export default function App() {
   const [page, setPage] = useState('landing')
   const [standards, setStandards] = useState([])
   const [health, setHealth] = useState(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [rightPanelOpen, setRightPanelOpen] = useState(false)
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem('manakmitra_language') || 'en'
+  })
+  const [activeChatId, setActiveChatId] = useState(() => {
+    return localStorage.getItem(ACTIVE_CHAT_KEY) || null
   })
 
   const navigate = useCallback((newPage) => {
     setPage(newPage)
-    // Don't persist page choice — always start at landing
   }, [])
 
-  // Initial load of standards list (only when on main app)
+  // Load standards when on main app
   useEffect(() => {
     if (page === 'app') {
       fetch('/api/standards')
@@ -46,42 +51,61 @@ export default function App() {
     localStorage.setItem('manakmitra_language', lang)
   }, [])
 
-  // Render landing page
+  const handleChatSelect = useCallback((chatId) => {
+    setActiveChatId(chatId)
+    localStorage.setItem(ACTIVE_CHAT_KEY, chatId)
+  }, [])
+
+  // Landing page
   if (page === 'landing') {
     return <LandingPage onNavigate={navigate} />
   }
 
-  // Render login page
+  // Login page
   if (page === 'login') {
     return <LoginPage onNavigate={navigate} />
   }
 
-  // Render signup page
+  // Signup page
   if (page === 'signup') {
     return <SignupPage onNavigate={navigate} />
   }
 
-  // Render main app
+  // Main app — 3-column layout
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Header
         health={health}
         onHealthUpdate={handleHealthUpdate}
-        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        onMenuToggle={() => setRightPanelOpen(!rightPanelOpen)}
         language={language}
         onLanguageChange={handleLanguageChange}
         onNavigate={navigate}
       />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          standards={standards}
-          health={health}
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
+        {/* Left Sidebar — Chat List */}
+        <div className="w-64 border-r bg-white flex-shrink-0 hidden md:flex flex-col">
+          <ChatList
+            onChatSelect={handleChatSelect}
+            activeChatId={activeChatId}
+          />
+        </div>
+
+        {/* Center — Chat Messages */}
+        <ChatInterface
           language={language}
-          onNavigate={navigate}
+          chatId={activeChatId}
         />
-        <ChatInterface language={language} />
+
+        {/* Right Sidebar — Standards / Auto-Fetch / Analytics */}
+        <div className="hidden lg:flex">
+          <RightPanel
+            standards={standards}
+            health={health}
+            isOpen={rightPanelOpen}
+            onClose={() => setRightPanelOpen(false)}
+          />
+        </div>
       </div>
       <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white hide-mobile">
         {t('ministry', language)} | {t('poweredBy', language)}

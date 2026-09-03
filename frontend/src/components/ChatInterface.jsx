@@ -6,20 +6,33 @@ import CertificationWizard from './CertificationWizard'
 import { t } from '../utils/translations'
 
 const REQUEST_TIMEOUT_MS = 45000
+const CHATS_KEY = 'manakmitra_chats'
+const MAX_HISTORY_FOR_CONTEXT = 6
 
-const STORAGE_KEY = 'manakmitra_chat_history'
-const MAX_HISTORY_FOR_CONTEXT = 6  // Last 6 messages (3 turns) for LLM context
+/**
+ * Load all chats from localStorage.
+ */
+function loadChats() {
+  try {
+    return JSON.parse(localStorage.getItem(CHATS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
 
-export default function ChatInterface({ language = 'en' }) {
-  const [messages, setMessages] = useState(() => {
-    // Load persisted chat history
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY)
-      return saved ? JSON.parse(saved) : []
-    } catch {
-      return []
-    }
-  })
+/**
+ * Save all chats to localStorage.
+ */
+function saveChats(chats) {
+  localStorage.setItem(CHATS_KEY, JSON.stringify(chats))
+}
+
+/**
+ * ChatInterface — Displays messages for a specific chat session.
+ * Each chat has its own message history stored in the chats array.
+ */
+export default function ChatInterface({ language = 'en', chatId }) {
+  const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
@@ -28,14 +41,36 @@ export default function ChatInterface({ language = 'en' }) {
   const timerRef = useRef(null)
   const abortControllerRef = useRef(null)
 
-  // Persist messages to localStorage whenever they change
+  // Load messages when chatId changes
   useEffect(() => {
-    if (messages.length > 0) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
-      } catch {}
+    if (!chatId) { setMessages([]); return }
+    const chats = loadChats()
+    const chat = chats.find(c => c.id === chatId)
+    setMessages(chat?.messages || [])
+    setInput('')
+    setLoading(false)
+    setShowWizard(false)
+  }, [chatId])
+
+  // Save messages to the specific chat whenever they change
+  useEffect(() => {
+    if (!chatId || messages.length === 0) return
+    const chats = loadChats()
+    const idx = chats.findIndex(c => c.id === chatId)
+    if (idx === -1) return
+
+    chats[idx].messages = messages
+
+    // Auto-title: use first user message as chat title (truncated)
+    if (messages.length > 0 && chats[idx].title === 'New Chat') {
+      const firstUserMsg = messages.find(m => m.role === 'user')
+      if (firstUserMsg) {
+        chats[idx].title = firstUserMsg.content.slice(0, 40) + (firstUserMsg.content.length > 40 ? '...' : '')
+      }
     }
-  }, [messages])
+
+    saveChats(chats)
+  }, [messages, chatId])
 
   useEffect(() => {
     messagesEnd.current?.scrollIntoView({ behavior: 'smooth' })
@@ -84,7 +119,6 @@ export default function ChatInterface({ language = 'en' }) {
     }, REQUEST_TIMEOUT_MS)
 
     try {
-      // Build conversation history for multi-turn context
       const historyForContext = messages
         .slice(-MAX_HISTORY_FOR_CONTEXT)
         .map(m => ({ role: m.role, content: m.content }))
@@ -92,10 +126,10 @@ export default function ChatInterface({ language = 'en' }) {
       const res = await fetch('/api/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           query: queryToSend,
           response_language: language,
-          conversation_history: historyForContext  // Multi-turn context
+          conversation_history: historyForContext
         }),
         signal: abortControllerRef.current.signal
       })
@@ -175,7 +209,7 @@ export default function ChatInterface({ language = 'en' }) {
           <button
             onClick={() => setShowWizard(false)}
             className={`text-sm font-medium transition ${
-              !showWizard ? 'text-navy border-b-2 border-navy' : 'text-gray-400 hover:text-gray-600'
+              !showWizard ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
             } pb-1`}
           >
             {t('chat', language)}
@@ -183,7 +217,7 @@ export default function ChatInterface({ language = 'en' }) {
           <button
             onClick={() => setShowWizard(true)}
             className={`text-sm font-medium transition ${
-              showWizard ? 'text-navy border-b-2 border-navy' : 'text-gray-400 hover:text-gray-600'
+              showWizard ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
             } pb-1`}
           >
             {t('certificationWizard', language)}
@@ -191,10 +225,7 @@ export default function ChatInterface({ language = 'en' }) {
         </div>
         {messages.length > 0 && !showWizard && (
           <button
-            onClick={() => {
-              setMessages([])
-              localStorage.removeItem(STORAGE_KEY)
-            }}
+            onClick={() => setMessages([])}
             className="text-xs text-gray-400 hover:text-red-500 transition flex items-center gap-1"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -257,13 +288,13 @@ export default function ChatInterface({ language = 'en' }) {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !loading && handleSend()}
               placeholder={t('askPlaceholder', language)}
-              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-navy focus:ring-1 focus:ring-navy disabled:bg-gray-100"
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] disabled:bg-gray-100"
               disabled={loading}
             />
             <button
               onClick={() => handleSend()}
               disabled={loading || !input.trim()}
-              className="bg-saffron hover:bg-saffron-light text-white px-6 py-3 rounded-xl font-semibold text-sm transition disabled:opacity-50"
+              className="bg-[#FF9933] hover:bg-[#E88A2D] text-white px-6 py-3 rounded-xl font-semibold text-sm transition disabled:opacity-50"
             >
               {t('askButton', language)}
             </button>
