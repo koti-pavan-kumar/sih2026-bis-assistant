@@ -22,6 +22,8 @@ export default function SignupPage({ onNavigate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    // Clear previous user's chat history before entering app
+    localStorage.removeItem('manakmitra_chat_history')
     onNavigate('app')
   }
 
@@ -133,7 +135,10 @@ export default function SignupPage({ onNavigate }) {
                   {/* Demo skip */}
                   <div className="mt-6 text-center">
                     <button
-                      onClick={() => onNavigate('app')}
+                      onClick={() => {
+                        localStorage.removeItem('manakmitra_chat_history')
+                        onNavigate('app')
+                      }}
                       className="text-sm text-gray-400 hover:text-[#000080] transition"
                     >
                       Skip registration → Try demo
@@ -249,7 +254,10 @@ export default function SignupPage({ onNavigate }) {
                     Your account has been created. You can now access ManakMitra and start querying Indian Standards.
                   </p>
                   <button
-                    onClick={() => onNavigate('app')}
+                    onClick={() => {
+                      localStorage.removeItem('manakmitra_chat_history')
+                      onNavigate('app')
+                    }}
                     className="bg-[#FF9933] hover:bg-[#E88A2D] text-white font-bold px-8 py-3 rounded-xl text-sm transition shadow-sm"
                   >
                     Go to ManakMitra →

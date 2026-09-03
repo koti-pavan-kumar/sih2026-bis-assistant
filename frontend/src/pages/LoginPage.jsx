@@ -12,7 +12,8 @@ export default function LoginPage({ onNavigate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // For demo: just navigate to app
+    // Clear previous user's chat history before entering app
+    localStorage.removeItem('manakmitra_chat_history')
     onNavigate('app')
   }
 
@@ -152,7 +153,10 @@ export default function LoginPage({ onNavigate }) {
 
               {/* Demo Access */}
               <button
-                onClick={() => onNavigate('app')}
+                onClick={() => {
+                  localStorage.removeItem('manakmitra_chat_history')
+                  onNavigate('app')
+                }}
                 className="w-full bg-[#FF9933] hover:bg-[#E88A2D] text-white font-semibold py-3 rounded-xl text-sm transition"
               >
                 🔍 Try Demo Without Login
