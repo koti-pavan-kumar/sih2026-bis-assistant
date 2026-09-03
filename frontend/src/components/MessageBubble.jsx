@@ -134,14 +134,6 @@ export default function MessageBubble({ message, onRetry }) {
   const isUser = message.role === 'user'
   const isError = message.isError
 
-  const confidenceDisplay = {
-    HIGH: { text: 'HIGH confidence', color: 'bg-green-100 text-green-700', icon: '✓' },
-    MEDIUM: { text: 'MEDIUM confidence', color: 'bg-yellow-100 text-yellow-700', icon: '~' },
-    LOW: { text: 'LOW confidence', color: 'bg-red-100 text-red-700', icon: '!' },
-    TEMPLATE: { text: '⚡ Template Mode', color: 'bg-purple-100 text-purple-700', icon: '⚡' },
-    UNKNOWN: { text: 'UNKNOWN', color: 'bg-gray-100 text-gray-600', icon: '?' }
-  }[message.confidence] || { text: message.confidence, color: 'bg-gray-100 text-gray-600', icon: '?' }
-
   // Parse the response into structured sections
   const parsed = !isUser && !isError ? parseSections(message.content) : null
 
@@ -222,12 +214,9 @@ export default function MessageBubble({ message, onRetry }) {
           )}
         </div>
 
-        {/* Confidence + Language badges */}
+        {/* Language badge */}
         {!isUser && !isError && (
           <div className="mt-2 flex items-center gap-2 flex-wrap">
-            <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${confidenceDisplay.color}`}>
-              {confidenceDisplay.icon} {confidenceDisplay.text}
-            </span>
             {message.language && (
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
                 message.language === 'en'
