@@ -1,4 +1,5 @@
 import React from 'react'
+import { getBISDocumentURL, getGoogleSearchURL } from '../utils/urls'
 
 // Language display labels with flags
 const LANGUAGE_LABELS = {
@@ -245,19 +246,42 @@ export default function MessageBubble({ message, onRetry }) {
             <div className="text-xs text-gray-400 font-medium flex items-center gap-1">
               <span>📄</span> Sources
             </div>
-            {message.sources.map((s, i) => (
-              <div key={i} className="bg-blue-50/80 border border-blue-100 rounded-xl px-3 py-2.5 text-xs hover:bg-blue-50 transition">
-                <div className="flex items-center justify-between">
-                  <div className="font-bold text-navy">{s.is_number}</div>
-                  <div className="text-gray-400 text-[10px]">{Math.round(s.score * 100)}% match</div>
-                </div>
-                <div className="text-gray-600 truncate mt-0.5">{s.title}</div>
-                <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-400">
-                  {s.section && <span>📋 {s.section}</span>}
-                  <span>📄 Page {s.page}</span>
-                </div>
-              </div>
-            ))}
+            {message.sources.map((s, i) => {
+              const bisUrl = getBISDocumentURL(s.is_number, s.title)
+              const googleUrl = getGoogleSearchURL(s.is_number, s.title)
+              const href = bisUrl || googleUrl
+              return (
+                <a
+                  key={i}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-blue-50/80 border border-blue-100 rounded-xl px-3 py-2.5 text-xs hover:bg-blue-50 hover:border-blue-300 transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-navy group-hover:text-[#000080]">
+                      <span className="inline-flex items-center gap-1">
+                        {s.is_number}
+                        <svg className="w-3 h-3 text-gray-400 group-hover:text-[#000080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </span>
+                    </div>
+                    <div className="text-gray-400 text-[10px]">{Math.round(s.score * 100)}% match</div>
+                  </div>
+                  <div className="text-gray-600 truncate mt-0.5">{s.title}</div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-2 text-[10px] text-gray-400">
+                      {s.section && <span>📋 {s.section}</span>}
+                      <span>📄 Page {s.page}</span>
+                    </div>
+                    <span className="text-[10px] text-[#000080] font-medium opacity-0 group-hover:opacity-100 transition">
+                      View Official Document →
+                    </span>
+                  </div>
+                </a>
+              )
+            })}
           </div>
         )}
 
