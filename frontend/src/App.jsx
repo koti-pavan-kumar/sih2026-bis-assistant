@@ -18,6 +18,9 @@ export default function App() {
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem('manakmitra_language') || 'en'
   })
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('manakmitra_dark') === 'true'
+  })
   const [activeChatId, setActiveChatId] = useState(() => {
     return localStorage.getItem(ACTIVE_CHAT_KEY) || null
   })
@@ -56,6 +59,13 @@ export default function App() {
     localStorage.setItem('manakmitra_language', lang)
   }, [])
 
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode(prev => {
+      localStorage.setItem('manakmitra_dark', String(!prev))
+      return !prev
+    })
+  }, [])
+
   const handleChatSelect = useCallback((chatId) => {
     setActiveChatId(chatId)
     localStorage.setItem(ACTIVE_CHAT_KEY, chatId)
@@ -78,7 +88,7 @@ export default function App() {
 
   // Main app — 3-column layout
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className={`flex flex-col h-screen ${darkMode ? 'dark bg-[#0f1115]' : 'bg-gray-50'}`}>
       <Header
         health={health}
         onHealthUpdate={handleHealthUpdate}
@@ -86,10 +96,12 @@ export default function App() {
         language={language}
         onLanguageChange={handleLanguageChange}
         onNavigate={navigate}
+        darkMode={darkMode}
+        onToggleDarkMode={toggleDarkMode}
       />
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar — Chat List */}
-        <div className="w-64 border-r bg-white flex-shrink-0 hidden md:flex flex-col">
+        <div className={`w-64 flex-shrink-0 hidden md:flex flex-col panel-left`}>
           <ChatList
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}
@@ -105,7 +117,7 @@ export default function App() {
         />
 
         {/* Right Sidebar — Standards / Auto-Fetch / Analytics */}
-        <div className="hidden lg:flex">
+        <div className={`hidden lg:flex panel-right`}>
           <RightPanel
             standards={standards}
             health={health}

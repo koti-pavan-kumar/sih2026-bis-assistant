@@ -61,31 +61,28 @@ export default function RightPanel({ standards, health, isOpen, onClose }) {
           onClick={onClose}
         ></div>
       )}
-      <aside className={`w-72 bg-white border-l flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
+      <aside className={`w-72 bg-white dark:bg-[#14161c] border-l border-gray-200 dark:border-[#2a2d35] flex flex-col overflow-y-auto fixed md:relative z-40 h-full transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'
       }`}>
         {/* Tab toggles */}
         <div className="flex border-b">
           <button
-            onClick={() => setActiveTab('standards')}
-            className={`flex-1 py-2.5 text-xs font-medium transition ${
-              activeTab === 'standards' ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
+            onClick={() => setActiveTab('standards')}              className={`flex-1 py-2.5 text-xs font-medium transition ${
+              activeTab === 'standards' ? 'text-[#000080] dark:text-blue-300 border-b-2 border-[#000080] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             }`}
           >
             Standards
           </button>
           <button
-            onClick={() => setActiveTab('updates')}
-            className={`flex-1 py-2.5 text-xs font-medium transition ${
-              activeTab === 'updates' ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
+            onClick={() => setActiveTab('updates')}              className={`flex-1 py-2.5 text-xs font-medium transition ${
+              activeTab === 'updates' ? 'text-[#000080] dark:text-blue-300 border-b-2 border-[#000080] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             }`}
           >
             Auto-Fetch
           </button>
           <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex-1 py-2.5 text-xs font-medium transition ${
-              activeTab === 'analytics' ? 'text-[#000080] border-b-2 border-[#000080]' : 'text-gray-400 hover:text-gray-600'
+            onClick={() => setActiveTab('analytics')}              className={`flex-1 py-2.5 text-xs font-medium transition ${
+              activeTab === 'analytics' ? 'text-[#000080] dark:text-blue-300 border-b-2 border-[#000080] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             }`}
           >
             Analytics
@@ -111,7 +108,7 @@ export default function RightPanel({ standards, health, isOpen, onClose }) {
               </h2>
               <div className="space-y-2">
                 {standards.map((s, i) => (
-                  <div key={i} className="bg-[#000080] text-white px-3 py-2 rounded-lg text-xs">
+                  <div key={i} className="bg-[#000080] dark:bg-[#1e3a5f] text-white px-3 py-2 rounded-lg text-xs">
                     <div className="font-semibold">{s.is_number}</div>
                     <div className="text-blue-200 text-[10px] truncate">{s.title}</div>
                   </div>

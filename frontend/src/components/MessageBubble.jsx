@@ -142,10 +142,10 @@ export default function MessageBubble({ message, onRetry }) {
       <div className={`max-w-3xl ${isUser ? 'order-2' : ''}`}>
         <div className={`rounded-2xl px-5 py-4 shadow-sm ${
           isUser
-            ? 'bg-navy text-white'
+            ? 'bg-[#000080] dark:bg-[#1e3a5f] text-white'
             : isError
-              ? 'bg-red-50 border border-red-200 text-red-800'
-              : 'bg-white border text-gray-800'
+              ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300'
+              : 'bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] text-gray-800 dark:text-gray-200'
         }`}>
           {isUser ? (
             <p className="text-sm">{message.content}</p>
@@ -167,9 +167,7 @@ export default function MessageBubble({ message, onRetry }) {
                       </h4>
                       <div className="space-y-1">
                         {section.items.map((item, j) => (
-                          <div key={j} className="flex items-start gap-2 text-xs">
-                            <span className="text-navy font-mono">•</span>
-                            <span className="text-gray-600">
+                          <div key={j} className="flex items-start gap-2 text-xs">                              <span className="text-navy dark:text-blue-300 font-mono">•</span>                              <span className="text-gray-600 dark:text-gray-400">
                               <RenderLine line={item} />
                             </span>
                           </div>
@@ -179,7 +177,7 @@ export default function MessageBubble({ message, onRetry }) {
                   ) : (
                     // Content section
                     <div>
-                      <h4 className="text-sm font-bold text-navy mb-2 flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-navy dark:text-blue-300 mb-2 flex items-center gap-2">
                         {section.title.includes('Direct Answer') && <span className="text-green-600">✓</span>}
                         {section.title.includes('Supporting') && <span className="text-blue-500">📋</span>}
                         {section.title}
@@ -245,26 +243,26 @@ export default function MessageBubble({ message, onRetry }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block bg-blue-50/80 border border-blue-100 rounded-xl px-3 py-2.5 text-xs hover:bg-blue-50 hover:border-blue-300 transition group"
+                  className="block bg-blue-50/80 dark:bg-[#1a1d23] border border-blue-100 dark:border-[#2a2d35] rounded-xl px-3 py-2.5 text-xs hover:bg-blue-50 dark:hover:bg-[#1e2028] hover:border-blue-300 dark:hover:border-blue-700 transition group"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="font-bold text-navy group-hover:text-[#000080]">
+                    <div className="font-bold text-navy dark:text-blue-300 group-hover:text-[#000080] dark:group-hover:text-blue-200">
                       <span className="inline-flex items-center gap-1">
                         {s.is_number}
-                        <svg className="w-3 h-3 text-gray-400 group-hover:text-[#000080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-3 h-3 text-gray-400 dark:text-gray-500 group-hover:text-[#000080] dark:group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
                       </span>
                     </div>
                     <div className="text-gray-400 text-[10px]">{Math.round(s.score * 100)}% match</div>
                   </div>
-                  <div className="text-gray-600 truncate mt-0.5">{s.title}</div>
+                  <div className="text-gray-600 dark:text-gray-400 truncate mt-0.5">{s.title}</div>
                   <div className="flex items-center justify-between mt-1">
                     <div className="flex items-center gap-2 text-[10px] text-gray-400">
                       {s.section && <span>📋 {s.section}</span>}
                       <span>📄 Page {s.page}</span>
                     </div>
-                    <span className="text-[10px] text-[#000080] font-medium opacity-0 group-hover:opacity-100 transition">
+                    <span className="text-[10px] text-[#000080] dark:text-blue-300 font-medium opacity-0 group-hover:opacity-100 transition">
                       View Official Document →
                     </span>
                   </div>
