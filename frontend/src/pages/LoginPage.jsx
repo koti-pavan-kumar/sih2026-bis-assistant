@@ -14,6 +14,13 @@ export default function LoginPage({ onNavigate }) {
     e.preventDefault()
     // Clear previous user's chat history before entering app
     localStorage.removeItem('manakmitra_chat_history')
+    // Store current user info
+    localStorage.setItem('manakmitra_user', JSON.stringify({
+      name: email.split('@')[0],
+      email: email,
+      userType: userType,
+      loggedIn: true,
+    }))
     onNavigate('app')
   }
 
@@ -155,6 +162,12 @@ export default function LoginPage({ onNavigate }) {
               <button
                 onClick={() => {
                   localStorage.removeItem('manakmitra_chat_history')
+                  localStorage.setItem('manakmitra_user', JSON.stringify({
+                    name: 'Guest',
+                    email: '',
+                    userType: 'guest',
+                    loggedIn: false,
+                  }))
                   onNavigate('app')
                 }}
                 className="w-full bg-[#FF9933] hover:bg-[#E88A2D] text-white font-semibold py-3 rounded-xl text-sm transition"

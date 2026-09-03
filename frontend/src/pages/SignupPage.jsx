@@ -24,6 +24,13 @@ export default function SignupPage({ onNavigate }) {
     e.preventDefault()
     // Clear previous user's chat history before entering app
     localStorage.removeItem('manakmitra_chat_history')
+    // Store current user info
+    localStorage.setItem('manakmitra_user', JSON.stringify({
+      name: formData.name,
+      email: formData.email,
+      userType: userType,
+      loggedIn: true,
+    }))
     onNavigate('app')
   }
 
@@ -137,6 +144,12 @@ export default function SignupPage({ onNavigate }) {
                     <button
                       onClick={() => {
                         localStorage.removeItem('manakmitra_chat_history')
+                        localStorage.setItem('manakmitra_user', JSON.stringify({
+                          name: 'Guest',
+                          email: '',
+                          userType: 'guest',
+                          loggedIn: false,
+                        }))
                         onNavigate('app')
                       }}
                       className="text-sm text-gray-400 hover:text-[#000080] transition"
@@ -256,6 +269,12 @@ export default function SignupPage({ onNavigate }) {
                   <button
                     onClick={() => {
                       localStorage.removeItem('manakmitra_chat_history')
+                      localStorage.setItem('manakmitra_user', JSON.stringify({
+                        name: formData.name,
+                        email: formData.email,
+                        userType: userType,
+                        loggedIn: true,
+                      }))
                       onNavigate('app')
                     }}
                     className="bg-[#FF9933] hover:bg-[#E88A2D] text-white font-bold px-8 py-3 rounded-xl text-sm transition shadow-sm"

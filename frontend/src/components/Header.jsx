@@ -1,6 +1,7 @@
 import React from 'react'
 import ConnectionStatus from './ConnectionStatus'
 import LanguageSelector from './LanguageSelector'
+import ProfileMenu from './ProfileMenu'
 import { t } from '../utils/translations'
 
 export default function Header({ health, onHealthUpdate, onMenuToggle, language, onLanguageChange, onNavigate }) {
@@ -44,7 +45,8 @@ export default function Header({ health, onHealthUpdate, onMenuToggle, language,
             currentLanguage={language}
             onLanguageChange={onLanguageChange}
           />
-          <span className="bg-[#FF9933] text-white px-2.5 py-1 rounded-md text-[10px] font-bold">SIH 2026</span>
+          <span className="hidden md:inline-block bg-[#FF9933] text-white px-2.5 py-1 rounded-md text-[10px] font-bold">SIH 2026</span>
+          <ProfileMenu onNavigate={onNavigate} />
         </div>
       </header>
     </>
