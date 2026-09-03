@@ -1,45 +1,87 @@
 import React, { useState } from 'react'
+import { register, login } from '../utils/auth'
+
+const INDIAN_STATES = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan',
+  'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
+  'Uttarakhand', 'West Bengal',
+]
 
 /**
  * SignupPage — Professional government-style registration page.
  * Multi-step form with user type, personal info, and organization details.
+ * Stores registered users in localStorage.
  */
 export default function SignupPage({ onNavigate }) {
   const [step, setStep] = useState(1)
   const [userType, setUserType] = useState('')
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
+    confirmPassword: '',
     organization: '',
     gstNumber: '',
     state: '',
     district: '',
   })
 
-  const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }))
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Clear previous user's chat history before entering app
-    localStorage.removeItem('manakmitra_chat_history')
-    // Store current user info
-    localStorage.setItem('manakmitra_user', JSON.stringify({
-      name: formData.name,
-      email: formData.email,
-      userType: userType,
-      loggedIn: true,
-    }))
-    onNavigate('app')
+  const update = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    setError('') // Clear error on any input change
   }
 
-  const INDIAN_STATES = [
-    'Andhra Pradesh', 'Bihar', 'Chhattisgarh', 'Delhi', 'Goa', 'Gujarat',
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala',
-    'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan',
-    'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal',
-  ]
+  const handleRegister = (e) => {
+    e.preventDefault()
+    setError('')
+
+    // Validate required fields
+    if (!formData.name.trim()) { setError('Please enter your full name.'); return }
+    if (!formData.email.trim()) { setError('Please enter your email address.'); return }
+    if (!formData.phone.trim()) { setError('Please enter your phone number.'); return }
+    if (!formData.password) { setError('Please enter a password.'); return }
+    if (formData.password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.'); return }
+    if (!formData.state) { setError('Please select your state.'); return }
+    if (userType === 'msme' && !formData.organization.trim()) {
+      setError('Please enter your organization name.'); return
+    }
+
+    // Attempt registration
+    const result = register({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      userType: userType,
+      organization: formData.organization,
+      gstNumber: formData.gstNumber,
+      state: formData.state,
+      district: formData.district,
+    })
+
+    if (!result.success) {
+      setError(result.error)
+      return
+    }
+
+    // Registration successful — move to step 3
+    setStep(3)
+  }
+
+  const handleGoToApp = () => {
+    // Log in the newly registered user
+    const result = login(formData.email, formData.password)
+    if (result.success) {
+      localStorage.removeItem('manakmitra_chat_history')
+      onNavigate('app')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -108,6 +150,14 @@ export default function SignupPage({ onNavigate }) {
             </div>
 
             <div className="p-8">
+              {/* Error Banner */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+                  <span className="text-red-500 text-sm mt-0.5">⚠️</span>
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              )}
+
               {/* Step 1: User Type */}
               {step === 1 && (
                 <div>
@@ -122,7 +172,7 @@ export default function SignupPage({ onNavigate }) {
                     ].map((type) => (
                       <button
                         key={type.id}
-                        onClick={() => { setUserType(type.id); setStep(2) }}
+                        onClick={() => { setUserType(type.id); setStep(2); setError('') }}
                         className={`w-full text-left p-5 border-2 rounded-xl transition ${type.color} ${
                           userType === type.id ? 'ring-2 ring-[#000080]' : ''
                         }`}
@@ -145,10 +195,7 @@ export default function SignupPage({ onNavigate }) {
                       onClick={() => {
                         localStorage.removeItem('manakmitra_chat_history')
                         localStorage.setItem('manakmitra_user', JSON.stringify({
-                          name: 'Guest',
-                          email: '',
-                          userType: 'guest',
-                          loggedIn: false,
+                          name: 'Guest', email: '', userType: 'guest', loggedIn: false,
                         }))
                         onNavigate('app')
                       }}
@@ -162,9 +209,9 @@ export default function SignupPage({ onNavigate }) {
 
               {/* Step 2: Details Form */}
               {step === 2 && (
-                <form onSubmit={(e) => { e.preventDefault(); setStep(3) }}>
+                <form onSubmit={handleRegister}>
                   <div className="flex items-center gap-2 mb-6">
-                    <button type="button" onClick={() => setStep(1)} className="text-gray-400 hover:text-gray-600">
+                    <button type="button" onClick={() => { setStep(1); setError('') }} className="text-gray-400 hover:text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
                     <div>
@@ -198,11 +245,19 @@ export default function SignupPage({ onNavigate }) {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">Password *</label>
-                      <input type="password" value={formData.password} onChange={(e) => update('password', e.target.value)}
-                        placeholder="Min 8 characters"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Password *</label>
+                        <input type="password" value={formData.password} onChange={(e) => update('password', e.target.value)}
+                          placeholder="Min 6 characters"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Confirm Password *</label>
+                        <input type="password" value={formData.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)}
+                          placeholder="Re-enter password"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
+                      </div>
                     </div>
 
                     {userType === 'msme' && (
@@ -248,7 +303,7 @@ export default function SignupPage({ onNavigate }) {
 
                     <button type="submit"
                       className="w-full bg-[#000080] hover:bg-[#000060] text-white font-bold py-3 rounded-xl text-sm transition shadow-sm">
-                      Continue →
+                      Register →
                     </button>
                   </div>
                 </form>
@@ -263,20 +318,14 @@ export default function SignupPage({ onNavigate }) {
                     </svg>
                   </div>
                   <h2 className="text-xl font-bold text-[#000080] mb-2">Registration Complete!</h2>
-                  <p className="text-sm text-gray-500 mb-6">
-                    Your account has been created. You can now access ManakMitra and start querying Indian Standards.
+                  <p className="text-sm text-gray-500 mb-2">
+                    Welcome, <strong>{formData.name}</strong>!
+                  </p>
+                  <p className="text-xs text-gray-400 mb-6">
+                    Your account ({formData.email}) has been created successfully.
                   </p>
                   <button
-                    onClick={() => {
-                      localStorage.removeItem('manakmitra_chat_history')
-                      localStorage.setItem('manakmitra_user', JSON.stringify({
-                        name: formData.name,
-                        email: formData.email,
-                        userType: userType,
-                        loggedIn: true,
-                      }))
-                      onNavigate('app')
-                    }}
+                    onClick={handleGoToApp}
                     className="bg-[#FF9933] hover:bg-[#E88A2D] text-white font-bold px-8 py-3 rounded-xl text-sm transition shadow-sm"
                   >
                     Go to ManakMitra →

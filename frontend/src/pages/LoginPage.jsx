@@ -1,26 +1,48 @@
 import React, { useState } from 'react'
+import { login, setGuest } from '../utils/auth'
 
 /**
  * LoginPage — Professional government-style login page.
- * Supports MSME, Individual, and BIS Official user types.
+ * Validates credentials against registered users stored in localStorage.
  */
 export default function LoginPage({ onNavigate }) {
   const [userType, setUserType] = useState('msme')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Clear previous user's chat history before entering app
+    setError('')
+
+    // Validate inputs
+    if (!email.trim()) { setError('Please enter your email address.'); return }
+    if (!password) { setError('Please enter your password.'); return }
+
+    setLoading(true)
+
+    // Small delay to simulate network check
+    setTimeout(() => {
+      const result = login(email, password)
+
+      if (!result.success) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+
+      // Login successful — clear old chat, go to app
+      localStorage.removeItem('manakmitra_chat_history')
+      setLoading(false)
+      onNavigate('app')
+    }, 400)
+  }
+
+  const handleDemoLogin = () => {
+    setGuest()
     localStorage.removeItem('manakmitra_chat_history')
-    // Store current user info
-    localStorage.setItem('manakmitra_user', JSON.stringify({
-      name: email.split('@')[0],
-      email: email,
-      userType: userType,
-      loggedIn: true,
-    }))
     onNavigate('app')
   }
 
@@ -95,6 +117,14 @@ export default function LoginPage({ onNavigate }) {
                 ))}
               </div>
 
+              {/* Error Banner */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
+                  <span className="text-red-500 text-sm mt-0.5">⚠️</span>
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              )}
+
               {/* Login Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -104,7 +134,7 @@ export default function LoginPage({ onNavigate }) {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); setError('') }}
                     placeholder={userType === 'official' ? 'official@bis.gov.in' : 'you@company.com'}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] transition"
                   />
@@ -116,7 +146,7 @@ export default function LoginPage({ onNavigate }) {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); setError('') }}
                       placeholder="••••••••"
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] transition pr-12"
                     />
@@ -130,21 +160,16 @@ export default function LoginPage({ onNavigate }) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-xs text-gray-600">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                    Remember me
-                  </label>
-                  <button type="button" className="text-xs text-[#000080] hover:underline font-medium">
-                    Forgot password?
-                  </button>
-                </div>
-
                 <button
                   type="submit"
-                  className="w-full bg-[#000080] hover:bg-[#000060] text-white font-bold py-3 rounded-xl text-sm transition shadow-sm"
+                  disabled={loading}
+                  className={`w-full font-bold py-3 rounded-xl text-sm transition shadow-sm ${
+                    loading
+                      ? 'bg-gray-400 text-white cursor-not-allowed'
+                      : 'bg-[#000080] hover:bg-[#000060] text-white'
+                  }`}
                 >
-                  Sign In
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </button>
               </form>
 
@@ -160,20 +185,21 @@ export default function LoginPage({ onNavigate }) {
 
               {/* Demo Access */}
               <button
-                onClick={() => {
-                  localStorage.removeItem('manakmitra_chat_history')
-                  localStorage.setItem('manakmitra_user', JSON.stringify({
-                    name: 'Guest',
-                    email: '',
-                    userType: 'guest',
-                    loggedIn: false,
-                  }))
-                  onNavigate('app')
-                }}
+                onClick={handleDemoLogin}
                 className="w-full bg-[#FF9933] hover:bg-[#E88A2D] text-white font-semibold py-3 rounded-xl text-sm transition"
               >
                 🔍 Try Demo Without Login
               </button>
+
+              {/* Register link */}
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => onNavigate('signup')}
+                  className="text-xs text-[#000080] hover:underline font-medium"
+                >
+                  Don't have an account? Register here →
+                </button>
+              </div>
 
               {/* BIS Official note */}
               {userType === 'official' && (
