@@ -11,5 +11,7 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  }
+  },
+  // In production, frontend calls the backend directly via VITE_API_URL
+  // In dev, Vite proxy forwards /api to localhost:8000
 })

@@ -40,12 +40,15 @@ def main():
         logger.info(f"FAISS index loaded: {rag.vector_store.index.ntotal} vectors")
 
     # Step 2: Start the API server
+    port = int(os.environ.get("PORT", 8000))
+    is_production = os.environ.get("RENDER") is not None
+    
     import uvicorn
     uvicorn.run(
         "backend.api.main:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,
+        port=port,
+        reload=not is_production,
         log_level="info"
     )
 
