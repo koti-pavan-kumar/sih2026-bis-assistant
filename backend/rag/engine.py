@@ -1,5 +1,6 @@
 """
 RAG Engine — FAISS-based vector store and retrieval.
+Uses ONNX Runtime for embeddings (lightweight, no PyTorch needed).
 """
 import os
 import pickle
@@ -10,11 +11,87 @@ from dataclasses import dataclass
 
 import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from backend.ingestion.pipeline import TextChunk
 
 logger = logging.getLogger(__name__)
+
+
+class ONNXEmbedder:
+    """Lightweight embedding model using ONNX Runtime (no PyTorch)."""
+
+    def __init__(self, model_name: str = "Xenova/all-MiniLM-L6-v2"):
+        from huggingface_hub import hf_hub_download
+        import onnxruntime as ort
+        from transformers import AutoTokenizer
+
+        logger.info(f"Loading ONNX embedding model: {model_name}")
+
+        # Download ONNX model and tokenizer
+        onnx_path = hf_hub_download(repo_id=model_name, filename="onnx/model.onnx")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        # Create ONNX session with CPU optimization
+        sess_options = ort.SessionOptions()
+        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        self.session = ort.InferenceSession(onnx_path, sess_options, providers=["CPUExecutionProvider"])
+
+        # Get model dimension (384 for MiniLM-L6)
+        self.dimension = self.session.get_outputs()[0].shape[-1]
+        logger.info(f"ONNX model loaded: dim={self.dimension}")
+
+    def encode(self, texts: List[str], normalize: bool = True) -> np.ndarray:
+        """Encode texts to embeddings."""
+        if isinstance(texts, str):
+            texts = [texts]
+
+        all_embeddings = []
+        batch_size = 32
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            encoded = self.tokenizer(
+                batch, padding=True, truncation=True,
+                max_length=128, return_tensors="np"
+            )
+
+            inputs = {
+                "input_ids": encoded["input_ids"].astype(np.int64),
+                "attention_mask": encoded["attention_mask"].astype(np.int64),
+            }
+            # Some ONNX models also require token_type_ids
+            if "token_type_ids" in [inp.name for inp in self.session.get_inputs()]:
+                inputs["token_type_ids"] = np.zeros_like(encoded["input_ids"], dtype=np.int64)
+
+            outputs = self.session.run(None, inputs)
+
+            # Mean pooling
+            token_embeddings = outputs[0]  # (batch, seq_len, dim)
+            attention_mask = encoded["attention_mask"]
+            mask_expanded = np.expand_dims(attention_mask, -1)
+            sum_embeddings = np.sum(token_embeddings * mask_expanded, axis=1)
+            sum_mask = np.clip(mask_expanded.sum(axis=1), 1e-9, None)
+            embeddings = sum_embeddings / sum_mask
+
+            if normalize:
+                norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+                embeddings = embeddings / np.clip(norms, 1e-9, None)
+
+            all_embeddings.append(embeddings.astype(np.float32))
+
+        return np.vstack(all_embeddings)
+
+
+# Global embedder instance (loaded once)
+_embedder: Optional[ONNXEmbedder] = None
+
+
+def get_embedder() -> ONNXEmbedder:
+    """Get or create the global ONNX embedder instance."""
+    global _embedder
+    if _embedder is None:
+        _embedder = ONNXEmbedder()
+    return _embedder
 
 
 @dataclass
@@ -28,7 +105,7 @@ class RetrievalResult:
 class VectorStore:
     """FAISS-based vector store for BIS standard chunks."""
 
-    def __init__(self, persist_dir: str = None, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, persist_dir: str = None, model_name: str = "Xenova/all-MiniLM-L6-v2"):
         if persist_dir is None:
             persist_dir = str(Path(__file__).parent.parent.parent / "data" / "chroma_db")
         self.persist_dir = Path(persist_dir)
@@ -37,9 +114,9 @@ class VectorStore:
         self.index_path = self.persist_dir / "faiss.index"
         self.metadata_path = self.persist_dir / "metadata.pkl"
 
-        logger.info(f"Loading embedding model: {model_name}")
-        self.model = SentenceTransformer(model_name)
-        self.dimension = self.model.get_sentence_embedding_dimension()
+        # Load ONNX embedding model (lightweight, no PyTorch)
+        self.embedder = get_embedder()
+        self.dimension = self.embedder.dimension
 
         self.index: Optional[faiss.Index] = None
         self.chunks: List[TextChunk] = []
@@ -67,8 +144,7 @@ class VectorStore:
             return
 
         texts = [c.text for c in chunks]
-        embeddings = self.model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
-        embeddings = np.array(embeddings, dtype=np.float32)
+        embeddings = self.embedder.encode(texts, normalize=True)
 
         self.index.add(embeddings)
         self.chunks.extend(chunks)
@@ -86,8 +162,7 @@ class VectorStore:
         if self.index is None or self.index.ntotal == 0:
             return []
 
-        query_embedding = self.model.encode([query], normalize_embeddings=True)
-        query_embedding = np.array(query_embedding, dtype=np.float32)
+        query_embedding = self.embedder.encode([query], normalize=True)
 
         k = min(n_results * 2, self.index.ntotal) if filter_is_number else min(n_results, self.index.ntotal)
         scores, indices = self.index.search(query_embedding, k)
