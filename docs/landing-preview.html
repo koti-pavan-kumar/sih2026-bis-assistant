@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManakMitra — Landing Page Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f5f5f5; }
+  
+  .govt-bar { background: #000080; color: white; font-size: 11px; padding: 6px 24px; display: flex; gap: 16px; align-items: center; }
+  .govt-bar span { color: #99aaff; }
+  
+  .tricolor { height: 6px; display: flex; }
+  .tricolor div { flex: 1; }
+  .tricolor .saffron { background: #FF9933; }
+  .tricolor .white { background: white; }
+  .tricolor .green { background: #138808; }
+  
+  header { background: white; border-bottom: 1px solid #e5e7eb; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 40px; height: 40px; background: #000080; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 14px; }
+  .logo-text h1 { font-size: 16px; font-weight: 800; color: #000080; }
+  .logo-text p { font-size: 9px; color: #888; }
+  .nav { display: flex; gap: 24px; font-size: 13px; color: #555; font-weight: 500; }
+  .nav a { text-decoration: none; color: inherit; }
+  .nav a:hover { color: #000080; }
+  .auth-buttons { display: flex; gap: 8px; }
+  .btn-signin { background: none; border: none; color: #000080; font-weight: 600; font-size: 13px; cursor: pointer; padding: 8px 16px; }
+  .btn-register { background: #FF9933; color: white; border: none; font-weight: 700; font-size: 13px; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+  
+  .hero { background: linear-gradient(135deg, #000080 0%, #0000B0 50%, #1a1aff 100%); color: white; padding: 80px 24px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: 40px; left: 40px; width: 250px; height: 250px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; }
+  .hero::after { content: ''; position: absolute; bottom: -50px; right: -50px; width: 400px; height: 400px; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 6px 16px; font-size: 12px; margin-bottom: 24px; backdrop-filter: blur(4px); }
+  .hero-badge .dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .hero h2 { font-size: 42px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+  .hero h2 span { color: #FF9933; }
+  .hero p { font-size: 16px; color: #b3c6ff; max-width: 600px; line-height: 1.6; margin-bottom: 32px; }
+  .hero-buttons { display: flex; gap: 12px; margin-bottom: 40px; }
+  .btn-primary { background: #FF9933; color: white; font-weight: 700; padding: 16px 32px; border-radius: 12px; font-size: 15px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(255,153,51,0.3); }
+  .btn-secondary { background: rgba(255,255,255,0.1); color: white; font-weight: 600; padding: 16px 32px; border-radius: 12px; font-size: 15px; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; backdrop-filter: blur(4px); }
+  .hero-features { display: flex; gap: 24px; font-size: 13px; color: #b3c6ff; }
+  .hero-features span { display: flex; align-items: center; gap: 6px; }
+  
+  .stats { background: #f9fafb; border-bottom: 1px solid #e5e7eb; padding: 24px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+  .stat { display: flex; align-items: center; gap: 12px; }
+  .stat-icon { font-size: 24px; }
+  .stat-value { font-size: 28px; font-weight: 900; color: #000080; }
+  .stat-label { font-size: 12px; color: #888; }
+  
+  .features { padding: 80px 24px; max-width: 1000px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 48px; }
+  .section-tag { font-size: 11px; font-weight: 700; color: #FF9933; text-transform: uppercase; letter-spacing: 2px; }
+  .section-title { font-size: 28px; font-weight: 900; color: #000080; margin-top: 8px; }
+  .section-desc { font-size: 14px; color: #888; margin-top: 12px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature-card { padding: 28px; border-radius: 16px; border: 1px solid #e5e7eb; }
+  .feature-card.orange { background: #fff7ed; border-color: #fed7aa; }
+  .feature-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+  .feature-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+  .feature-card.purple { background: #faf5ff; border-color: #d8b4fe; }
+  .feature-card.yellow { background: #fefce8; border-color: #fde047; }
+  .feature-card.red { background: #fef2f2; border-color: #fecaca; }
+  .feature-icon { font-size: 28px; }
+  .feature-title { font-size: 16px; font-weight: 700; color: #000080; margin-top: 12px; margin-bottom: 8px; }
+  .feature-desc { font-size: 13px; color: #666; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <!-- Government Bar -->
+  <div class="govt-bar">
+    <span>🇮🇳</span> Government of India <span>|</span> Ministry of Consumer Affairs, Food & Public Distribution
+  </div>
+  
+  <!-- Tricolor -->
+  <div class="tricolor">
+    <div class="saffron"></div>
+    <div class="white"></div>
+    <div class="green"></div>
+  </div>
+  
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">BIS</div>
+      <div class="logo-text">
+        <h1>ManakMitra</h1>
+        <p>मानक मित्र — AI Assistant for Indian Standards</p>
+      </div>
+    </div>
+    <div class="nav">
+      <a href="#features">Features</a>
+      <a href="#standards">Standards</a>
+      <a href="#about">About BIS</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="auth-buttons">
+      <button class="btn-signin">Sign In</button>
+      <button class="btn-register">Register</button>
+    </div>
+  </header>
+  
+  <!-- Hero -->
+  <section class="hero">
+    <div style="max-width: 1000px; margin: 0 auto; position: relative; z-index: 1;">
+      <div class="hero-badge">
+        <div class="dot"></div>
+        Powered by AI • 23 Standards Indexed • Live
+      </div>
+      <h2>Your AI Guide to<br><span>Indian Standards</span></h2>
+      <p>ManakMitra helps MSMEs, manufacturers, and consumers understand BIS standards in their own language. Ask any question about IS standards — get instant, cited answers in 20 Indian languages.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary">Get Started Free →</button>
+        <button class="btn-secondary">Try Demo</button>
+      </div>
+      <div class="hero-features">
+        <span>✓ No registration required for demo</span>
+        <span>✓ 20 Indian languages</span>
+        <span>✓ Voice input supported</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Tricolor accent -->
+  <div class="tricolor">
+    <div class="saffron"></div>
+    <div class="white"></div>
+    <div class="green"></div>
+  </div>
+  
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat">
+        <span class="stat-icon">📋</span>
+        <div><div class="stat-value">23</div><div class="stat-label">BIS Standards Indexed</div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🧠</span>
+        <div><div class="stat-value">115</div><div class="stat-label">Knowledge Chunks</div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🌐</span>
+        <div><div class="stat-value">20</div><div class="stat-label">Indian Languages</div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon">🏭</span>
+        <div><div class="stat-value">8</div><div class="stat-label">Product Domains</div></div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features -->
+  <section class="features">
+    <div class="section-header">
+      <div class="section-tag">Platform Features</div>
+      <div class="section-title">Built for India's MSMEs</div>
+      <div class="section-desc">ManakMitra combines AI technology with official BIS data to make Indian Standards accessible to everyone.</div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card orange">
+        <div class="feature-icon">🗣️</div>
+        <div class="feature-title">Ask in Your Language</div>
+        <div class="feature-desc">Type or speak in any of 20 Indian languages. ManakMitra understands Hindi, Tamil, Telugu, Bengali, and more.</div>
+      </div>
+      <div class="feature-card blue">
+        <div class="feature-icon">📚</div>
+        <div class="feature-title">Cited Answers</div>
+        <div class="feature-desc">Every answer includes the exact IS standard number, section, and clause. No guessing, no hallucination.</div>
+      </div>
+      <div class="feature-card green">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Auto-Fetch Updates</div>
+        <div class="feature-desc">When BIS publishes new standards, ManakMitra automatically discovers and indexes them.</div>
+      </div>
+      <div class="feature-card purple">
+        <div class="feature-icon">🧭</div>
+        <div class="feature-title">Certification Wizard</div>
+        <div class="feature-desc">Select your product category and get the exact applicable IS standard and certification process.</div>
+      </div>
+      <div class="feature-card yellow">
+        <div class="feature-icon">✅</div>
+        <div class="feature-title">Verified Confidence</div>
+        <div class="feature-desc">Every response shows a confidence score based on actual retrieval quality and citation verification.</div>
+      </div>
+      <div class="feature-card red">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Offline Ready</div>
+        <div class="feature-desc">Run with Ollama for fully offline operation. Your data stays on your device.</div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
