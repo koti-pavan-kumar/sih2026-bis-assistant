@@ -164,7 +164,7 @@ Provide a comprehensive, structured answer following the 6-section format above.
         gemini_key = os.getenv("GEMINI_API_KEY")
         
         # Try REST API directly — try multiple model names for compatibility
-        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash-latest"]:
+        for model_name in ["gemini-3.6-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
                 data = {"contents": [{"parts": [{"text": prompt}]}]}
