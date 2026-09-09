@@ -14,7 +14,7 @@ const SECTION_CONFIG = {
   '2': { icon: '🔬', label: 'Testing Requirements', color: 'purple', bgClass: 'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800', iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' },
   '3': { icon: '📍', label: 'Where to Test', color: 'green', bgClass: 'bg-green-50 dark:bg-green-900/15 border-green-200 dark:border-green-800', iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
   '4': { icon: '⚖️', label: 'Mandatory or Voluntary?', color: 'amber', bgClass: 'bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800', iconBg: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300' },
-  '5': { icon: '🧪', label: 'Quality Control & Testing', color: 'teal', bgClass: 'bg-teal-50 dark:bg-teal-900/15 border-teal-200 dark:border-teal-800', iconBg: 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-300' },
+  '5': { icon: '📝', label: 'Certification Process & Quality Control', color: 'indigo', bgClass: 'bg-indigo-50 dark:bg-indigo-900/15 border-indigo-200 dark:border-indigo-800', iconBg: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300' },
   '6': { icon: '📄', label: 'Documents Required', color: 'rose', bgClass: 'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800', iconBg: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300' },
 }
 

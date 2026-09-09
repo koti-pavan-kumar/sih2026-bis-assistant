@@ -107,8 +107,8 @@ List the nearest BIS Regional Offices and Testing Laboratories. Include: Office 
 ### 4. Is BIS Certification Mandatory?
 Clearly state whether BIS certification is mandatory or voluntary for this product. Explain WHY — reference the BIS Act 2016, compulsory certification orders, or quality control orders if applicable.
 
-### 5. Quality Control & In-House Testing
-Explain quality control procedures and in-house testing requirements. Include test reports from recognized laboratories, raw material quality checks, and production process monitoring.
+### 5. Certification Process & Quality Control
+Provide step-by-step process to obtain BIS certification for THIS specific product. Include: application at https://bis.gov.in, document submission, factory audit, product testing, license grant. Also explain quality control procedures, in-house testing requirements, and test reports from recognized BIS laboratories.
 
 ### 6. Documents & Information Required
 List all documents needed for certification. Include: application forms, test reports, factory details, manufacturing process flow, machinery list, raw material sources.
