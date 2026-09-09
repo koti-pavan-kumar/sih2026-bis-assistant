@@ -184,20 +184,46 @@ class DocumentIngestionPipeline:
         logger.info(f"Created {len(chunks)} chunks for {is_number}")
         return chunks
 
+    def ingest_text(self, text_path: str) -> List[TextChunk]:
+        """Ingest a plain text file as a BIS standard."""
+        logger.info(f"Ingesting text file: {text_path}")
+        try:
+            with open(text_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+        except Exception as e:
+            logger.error(f"Error reading {text_path}: {e}")
+            return []
+
+        if not text.strip():
+            return []
+
+        is_number, title = self.identify_standard(text, text_path)
+        # Create a single page from the text
+        pages = [{"page_num": 1, "text": text.strip()}]
+        chunks = self.create_chunks(pages, is_number, title)
+        logger.info(f"Created {len(chunks)} chunks for {is_number} from text file")
+        return chunks
+
     def ingest_directory(self, directory: str = None) -> List[TextChunk]:
-        """Ingest all PDFs from a directory."""
+        """Ingest all PDFs and text files from a directory."""
         if directory is None:
             directory = str(self.raw_dir)
 
         all_chunks = []
-        pdf_dir = Path(directory)
+        data_dir = Path(directory)
 
-        if not pdf_dir.exists():
+        if not data_dir.exists():
             logger.warning(f"Directory not found: {directory}")
             return all_chunks
 
-        for pdf_file in pdf_dir.glob("**/*.pdf"):
+        # Ingest PDFs
+        for pdf_file in data_dir.glob("**/*.pdf"):
             chunks = self.ingest_pdf(str(pdf_file))
+            all_chunks.extend(chunks)
+
+        # Ingest text files
+        for txt_file in data_dir.glob("**/*.txt"):
+            chunks = self.ingest_text(str(txt_file))
             all_chunks.extend(chunks)
 
         # Save processed chunks

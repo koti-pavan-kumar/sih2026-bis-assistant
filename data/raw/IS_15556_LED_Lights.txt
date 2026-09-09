@@ -1,0 +1,61 @@
+IS 15556:2023
+LED Lamps for General Lighting — Performance Requirements
+
+Specification
+
+This standard specifies performance requirements for LED lamps used for general lighting purposes.
+
+Scope: This standard covers LED lamps including LED bulbs, LED tube lights, LED panels, and LED downlights intended for general lighting in residential, commercial, and industrial applications.
+
+Clause 4: Classification
+LED lamps shall be classified by:
+- Wattage category: Low (1-10W), Medium (10-25W), High (25-100W)
+- Colour temperature: Warm White (2700-3000K), Neutral White (4000-4500K), Cool White (6000-6500K)
+- Colour Rendering Index (CRI): Minimum Ra ≥ 80 for indoor applications
+
+Clause 5: Rated Values
+Rated voltage: 240V AC (nominal), operating range 170-270V AC
+Rated frequency: 50 Hz
+Power factor: Minimum 0.9 for lamps above 5W
+Total harmonic distortion (THD): Maximum 10% for lamps above 5W
+
+Clause 6: Performance Requirements
+Luminous efficacy: Minimum 100 lumens per watt for LED bulbs
+Luminous flux maintenance: Minimum 70% of initial flux at 25,000 hours (L70B50)
+Colour consistency: Within 7-step MacAdam ellipse
+Start time: Maximum 1 second from switch-on
+Colour rendering index: Ra ≥ 80 minimum
+
+Clause 7: Safety Requirements
+The lamp shall comply with IS 10322 or IS 15285 as applicable
+Maximum surface temperature: 80°C during operation
+Power supply: Built-in driver shall comply with IS 15885
+
+Clause 8: Electromagnetic Compatibility
+The lamp shall comply with IS 15935 (EMC requirements for lighting equipment)
+Conducted emissions: Below limits specified in CISPR 15
+Radiated emissions: Below limits specified in CISPR 15
+
+Clause 9: Reliability
+Minimum rated life: 25,000 hours
+Number of switch cycles: Minimum 50,000 on-off cycles
+Operating temperature range: -10°C to +50°C
+
+Marking Requirements:
+Each lamp shall be marked with:
+- Rated voltage and frequency
+- Rated power (W)
+- Luminous flux (lumens)
+- Colour temperature (K)
+- CRI value
+- Manufacturer name
+- Country of origin
+- Date of manufacture
+- BIS standard number reference
+
+Test Methods:
+- Luminous flux measurement using integrating sphere
+- Power measurement using digital power analyser
+- Colour temperature measurement using spectroradiometer
+- Life testing per IES LM-80 methodology
+- Temperature rise measurement at rated voltage

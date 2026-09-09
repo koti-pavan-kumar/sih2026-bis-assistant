@@ -8,14 +8,13 @@ const LANGUAGE_LABELS = {
   as: '🇮🇳 অসমীয়া', ne: '🇮🇳 नेपाली', sa: '🇮🇳 संस्कृतम्',
 }
 
-// Section configs — icons, colors, labels
+// Section configs — icons, colors, labels (5 sections)
 const SECTION_CONFIG = {
   '1': { icon: '📋', label: 'Applicable IS Standards', color: 'blue', bgClass: 'bg-blue-50 dark:bg-blue-900/15 border-blue-200 dark:border-blue-800', iconBg: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' },
   '2': { icon: '🔬', label: 'Testing Requirements', color: 'purple', bgClass: 'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800', iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' },
   '3': { icon: '📍', label: 'Where to Test', color: 'green', bgClass: 'bg-green-50 dark:bg-green-900/15 border-green-200 dark:border-green-800', iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
   '4': { icon: '⚖️', label: 'Mandatory or Voluntary?', color: 'amber', bgClass: 'bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800', iconBg: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300' },
-  '5': { icon: '📝', label: 'Certification Process', color: 'indigo', bgClass: 'bg-indigo-50 dark:bg-indigo-900/15 border-indigo-200 dark:border-indigo-800', iconBg: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300' },
-  '6': { icon: '📄', label: 'Documents Required', color: 'rose', bgClass: 'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800', iconBg: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300' },
+  '5': { icon: '📄', label: 'Documents Required', color: 'rose', bgClass: 'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800', iconBg: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300' },
 }
 
 /**
@@ -107,8 +106,14 @@ function parseStructuredResponse(text) {
  * Render a line with bold text, bullet points, and IS standard highlighting
  */
 function RenderLine({ line }) {
-  // Handle bold **text**
-  const parts = line.split(/(\*\*[^*]+\*\*)/g)
+  // Strip single asterisks used for emphasis (Gemini output)
+  // e.g. *text* → text, **text** → text (bold rendered below)
+  let cleaned = line
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove **bold** markers (we render bold via CSS)
+    .replace(/\*([^*]+)\*/g, '$1')        // Remove *italic* markers
+
+  // Handle bold **text** for rendering
+  const parts = cleaned.split(/(\*\*[^*]+\*\*)/g)
 
   return (
     <span>

@@ -89,7 +89,7 @@ class LLMGenerator:
 
         return f"""You are ManakMitra, an expert AI assistant on Indian Standards (BIS) published by the Bureau of Indian Standards.
 
-Answer the user's question using the provided standard excerpts. You MUST respond in this EXACT 6-section format:
+Answer the user's question using the provided standard excerpts. You MUST respond in this EXACT 5-section format:
 
 {lang_instruction}
 
@@ -107,14 +107,11 @@ List the nearest BIS Regional Offices and Testing Laboratories. Include: Office 
 ### 4. Is BIS Certification Mandatory?
 Clearly state whether BIS certification is mandatory or voluntary for this product. Explain WHY — reference the BIS Act 2016, compulsory certification orders, or quality control orders if applicable.
 
-### 5. Certification Process
-Provide step-by-step process to obtain BIS certification for THIS specific product. Include: application, document submission, factory audit, product testing, license grant. Mention the official BIS portal: https://bis.gov.in
-
-### 6. Documents & Information Required
+### 5. Documents & Information Required
 List all documents needed for certification. Include: application forms, test reports, factory details, manufacturing process flow, machinery list, raw material sources.
 
 CRITICAL RULES:
-1. You MUST write ALL 6 sections with actual content in each. NO section can be empty.
+1. You MUST write ALL 5 sections with actual content in each. NO section can be empty.
 2. Each section MUST have at least 2-3 bullet points of real, specific content.
 3. Always cite exact IS standard numbers with sections: [IS XXXX:YYYY, Section X.X]
 4. Be specific — numbers, percentages, technical specs from the context
@@ -123,21 +120,20 @@ CRITICAL RULES:
 7. For testing centres, list real BIS offices with phone numbers from the context
 8. Translate technical terms accurately in non-English languages
 9. Use the conversation history for follow-up questions
-10. Section 5 (Certification Process) MUST include actual numbered steps, not just a description
-11. Section 6 (Documents Required) MUST list specific document names, not just categories
+10. Section 5 (Documents Required) MUST list specific document names, not just categories
 
 FORMAT EXAMPLE for each section:
 ### 1. Applicable IS Standards
-- **IS 455:2015** — Portland Slag Cement — This standard applies because it defines specifications for PSC used in construction
-- **IS 269:2015** — Ordinary Portland Cement, 33 Grade — Covers cement grade requirements
-- **IS 12269:2013** — OPC 53 Grade — Higher strength cement specifications
+- IS 455:2015 — Portland Slag Cement — This standard applies because it defines specifications for PSC used in construction
+- IS 269:2015 — Ordinary Portland Cement, 33 Grade — Covers cement grade requirements
+- IS 12269:2013 — OPC 53 Grade — Higher strength cement specifications
 
 Context from BIS Standards:
 {context}{history_text}
 
 User Question: {query}
 
-Provide a comprehensive, structured answer following the 6-section format above. Every section MUST have content."""
+Provide a comprehensive, structured answer following the 5-section format above. Every section MUST have content."""
 
     def _generate_ollama(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
         """Generate using Ollama."""

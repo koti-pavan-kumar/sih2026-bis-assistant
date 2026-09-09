@@ -1,0 +1,67 @@
+IS 14543:2022
+Packaged Drinking Water (Other Than Mineral Water) — Specification
+
+Specification
+
+This standard specifies requirements for packaged drinking water other than mineral water.
+
+Scope: This standard applies to packaged drinking water produced by purification, treatment, or any other process and sold in sealed containers. It covers water intended for human consumption and domestic use.
+
+Clause 4: Definition
+Packaged drinking water: Water that is obtained from any source, purified by processes such as reverse osmosis, distillation, deionisation, or any other appropriate method, and packed in suitable containers.
+
+Clause 5: Requirements
+Water shall be free from disease-causing organisms, harmful substances, and shall meet the requirements specified in Table 1.
+
+Physical Requirements:
+- pH value: 6.5 to 8.5
+- Total dissolved solids (TDS): Maximum 500 mg/L
+- Turbidity: Maximum 1 NTU
+- Colour: Maximum 5 TCU (True Colour Units)
+- Taste and odour: Unobjectionable
+- Free from foreign matter
+
+Chemical Requirements:
+- Fluoride: Maximum 1.0 mg/L
+- Chlorides: Maximum 250 mg/L
+- Sulphates: Maximum 200 mg/L
+- Iron: Maximum 0.3 mg/L
+- Total hardness as CaCO3: Maximum 200 mg/L
+- Copper: Maximum 0.05 mg/L
+- Zinc: Maximum 5.0 mg/L
+- Lead: Maximum 0.01 mg/L
+- Arsenic: Maximum 0.01 mg/L
+- Mercury: Maximum 0.001 mg/L
+- Cadmium: Maximum 0.003 mg/L
+- Chromium (Hexavalent): Maximum 0.05 mg/L
+- Nitrate: Maximum 45 mg/L
+- Total coliform: Absent in 100 mL
+- E. coli: Absent in 100 mL
+
+Microbiological Requirements:
+- Aerobic mesophilic count at 22°C: Maximum 100 CFU/mL
+- Aerobic mesophilic count at 36°C: Maximum 10 CFU/mL
+- Total coliform bacteria: Absent in 100 mL
+- Pseudomonas aeruginosa: Absent in 25 mL
+
+Clause 6: Packaging
+Water shall be packed in clean, new, and tamper-evident containers made of food-grade polyethylene or polyethylene terephthalate (PET). The container shall be sealed to prevent contamination during storage and transport.
+
+Clause 7: Labeling
+Labels shall include:
+- Product name: "Packaged Drinking Water"
+- Net quantity in litres or millilitres
+- Name and address of the packer/bottler
+- Batch number
+- Date of packaging (day, month, year)
+- Best before date or expiry date
+- BIS standard mark (IS 14543)
+- Consumer care details
+- FSSAI license number
+
+Test Methods:
+- pH measurement: IS 3025 (Part 12)
+- TDS determination: IS 3025 (Part 16)
+- Turbidity: IS 3025 (Part 18)
+- Microbiological testing: IS 5402
+- Chemical analysis: IS 3025 (Part 18 to Part 52)

@@ -1,0 +1,45 @@
+IS 302:Part 1:2024
+Household and Similar Electrical Appliances — Safety Requirements
+Part 1: General Requirements
+
+Specification
+
+This standard specifies safety requirements for household and similar electrical appliances.
+
+Scope: This standard applies to household and similar electrical appliances including electric cooking, cleaning, and personal care appliances. It covers appliances used for domestic purposes and similar purposes in shops, farms, and light industry.
+
+Clause 7: Protection Against Electric Shock
+All accessible parts of Class I appliances shall be connected to the protective earthing conductor. Insulation resistance between live parts and accessible metal parts shall be not less than 1 megohm at 500V DC.
+
+Clause 11: Heating
+Appliances shall not cause excessive temperatures on accessible surfaces during normal operation. Temperature rise of windings shall not exceed the values specified in Table 11 based on insulation class.
+
+Clause 16: Leakage Current and Electric Strength
+The leakage current of Class I appliances shall not exceed 0.75 mA for appliances rated up to 15 kW. The electric strength test shall be performed at 1000V plus twice the rated voltage for 1 minute.
+
+Clause 22: Mechanical Hazards
+Appliances with rotating parts shall have adequate guards. Appliance stability tests shall be conducted to ensure the appliance does not tip over during normal use.
+
+Clause 25: Abnormal Operation
+Appliances shall withstand abnormal conditions such as motor lock-rotor, overload, and single-fault conditions without creating fire or electric shock hazards.
+
+Clause 30: Resistance to Heat and Fire
+Non-metallic parts of appliances shall have a minimum glow-wire ignition temperature of 650°C for parts supporting current-carrying components and 550°C for other parts.
+
+Marking Requirements:
+Each appliance shall be marked with:
+- Manufacturer name or trademark
+- Model designation
+- Rated voltage or rated voltage range (V)
+- Rated frequency (Hz)
+- Rated power input (W) or rated current (A)
+- Date of manufacture or manufacturing code
+- IP rating if applicable
+- Class I or Class II designation
+
+Test Methods:
+- Earth continuity test: 25A for 5 seconds
+- Insulation resistance: 500V DC megohm test
+- Leakage current measurement at 1.06x rated voltage
+- Temperature rise test in standard ambient conditions
+- Abnormal operation: motor lock-rotor test for 18 hours

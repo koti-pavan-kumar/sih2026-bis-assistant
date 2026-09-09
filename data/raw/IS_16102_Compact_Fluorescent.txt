@@ -1,0 +1,60 @@
+IS 16102:2022
+Self-Ballasted Compact Fluorescent Lamps — Performance Requirements
+
+Specification
+
+This standard specifies performance requirements for self-ballasted compact fluorescent lamps (CFLs) for general lighting.
+
+Scope: This standard applies to self-ballasted compact fluorescent lamps designed for operation on AC supply at 240V, 50 Hz, intended for general lighting.
+
+Clause 4: Classification
+CFLs shall be classified by:
+- Wattage: 5W, 7W, 9W, 11W, 15W, 18W, 23W
+- Base type: B22 (bayonet), E27 (Edison screw), GX24q (2-pin/4-pin)
+- Colour temperature: Warm White (2700-3000K), Cool Daylight (6500K)
+- Shape: Spiral, Tube, Candle, Globe
+
+Clause 5: Rated Values
+Rated voltage: 240V AC (nominal)
+Operating range: 198-253V AC
+Rated frequency: 50 Hz
+Power factor: Minimum 0.5
+CRI: Minimum 80
+
+Clause 6: Performance Requirements
+Luminous efficacy: Minimum 60 lumens per watt
+Starting time: Maximum 5 seconds
+Warm-up time to 60% flux: Maximum 120 seconds
+Lumen maintenance at 5000 hours: Minimum 85% of initial flux
+Rated average life: Minimum 6000 hours
+Switching endurance: Minimum 10,000 cycles
+
+Clauses 7-8: Electrical Requirements
+Preheat starting: Recommended for long life
+Power consumption at rated voltage: Maximum 115% of rated wattage
+Total harmonic distortion: Maximum 30%
+Flicker: Below 3% at 100 Hz
+
+Clause 9: Safety Requirements
+The lamp shall comply with IS 10322 (safety requirements for fluorescent lamps)
+Maximum bulb surface temperature: 90°C
+Ballast shall have thermal cut-off protection
+
+Clause 10: Marking Requirements
+Each lamp shall be marked with:
+- Rated voltage and frequency (240V 50Hz)
+- Rated power (W)
+- Luminous flux (lumens)
+- Colour temperature (K)
+- CRI value
+- Manufacturer name or trademark
+- Country of origin
+- Date code
+- BIS mark reference
+
+Test Methods:
+- Luminous flux: Integrating sphere method (IS 11473)
+- Power measurements: Digital power analyser
+- Life testing: 3 hours on, 20 minutes off cycle
+- Temperature: Thermocouple measurement
+- Switching endurance: Automated on-off cycling

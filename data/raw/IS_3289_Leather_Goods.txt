@@ -1,0 +1,80 @@
+IS 3289:2023
+Finished Leather — Specification for Footwear and Leather Goods
+
+Specification
+
+This standard specifies requirements for finished leather used in footwear, bags, belts, and other leather goods.
+
+Scope: This standard covers all types of finished leather including full grain, corrected grain, split, and bonded leather used for manufacturing footwear, handbags, belts, wallets, and other leather accessories.
+
+Clause 4: Classification of Leather
+Leather shall be classified as:
+- Full Grain Leather: Complete grain surface retained
+- Corrected Grain Leather: Surface corrected by buffing or embossing
+- Top Grain Leather: Grain surface partially removed
+- Split Leather: Lower layer of hide after splitting
+- Bonded Leather: Reconstituted from leather fibres
+
+Clause 5: Performance Requirements
+
+Tensile Strength:
+- Full grain: Minimum 15 N/mm²
+- Corrected grain: Minimum 12 N/mm²
+- Split leather: Minimum 10 N/mm²
+- Bonded leather: Minimum 5 N/mm²
+
+Elongation at Break:
+- Minimum 15% for all types
+- Maximum 80% for footwear leather
+
+Tear Strength:
+- Minimum 30 N (full grain)
+- Minimum 20 N (corrected grain)
+- Minimum 15 N (split)
+
+Colour Fastness:
+- To light (Xenon arc): Grade 4 minimum
+- To rubbing (dry): Grade 4 minimum
+- To rubbing (wet): Grade 3 minimum
+- To water: Grade 3 minimum
+- To perspiration: Grade 3 minimum
+
+Flex Resistance:
+- Flexometer test: Minimum 50,000 cycles without cracking
+- Bally flex test: Minimum 20,000 cycles
+
+Shrinkage Temperature:
+- Vegetable tanned: Minimum 75°C
+- Chrome tanned: Minimum 100°C
+
+pH Value:
+- 3.5 to 5.0 for chrome tanned
+- 4.0 to 6.0 for vegetable tanned
+
+Restricted Substances:
+- Chromium (VI): Maximum 3 mg/kg
+- Formaldehyde: Maximum 75 mg/kg
+- Azo dyes releasing banned amines: Not detectable
+- Total lead: Maximum 90 mg/kg
+
+Clause 6: Dimensional Requirements
+Leather thickness shall be specified by the buyer. Standard ranges:
+- Footwear upper: 0.8 to 1.2 mm
+- Sole leather: 2.0 to 4.0 mm
+- Bag leather: 0.6 to 1.0 mm
+- Belt leather: 2.5 to 4.5 mm
+
+Marking Requirements:
+- Grade mark (Full Grain / Corrected / Split)
+- Manufacturer name or code
+- Thickness in mm
+- Tanning method (Chrome / Vegetable / Mixed)
+- Date of manufacture
+
+Test Methods:
+- Tensile strength: IS 3378
+- Tear strength: IS 3379
+- Flex resistance: IS 3381
+- Colour fastness: IS 3380
+- Shrinkage temperature: IS 4018
+- pH measurement: IS 4019
