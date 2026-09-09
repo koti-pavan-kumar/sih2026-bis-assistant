@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManakMitra — Data Flow Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
+    padding: 40px;
+    width: 1920px;
+  }
+  .title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 40px;
+  }
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    max-width: 1700px;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+  }
+  .step {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    width: 180px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    position: relative;
+  }
+  .step-num {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .step-icon { font-size: 32px; margin-bottom: 8px; margin-top: 4px; }
+  .step-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+  .step-desc { font-size: 11px; color: #64748b; line-height: 1.4; }
+  .arrow-right {
+    font-size: 24px;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+  .step.user { border-color: #3b82f6; border-top: 4px solid #3b82f6; }
+  .step.translate { border-color: #8b5cf6; border-top: 4px solid #8b5cf6; }
+  .step.rag { border-color: #f59e0b; border-top: 4px solid #f59e0b; }
+  .step.llm { border-color: #ef4444; border-top: 4px solid #ef4444; }
+  .step.output { border-color: #10b981; border-top: 4px solid #10b981; }
+  
+  .section-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-top: 50px;
+    margin-bottom: 24px;
+  }
+  
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    max-width: 1700px;
+    margin: 0 auto;
+  }
+  .feature-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px 20px;
+    border: 2px solid #e2e8f0;
+    text-align: center;
+  }
+  .feature-card .icon { font-size: 36px; margin-bottom: 12px; }
+  .feature-card h3 { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .feature-card p { font-size: 12px; color: #64748b; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="title">🔄 ManakMitra — Query Processing Pipeline</div>
+<div class="subtitle">From user question to verified 6-section response</div>
+
+<div class="flow">
+  <div class="step user">
+    <div class="step-num">1</div>
+    <div class="step-icon">👤</div>
+    <div class="step-title">User Query</div>
+    <div class="step-desc">User types question in any of 22 Indian languages (Hindi, Telugu, Bengali, etc.)</div>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="step translate">
+    <div class="step-num">2</div>
+    <div class="step-icon">🌍</div>
+    <div class="step-title">Auto-Detect & Translate</div>
+    <div class="step-desc">langdetect identifies language → deep-translator converts to English for processing</div>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="step rag">
+    <div class="step-num">3</div>
+    <div class="step-icon">🔍</div>
+    <div class="step-title">RAG Retrieval</div>
+    <div class="step-desc">ONNX embeddings → FAISS cosine search → retrieves top-5 relevant BIS standard chunks</div>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="step rag">
+    <div class="step-num">4</div>
+    <div class="step-icon">📋</div>
+    <div class="step-title">Context Assembly</div>
+    <div class="step-desc">Retrieved chunks + BIS offices data + certification guides assembled into prompt context</div>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="step llm">
+    <div class="step-num">5</div>
+    <div class="step-icon">🤖</div>
+    <div class="step-title">LLM Generation</div>
+    <div class="step-desc">Gemini 3.6 Flash generates structured 6-section response with citations</div>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="step output">
+    <div class="step-num">6</div>
+    <div class="step-icon">✅</div>
+    <div class="step-title">Verified Output</div>
+    <div class="step-desc">Citation verification → translate back to user's language → render 6 colored cards</div>
+  </div>
+</div>
+
+<div class="section-title">🏛️ Key Features & Technology Choices</div>
+
+<div class="features-grid">
+  <div class="feature-card">
+    <div class="icon">🧠</div>
+    <h3>RAG Architecture</h3>
+    <p>Retrieval Augmented Generation ensures every answer is grounded in actual BIS standard documents, not AI hallucination.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">⚡</div>
+    <h3>ONNX Runtime</h3>
+    <p>Replaced PyTorch (500MB) with ONNX (80MB). Same accuracy, 10x less memory. Fits free hosting tier.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🌍</div>
+    <h3>22 Indian Languages</h3>
+    <p>Auto-detect → translate → RAG → translate back. Works for Hindi, Telugu, Bengali, Tamil, Marathi, and more.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">🔄</div>
+    <h3>Auto-Fetch</h3>
+    <p>Automatically scrapes bis.gov.in for new standards, downloads PDFs, and indexes them — zero manual work.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📍</div>
+    <h3>Office Finder</h3>
+    <p>25+ BIS testing centres with geolocation, distance sorting, product-based filtering, and Google Maps integration.</p>
+  </div>
+  <div class="feature-card">
+    <div class="icon">📝</div>
+    <h3>Certification Guide</h3>
+    <p>Step-by-step guides for ISI Mark, Hallmark, Eco Mark, CMVR, and MSME Udyam with official government links.</p>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 40px; color: #94a3b8; font-size: 13px;">
+  <strong>ManakMitra Data Flow</strong> | Smart India Hackathon 2026 | Team CodeCraft
+</div>
+
+</body>
+</html>

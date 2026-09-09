@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManakMitra — SIH 2026 Presentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0f172a; }
+  
+  .slide {
+    width: 1920px;
+    height: 1080px;
+    padding: 60px 80px;
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; }
+  
+  /* Slide 1: Title */
+  .slide-1 {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-1 .govt-badge {
+    background: rgba(255,153,51,0.2);
+    border: 2px solid #ff9933;
+    padding: 10px 30px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ff9933;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+  }
+  .slide-1 h1 { font-size: 72px; font-weight: 900; margin-bottom: 16px; }
+  .slide-1 h1 span { color: #ff9933; }
+  .slide-1 .tagline { font-size: 28px; color: #94a3b8; margin-bottom: 40px; }
+  .slide-1 .team-info { font-size: 18px; color: #64748b; }
+  .slide-1 .team-info strong { color: #e2e8f0; }
+  
+  /* Slide 2: Problem */
+  .slide-2 {
+    background: white;
+    color: #1a1a2e;
+  }
+  .slide-header {
+    font-size: 42px;
+    font-weight: 900;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 4px solid #ff9933;
+  }
+  .slide-header span { color: #ff9933; }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+  }
+  .stat-card .number { font-size: 48px; font-weight: 900; color: #1a1a2e; }
+  .stat-card .label { font-size: 16px; color: #64748b; margin-top: 8px; }
+  
+  .pain-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .pain-card {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 20px 24px;
+    border-radius: 0 12px 12px 0;
+  }
+  .pain-card h4 { font-size: 18px; font-weight: 700; color: #991b1b; margin-bottom: 6px; }
+  .pain-card p { font-size: 14px; color: #92400e; }
+  
+  /* Slide 3: Solution */
+  .slide-3 { background: white; color: #1a1a2e; }
+  .solution-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    flex: 1;
+  }
+  .solution-card {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #bae6fd;
+  }
+  .solution-card .icon { font-size: 40px; margin-bottom: 12px; }
+  .solution-card h3 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .solution-card p { font-size: 15px; color: #475569; line-height: 1.6; }
+  
+  /* Slide 4: Architecture */
+  .slide-4 { background: #f8fafc; color: #1a1a2e; }
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    flex: 1;
+  }
+  .arch-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 2px solid #e2e8f0;
+    text-align: center;
+  }
+  .arch-card.blue { border-top: 4px solid #3b82f6; }
+  .arch-card.purple { border-top: 4px solid #8b5cf6; }
+  .arch-card.amber { border-top: 4px solid #f59e0b; }
+  .arch-card.green { border-top: 4px solid #10b981; }
+  .arch-card.red { border-top: 4px solid #ef4444; }
+  .arch-card.indigo { border-top: 4px solid #6366f1; }
+  .arch-card.teal { border-top: 4px solid #14b8a6; }
+  .arch-card.rose { border-top: 4px solid #f43f5e; }
+  .arch-card .icon { font-size: 36px; margin-bottom: 10px; }
+  .arch-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .arch-card p { font-size: 13px; color: #64748b; }
+  
+  /* Slide 5: Demo */
+  .slide-5 {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-5 h2 { font-size: 56px; font-weight: 900; margin-bottom: 20px; }
+  .slide-5 .demo-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+    text-align: left;
+    max-width: 1200px;
+  }
+  .demo-feat {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .demo-feat h4 { font-size: 18px; margin-bottom: 8px; color: #ff9933; }
+  .demo-feat p { font-size: 14px; color: #94a3b8; }
+  
+  /* Slide 6: Impact */
+  .slide-6 { background: white; color: #1a1a2e; }
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    flex: 1;
+  }
+  .impact-card {
+    background: #f0fdf4;
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #bbf7d0;
+    text-align: center;
+  }
+  .impact-card .icon { font-size: 48px; margin-bottom: 12px; }
+  .impact-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .impact-card p { font-size: 15px; color: #475569; }
+  
+  /* Slide 7: Future */
+  .slide-7 { background: white; color: #1a1a2e; }
+  .timeline {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    align-items: flex-start;
+  }
+  .timeline-item {
+    flex: 1;
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 28px;
+    border: 2px solid #e2e8f0;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-radius: 16px 16px 0 0;
+  }
+  .timeline-item.phase1::before { background: #3b82f6; }
+  .timeline-item.phase2::before { background: #8b5cf6; }
+  .timeline-item.phase3::before { background: #10b981; }
+  .timeline-item.phase4::before { background: #f59e0b; }
+  .timeline-item h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .timeline-item ul { list-style: none; }
+  .timeline-item li { font-size: 15px; color: #475569; padding: 6px 0; padding-left: 24px; position: relative; }
+  .timeline-item li::before { content: '✓'; position: absolute; left: 0; color: #10b981; font-weight: 700; }
+  
+  /* Slide 8: Thank You */
+  .slide-8 {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .slide-8 h1 { font-size: 64px; font-weight: 900; margin-bottom: 20px; }
+  .slide-8 .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .contact-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+  .contact-card .icon { font-size: 32px; margin-bottom: 8px; }
+  .contact-card h4 { font-size: 16px; color: #ff9933; }
+  .contact-card p { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+  
+  /* Navigation */
+  .nav-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    background: #1a1a2e;
+    padding: 12px 24px;
+    border-radius: 40px;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: #ff9933; }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .slide-counter {
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-1 active" id="slide-1">
+  <div class="govt-badge">🇮🇳 SMART INDIA HACKATHON 2026</div>
+  <h1><span>Manak</span>Mitra</h1>
+  <div class="tagline">AI-Powered BIS Standards Compliance Assistant</div>
+  <div class="tagline" style="font-size: 20px; color: #64748b;">Bridging the gap between Indian businesses and government standards</div>
+  <div style="height: 30px;"></div>
+  <div class="team-info">
+    <strong>Problem Statement:</strong> Smart Compliance for MSMEs<br>
+    <strong>Category:</strong> Software — AI/ML
+  </div>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide slide-2" id="slide-2">
+  <div class="slide-header">The <span>Problem</span></div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="number">63M+</div>
+      <div class="label">MSMEs in India</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">110M</div>
+      <div class="label">People Employed</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">28,000+</div>
+      <div class="label">BIS Standards</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">22</div>
+      <div class="label">Indian Languages</div>
+    </div>
+  </div>
+  <div class="pain-points">
+    <div class="pain-card">
+      <h4>🔍 Discovery Problem</h4>
+      <p>MSMEs don't know which BIS standards apply to their specific products. Manual research across 28,000+ standards is impossible.</p>
+    </div>
+    <div class="pain-card">
+      <h4>🌐 Language Barrier</h4>
+      <p>BIS documents are in English. 90% of MSME owners speak regional languages. They can't read the standards they need to follow.</p>
+    </div>
+    <div class="pain-card">
+      <h4>📋 Compliance Gap</h4>
+      <p>No step-by-step guidance on how to obtain BIS certification. MSMEs face penalties for non-compliance due to lack of awareness.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Solution -->
+<div class="slide slide-3" id="slide-3">
+  <div class="slide-header">Our <span>Solution</span></div>
+  <div class="solution-grid">
+    <div class="solution-card">
+      <div class="icon">💬</div>
+      <h3>Ask in Your Language</h3>
+      <p>Ask questions in Hindi, Telugu, Bengali, Tamil, or any of 22 Indian languages. ManakMitra understands and responds in the same language.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📋</div>
+      <h3>6-Section Structured Response</h3>
+      <p>Every answer includes: Applicable IS Standards, Testing Requirements, Where to Test, Mandatory?, Certification Process, Documents Required.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🔍</div>
+      <h3>Verified Sources Only</h3>
+      <p>RAG architecture ensures every answer cites specific IS numbers and clause references. No AI hallucination — only verified government documents.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🔄</div>
+      <h3>Auto-Fetch New Standards</h3>
+      <p>Automatically monitors bis.gov.in for new standards, downloads PDFs, and indexes them. Knowledge base grows without manual intervention.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📍</div>
+      <h3>Find Testing Centres</h3>
+      <p>Locate 25+ BIS testing offices nearest to you with Google Maps navigation. Filter by product type and services offered.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📝</div>
+      <h3>Certification Guidance</h3>
+      <p>Step-by-step guides for ISI Mark, Hallmark, Eco Mark, CMVR, and MSME Udyam registration with direct links to official portals.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Architecture -->
+<div class="slide slide-4" id="slide-4">
+  <div class="slide-header">System <span>Architecture</span></div>
+  <div class="arch-grid">
+    <div class="arch-card blue">
+      <div class="icon">🌐</div>
+      <h4>React Frontend</h4>
+      <p>7 pages, dark mode, 22 languages, responsive UI. Deployed on Vercel.</p>
+    </div>
+    <div class="arch-card purple">
+      <div class="icon">⚡</div>
+      <h4>FastAPI Backend</h4>
+      <p>Async Python server with REST APIs for query, standards, offices, certifications.</p>
+    </div>
+    <div class="arch-card amber">
+      <div class="icon">🧠</div>
+      <h4>ONNX Embeddings</h4>
+      <p>all-MiniLM-L6-v2 model. 80MB, 384-dim vectors. No PyTorch dependency.</p>
+    </div>
+    <div class="arch-card green">
+      <div class="icon">📊</div>
+      <h4>FAISS Vector Store</h4>
+      <p>115+ document chunks indexed. Cosine similarity search for fast retrieval.</p>
+    </div>
+    <div class="arch-card red">
+      <div class="icon">🤖</div>
+      <h4>Gemini LLM</h4>
+      <p>gemini-3.6-flash for structured response generation. Template fallback available.</p>
+    </div>
+    <div class="arch-card indigo">
+      <div class="icon">🌍</div>
+      <h4>Translation Engine</h4>
+      <p>deep-translator + langdetect. Auto-detect → translate → RAG → translate back.</p>
+    </div>
+    <div class="arch-card teal">
+      <div class="icon">🔄</div>
+      <h4>Auto-Fetch Pipeline</h4>
+      <p>BeautifulSoup scraper → PDF parser → text chunker → embedding → FAISS index.</p>
+    </div>
+    <div class="arch-card rose">
+      <div class="icon">🏛️</div>
+      <h4>BIS Data APIs</h4>
+      <p>28 standards, 25+ offices, 5 certification types, Haversine distance calc.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Live Demo -->
+<div class="slide slide-5" id="slide-5">
+  <h2>🎬 Live <span style="color: #ff9933;">Demo</span></h2>
+  <p style="font-size: 22px; color: #94a3b8;">Watch ManakMitra in action</p>
+  <div class="demo-features">
+    <div class="demo-feat">
+      <h4>1. Multilingual Query</h4>
+      <p>Ask "सीमेंट के लिए कौन से IS मानक लागू होते हैं?" in Hindi → get complete structured response in Hindi</p>
+    </div>
+    <div class="demo-feat">
+      <h4>2. 6-Section Response</h4>
+      <p>Standards → Testing → Where to Test → Mandatory? → Certification → Documents — all in one response</p>
+    </div>
+    <div class="demo-feat">
+      <h4>3. Verified Citations</h4>
+      <p>Every IS number highlighted with clause reference. Clickable links to bis.gov.in official documents</p>
+    </div>
+    <div class="demo-feat">
+      <h4>4. Auto-Fetch</h4>
+      <p>Click "Check for Updates" → system scrapes bis.gov.in → downloads new PDFs → indexes automatically</p>
+    </div>
+    <div class="demo-feat">
+      <h4>5. Office Finder</h4>
+      <p>Enable GPS → see nearest BIS testing centres sorted by distance → Get Directions via Google Maps</p>
+    </div>
+    <div class="demo-feat">
+      <h4>6. Certification Guide</h4>
+      <p>Step-by-step ISI Mark process with documents, fees, timeline, and official portal links</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Impact -->
+<div class="slide slide-6" id="slide-6">
+  <div class="slide-header">Impact & <span>Innovation</span></div>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="icon">👥</div>
+      <h3>63M+ MSMEs Benefited</h3>
+      <p>Every small business in India can now understand and comply with BIS standards in their own language — no English proficiency required.</p>
+    </div>
+    <div class="impact-card">
+      <div class="icon">🌐</div>
+      <h3>22 Languages, Zero Barrier</h3>
+      <p>First BIS compliance tool supporting 22 Indian languages. Breaks the English-only barrier that excludes 90% of MSME owners.</p>
+    </div>
+    <div class="impact-card">
+      <div class="icon">🔄</div>
+      <h3>Always Up-to-Date</h3>
+      <p>Auto-fetch ensures the knowledge base stays current. No manual updates needed — new standards are indexed within hours of publication.</p>
+    </div>
+    <div class="impact-card">
+      <div class="icon">✅</div>
+      <h3>Verified, Not Hallucinated</h3>
+      <p>RAG architecture with citation verification means every answer is traceable to official government documents. Trust built-in.</p>
+    </div>
+    <div class="impact-card">
+      <div class="icon">💰</div>
+      <h3>Free for MSMEs</h3>
+      <p>No subscription fees. No ads. No data selling. A public good funded through government deployment for the benefit of Indian businesses.</p>
+    </div>
+    <div class="impact-card">
+      <div class="icon">⚡</div>
+      <h3>Lightweight & Scalable</h3>
+      <p>80MB ONNX model fits free hosting tiers. Modular architecture allows swapping embedding models, LLMs, and vector stores as needed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Future Roadmap -->
+<div class="slide slide-7" id="slide-7">
+  <div class="slide-header">Future <span>Roadmap</span></div>
+  <div class="timeline">
+    <div class="timeline-item phase1">
+      <h3>🔴 Phase 1: Foundation</h3>
+      <ul>
+        <li>28 BIS standards indexed</li>
+        <li>22 Indian languages</li>
+        <li>6-section response format</li>
+        <li>Auto-fetch from bis.gov.in</li>
+        <li>Multi-user authentication</li>
+        <li>Dark mode & responsive UI</li>
+      </ul>
+    </div>
+    <div class="timeline-item phase2">
+      <h3>🟠 Phase 2: Scale</h3>
+      <ul>
+        <li>500+ BIS standards indexed</li>
+        <li>PostgreSQL database</li>
+        <li>Redis caching layer</li>
+        <li>Rate limiting & analytics</li>
+        <li>Mobile app (React Native)</li>
+        <li>Government SSO integration</li>
+      </ul>
+    </div>
+    <div class="timeline-item phase3">
+      <h3>🟢 Phase 3: Intelligence</h3>
+      <ul>
+        <li>Document upload & analysis</li>
+        <li>Compliance deadline tracking</li>
+        <li>AI-powered gap analysis</li>
+        <li>Predictive standards mapping</li>
+        <li>Lab report auto-verification</li>
+        <li>Voice input (Indic ASR)</li>
+      </ul>
+    </div>
+    <div class="timeline-item phase4">
+      <h3>🟡 Phase 4: National</h3>
+      <ul>
+        <li>BIS official partnership</li>
+        <li>All 28,000+ standards</li>
+        <li>State language portals</li>
+        <li>Field inspector app</li>
+        <li>Industry dashboard</li>
+        <li>API for third parties</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Thank You -->
+<div class="slide slide-8" id="slide-8">
+  <h1>Thank <span style="color: #ff9933;">You</span></h1>
+  <p style="font-size: 24px; color: #94a3b8;">ManakMitra — AI-Powered BIS Standards Compliance</p>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="icon">🌐</div>
+      <h4>Live Demo</h4>
+      <p>manakmitra-frontend.vercel.app</p>
+    </div>
+    <div class="contact-card">
+      <div class="icon">💻</div>
+      <h4>GitHub</h4>
+      <p>github.com/koti-pavan-kumar/sih2026-bis-assistant</p>
+    </div>
+    <div class="contact-card">
+      <div class="icon">🏛️</div>
+      <h4>Problem Statement</h4>
+      <p>Smart Compliance for MSMEs</p>
+    </div>
+  </div>
+  <div style="margin-top: 40px; font-size: 18px; color: #64748b;">
+    Built with ❤️ for Smart India Hackathon 2026
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="nav-bar">
+  <button class="nav-btn" onclick="prevSlide()" id="prevBtn">← Previous</button>
+  <div class="slide-counter" id="counter">1 / 8</div>
+  <button class="nav-btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 8;
+  
+  function showSlide(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById(`slide-${n}`).classList.add('active');
+    document.getElementById('counter').textContent = `${n} / ${total}`;
+    document.getElementById('prevBtn').disabled = n === 1;
+    document.getElementById('nextBtn').disabled = n === total;
+  }
+  
+  function nextSlide() { if (current < total) { current++; showSlide(current); } }
+  function prevSlide() { if (current > 1) { current--; showSlide(current); } }
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+</script>
+
+</body>
+</html>

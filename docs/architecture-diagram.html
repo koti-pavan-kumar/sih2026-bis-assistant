@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ManakMitra Architecture Diagram</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
+    padding: 40px;
+    width: 1920px;
+  }
+  .title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 40px;
+  }
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .layer {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .layer-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    background: #1a1a2e;
+    color: white;
+    padding: 12px 8px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+  }
+  .layer-content {
+    flex: 1;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .box {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    flex: 1;
+    min-width: 200px;
+    border: 2px solid #e2e8f0;
+    position: relative;
+  }
+  .box-icon { font-size: 28px; margin-bottom: 8px; }
+  .box-title { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .box-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
+  .box-tech { 
+    margin-top: 10px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tech-tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+  }
+  
+  /* Color coding */
+  .box.frontend { border-left: 4px solid #3b82f6; }
+  .box.api { border-left: 4px solid #8b5cf6; }
+  .box.rag { border-left: 4px solid #f59e0b; }
+  .box.data { border-left: 4px solid #10b981; }
+  .box.external { border-left: 4px solid #ef4444; }
+  .box.infra { border-left: 4px solid #6366f1; }
+
+  .arrow-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 4px 0;
+  }
+  .arrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .arrow svg { width: 20px; height: 20px; }
+  
+  .flow-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+    margin: 0 60px;
+  }
+</style>
+</head>
+<body>
+
+<div class="title">🏛️ ManakMitra — System Architecture</div>
+<div class="subtitle">AI-Powered BIS Standards Compliance Assistant | Smart India Hackathon 2026</div>
+
+<div class="diagram">
+  
+  <!-- Layer 1: Frontend -->
+  <div class="layer">
+    <div class="layer-label">FRONTEND</div>
+    <div class="layer-content">
+      <div class="box frontend">
+        <div class="box-icon">🌐</div>
+        <div class="box-title">React + Vite SPA</div>
+        <div class="box-desc">Single-page application with 7 pages — Landing, Chat, Standards, Certifications, Testing Centres, Analytics, Auto-Fetch</div>
+        <div class="box-tech">
+          <span class="tech-tag">React 18</span>
+          <span class="tech-tag">Vite</span>
+          <span class="tech-tag">Tailwind CSS</span>
+          <span class="tech-tag">React Router</span>
+        </div>
+      </div>
+      <div class="box frontend">
+        <div class="box-icon">💬</div>
+        <div class="box-title">6-Section Chat UI</div>
+        <div class="box-desc">Structured AI responses with 6 colored cards — Standards, Testing, Offices, Mandatory?, Certification, Documents. Per-user chat history.</div>
+        <div class="box-tech">
+          <span class="tech-tag">localStorage</span>
+          <span class="tech-tag">Dark Mode</span>
+          <span class="tech-tag">22 Languages</span>
+        </div>
+      </div>
+      <div class="box frontend">
+        <div class="box-icon">🔍</div>
+        <div class="box-title">Feature Pages</div>
+        <div class="box-desc">Dedicated full-width pages for Standards library, BIS Office finder with geolocation, Certification wizard, and system Analytics dashboard.</div>
+        <div class="box-tech">
+          <span class="tech-tag">Geolocation API</span>
+          <span class="tech-tag">Google Maps</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-row">
+    <div class="arrow">▼ HTTPS ▼</div>
+    <div class="arrow">▼ REST API ▼</div>
+    <div class="arrow">▼ WebSockets ▼</div>
+  </div>
+
+  <!-- Layer 2: Backend API -->
+  <div class="layer">
+    <div class="layer-label">API LAYER</div>
+    <div class="layer-content">
+      <div class="box api">
+        <div class="box-icon">⚡</div>
+        <div class="box-title">FastAPI Server</div>
+        <div class="box-desc">Async Python API with CORS support. Routes: /api/query, /api/standards, /api/bis-offices, /api/certifications, /api/auto-fetch, /api/health</div>
+        <div class="box-tech">
+          <span class="tech-tag">FastAPI</span>
+          <span class="tech-tag">Uvicorn</span>
+          <span class="tech-tag">Pydantic</span>
+        </div>
+      </div>
+      <div class="box api">
+        <div class="box-icon">🌍</div>
+        <div class="box-title">Translation Engine</div>
+        <div class="box-desc">Auto-detect input language → translate to English for RAG → generate response → translate back to user's language. Supports 22 Indian languages.</div>
+        <div class="box-tech">
+          <span class="tech-tag">deep-translator</span>
+          <span class="tech-tag">langdetect</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-row">
+    <div class="arrow">▼ Query Processing ▼</div>
+    <div class="arrow">▼ Context Assembly ▼</div>
+  </div>
+
+  <!-- Layer 3: RAG Engine -->
+  <div class="layer">
+    <div class="layer-label">RAG ENGINE</div>
+    <div class="layer-content">
+      <div class="box rag">
+        <div class="box-icon">🧠</div>
+        <div class="box-title">ONNX Embeddings</div>
+        <div class="box-desc">Lightweight sentence embeddings using all-MiniLM-L6-v2 via ONNX Runtime. 384-dimension vectors. 80MB model — no PyTorch dependency.</div>
+        <div class="box-tech">
+          <span class="tech-tag">ONNX Runtime</span>
+          <span class="tech-tag">Xenova/all-MiniLM-L6-v2</span>
+          <span class="tech-tag">384-dim</span>
+        </div>
+      </div>
+      <div class="box rag">
+        <div class="box-icon">📊</div>
+        <div class="box-title">FAISS Vector Store</div>
+        <div class="box-desc">Facebook AI Similarity Search for fast nearest-neighbor lookup. Cosine similarity search across 115+ indexed document chunks from 28 BIS standards.</div>
+        <div class="box-tech">
+          <span class="tech-tag">FAISS-cpu</span>
+          <span class="tech-tag">Cosine Similarity</span>
+          <span class="tech-tag">115+ Chunks</span>
+        </div>
+      </div>
+      <div class="box rag">
+        <div class="box-icon">🤖</div>
+        <div class="box-title">LLM Generator</div>
+        <div class="box-desc">Generates structured 6-section responses using retrieved context. Includes citation verification against indexed IS numbers. Falls back to template mode if LLM unavailable.</div>
+        <div class="box-tech">
+          <span class="tech-tag">Gemini 3.6 Flash</span>
+          <span class="tech-tag">Ollama (offline)</span>
+          <span class="tech-tag">Prompt Engineering</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-row">
+    <div class="arrow">▼ Read/Write ▼</div>
+    <div class="arrow">▼ Parse & Index ▼</div>
+  </div>
+
+  <!-- Layer 4: Data Layer -->
+  <div class="layer">
+    <div class="layer-label">DATA</div>
+    <div class="layer-content">
+      <div class="box data">
+        <div class="box-icon">📄</div>
+        <div class="box-title">BIS Standards Corpus</div>
+        <div class="box-desc">28 indexed BIS standards (PDF + text) covering electronics, construction, food, leather, steel, cement, electrical, and more. Chunked into searchable segments.</div>
+        <div class="box-tech">
+          <span class="tech-tag">PyPDF</span>
+          <span class="tech-tag">PdfPlumber</span>
+          <span class="tech-tag">28 Standards</span>
+        </div>
+      </div>
+      <div class="box data">
+        <div class="box-icon">🏢</div>
+        <div class="box-title">BIS Offices & Certs</div>
+        <div class="box-desc">25+ BIS regional offices with geolocation, services, products tested. 5 certification types (ISI, Hallmark, Eco, CMVR, MSME) with step-by-step guides.</div>
+        <div class="box-tech">
+          <span class="tech-tag">Haversine Distance</span>
+          <span class="tech-tag">State Mapping</span>
+        </div>
+      </div>
+      <div class="box data">
+        <div class="box-icon">🔄</div>
+        <div class="box-title">Auto-Fetch Pipeline</div>
+        <div class="box-desc">Scrapes bis.gov.in for new standards, downloads PDFs, extracts text, chunks content, generates embeddings, and adds to FAISS index automatically.</div>
+        <div class="box-tech">
+          <span class="tech-tag">BeautifulSoup</span>
+          <span class="tech-tag">Requests</span>
+          <span class="tech-tag">JSON Log</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-row">
+    <div class="arrow">▲ Cloud APIs ▲</div>
+  </div>
+
+  <!-- Layer 5: External Services -->
+  <div class="layer">
+    <div class="layer-label">EXTERNAL</div>
+    <div class="layer-content">
+      <div class="box external">
+        <div class="box-icon">✨</div>
+        <div class="box-title">Google Gemini API</div>
+        <div class="box-desc">Cloud LLM for generating structured 6-section responses. gemini-3.6-flash model. Falls back to template mode if quota exceeded.</div>
+        <div class="box-tech">
+          <span class="tech-tag">gemini-3.6-flash</span>
+          <span class="tech-tag">REST API</span>
+        </div>
+      </div>
+      <div class="box external">
+        <div class="box-icon">🏛️</div>
+        <div class="box-title">BIS Website</div>
+        <div class="box-desc">Source for auto-fetching new standards. Scrapes publication lists, downloads official PDFs from bis.gov.in.</div>
+        <div class="box-tech">
+          <span class="tech-tag">bis.gov.in</span>
+          <span class="tech-tag">HTML Scraping</span>
+        </div>
+      </div>
+      <div class="box external">
+        <div class="box-icon">🤗</div>
+        <div class="box-title">Hugging Face Hub</div>
+        <div class="box-desc">Hosts the ONNX embedding model (Xenova/all-MiniLM-L6-v2). Downloaded once, cached locally.</div>
+        <div class="box-tech">
+          <span class="tech-tag">ONNX Model</span>
+          <span class="tech-tag">Cached Locally</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-line"></div>
+
+  <!-- Layer 6: Infrastructure -->
+  <div class="layer">
+    <div class="layer-label">DEPLOY</div>
+    <div class="layer-content">
+      <div class="box infra">
+        <div class="box-icon">▲</div>
+        <div class="box-title">Vercel (Frontend)</div>
+        <div class="box-desc">Global CDN, auto-deploy on git push, serverless functions for API proxy to Render backend.</div>
+        <div class="box-tech">
+          <span class="tech-tag">Free Tier</span>
+          <span class="tech-tag">Auto-Deploy</span>
+          <span class="tech-tag">SSL</span>
+        </div>
+      </div>
+      <div class="box infra">
+        <div class="box-icon">🔷</div>
+        <div class="box-title">Render (Backend)</div>
+        <div class="box-desc">Python runtime with persistent memory for FAISS index + ONNX model. Auto-deploy on git push. Free tier (512MB RAM).</div>
+        <div class="box-tech">
+          <span class="tech-tag">Free Tier</span>
+          <span class="tech-tag">Auto-Deploy</span>
+          <span class="tech-tag">ONNX (80MB)</span>
+        </div>
+      </div>
+      <div class="box infra">
+        <div class="box-icon">📦</div>
+        <div class="box-title">GitHub Actions</div>
+        <div class="box-desc">Version control with auto-deploy pipeline. Push to main → Vercel rebuilds frontend + Render rebuilds backend.</div>
+        <div class="box-tech">
+          <span class="tech-tag">Git CI/CD</span>
+          <span class="tech-tag">Auto-Deploy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align: center; margin-top: 40px; color: #94a3b8; font-size: 13px;">
+  <strong>ManakMitra Architecture</strong> | Smart India Hackathon 2026 | Team CodeCraft
+</div>
+
+</body>
+</html>
