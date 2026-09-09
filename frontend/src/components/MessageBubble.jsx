@@ -87,14 +87,23 @@ function parseStructuredResponse(text) {
   }
 
   // Remove sections with no content — merge into intro
+  // Also deduplicate: keep only the FIRST instance of each section number
   const validSections = []
+  const seenNumbers = new Set()
   for (const s of sections) {
     if (s.items.length === 0) {
       intro += (intro ? '\n' : '') + s.title
+    } else if (seenNumbers.has(s.num)) {
+      // Duplicate section — merge content into the first instance
+      const existing = validSections.find(vs => vs.num === s.num)
+      if (existing) {
+        existing.items.push(...s.items)
+      }
     } else {
       // Filter out empty or separator-only items
       s.items = s.items.filter(item => item.trim() && !/^[-=]{3,}$/.test(item.trim()))
       if (s.items.length > 0) {
+        seenNumbers.add(s.num)
         validSections.push(s)
       }
     }
