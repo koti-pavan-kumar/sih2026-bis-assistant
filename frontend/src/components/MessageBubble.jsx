@@ -44,10 +44,12 @@ function parseStructuredResponse(text) {
     const line = lines[i].trim()
     if (!line) continue
 
-    // Detect "### N. Section Title" or "**N. Section Title**" or "Section N:"
-    const sectionMatch = line.match(/^#{0,3}\s*(\d)\.\s*(.+?)(?:$|\*\*)/)
-      || line.match(/^\*\*(\d)\.\s*(.+?)\*\*/)
-      || line.match(/^(\d)\.\s+(Applicable|Testing|Where|Mandatory|Certification|Documents)/i)
+    // Detect section headers in multiple formats the AI might output:
+    // "### 1. Title", "**1. Title**", "1. Title", "Section 1: Title"
+    const sectionMatch = 
+      line.match(/#{0,3}\s*\*{0,2}\s*(\d)\.\s*(.+?)\s*\*{0,2}\s*$/)
+      || line.match(/Section\s+(\d)\s*[:\-–]\s*(.+)/i)
+      || line.match(/^(\d)\s*[:\-–]\s+(.+)/)
 
     if (sectionMatch) {
       currentSection = {
@@ -59,11 +61,20 @@ function parseStructuredResponse(text) {
       continue
     }
 
-    // Detect alternate section headers
-    const altMatch = line.match(/^(Applicable IS Standards|Testing Requirements|Where to Test|Mandatory|Certification Process|Documents)/i)
-    if (altMatch && !currentSection) {
-      const num = Object.keys(SECTION_CONFIG).find(k => SECTION_CONFIG[k].label.toLowerCase().includes(altMatch[1].toLowerCase())) || String(sections.length + 1)
-      currentSection = { num, title: altMatch[0], items: [] }
+    // Detect section headers by title keywords (even without number prefix)
+    const titleKeywords = [
+      'applicable is standard', 'testing requirement', 'where to test',
+      'mandatory', 'voluntary', 'certification process', 'documents required',
+      'documents and information', 'document'
+    ]
+    const isTitleLine = titleKeywords.some(kw => line.toLowerCase().includes(kw))
+      && line.length < 80  // Headers are short
+      && (line.includes(':') || line.startsWith('#') || line.startsWith('**') || /^\d/.test(line))
+
+    if (isTitleLine && !currentSection) {
+      const matched = titleKeywords.find(kw => line.toLowerCase().includes(kw))
+      const num = Object.keys(SECTION_CONFIG).find(k => SECTION_CONFIG[k].label.toLowerCase().includes(matched)) || String(sections.length + 1)
+      currentSection = { num, title: line.replace(/\*+/g, '').replace(/^#{0,3}\s*/, '').trim(), items: [] }
       sections.push(currentSection)
       continue
     }
@@ -75,7 +86,21 @@ function parseStructuredResponse(text) {
     }
   }
 
-  return { intro, sections }
+  // Remove sections with no content — merge into intro
+  const validSections = []
+  for (const s of sections) {
+    if (s.items.length === 0) {
+      intro += (intro ? '\n' : '') + s.title
+    } else {
+      // Filter out empty or separator-only items
+      s.items = s.items.filter(item => item.trim() && !/^[-=]{3,}$/.test(item.trim()))
+      if (s.items.length > 0) {
+        validSections.push(s)
+      }
+    }
+  }
+
+  return { intro, sections: validSections }
 }
 
 /**
