@@ -6,7 +6,11 @@ import RightPanel from './components/RightPanel'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
-import { t } from './utils/translations'
+import StandardsPage from './pages/StandardsPage'
+import OfficesPage from './pages/OfficesPage'
+import CertificationsPage from './pages/CertificationsPage'
+import AnalyticsPage from './pages/AnalyticsPage'
+import AutoFetchPage from './pages/AutoFetchPage'
 import { getActiveChatId, setActiveChatId } from './utils/chatStorage'
 
 export default function App() {
@@ -24,23 +28,16 @@ export default function App() {
     return getActiveChatId()
   })
   const [chatRefreshKey, setChatRefreshKey] = useState(0)
-  const [openWizard, setOpenWizard] = useState(false)
 
   const handleChatUpdated = useCallback(() => {
     setChatRefreshKey(k => k + 1)
-  }, [])
-
-  const handleOpenWizard = useCallback(() => {
-    setOpenWizard(true)
-    // Reset after a tick so it can be triggered again
-    setTimeout(() => setOpenWizard(false), 100)
   }, [])
 
   const navigate = useCallback((newPage) => {
     setPage(newPage)
   }, [])
 
-  // Load standards when on main app
+  // Load standards when on main app or chat page
   useEffect(() => {
     if (page === 'app') {
       fetch('/api/standards')
@@ -77,42 +74,68 @@ export default function App() {
     setActiveChatId(chatId)
   }, [])
 
-  // Landing page
+  // ─── Auth Pages ───────────────────────────────────────────
   if (page === 'landing') {
     return <LandingPage onNavigate={navigate} />
   }
-
-  // Login page
   if (page === 'login') {
     return <LoginPage onNavigate={navigate} />
   }
-
-  // Signup page
   if (page === 'signup') {
     return <SignupPage onNavigate={navigate} />
   }
 
-  // Main app — 3-column layout
+  // ─── Full-Width Feature Pages ─────────────────────────────
+  const fullPages = {
+    standards: <StandardsPage onNavigate={navigate} darkMode={darkMode} />,
+    offices: <OfficesPage onNavigate={navigate} darkMode={darkMode} />,
+    certifications: <CertificationsPage onNavigate={navigate} language={language} darkMode={darkMode} />,
+    analytics: <AnalyticsPage onNavigate={navigate} darkMode={darkMode} />,
+    'auto-fetch': <AutoFetchPage onNavigate={navigate} darkMode={darkMode} />,
+  }
+
+  if (fullPages[page]) {
+    return (
+      <div className={`min-h-screen ${darkMode ? 'dark bg-[#0f1115]' : 'bg-gray-50'}`}>
+        <Header
+          currentPage={page}
+          onNavigate={navigate}
+          health={health}
+          onHealthUpdate={handleHealthUpdate}
+          language={language}
+          onLanguageChange={handleLanguageChange}
+          darkMode={darkMode}
+          onToggleDarkMode={toggleDarkMode}
+        />
+        {fullPages[page]}
+        <footer className="text-center py-3 text-xs text-gray-400 border-t bg-white dark:bg-[#111318]">
+          Government of India | Bureau of Indian Standards | ManakMitra AI Assistant
+        </footer>
+      </div>
+    )
+  }
+
+  // ─── Main Chat Page (2-column: chats + messages) ──────────
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'dark bg-[#0f1115]' : 'bg-gray-50'}`}>
       <Header
+        currentPage={page}
+        onNavigate={navigate}
         health={health}
         onHealthUpdate={handleHealthUpdate}
-        onMenuToggle={() => setRightPanelOpen(!rightPanelOpen)}
         language={language}
         onLanguageChange={handleLanguageChange}
-        onNavigate={navigate}
         darkMode={darkMode}
         onToggleDarkMode={toggleDarkMode}
       />
+      
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar — Chat List */}
-        <div className={`w-64 flex-shrink-0 hidden md:flex flex-col panel-left`}>
+        <div className="w-64 flex-shrink-0 hidden md:flex flex-col panel-left">
           <ChatList
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}
             refreshKey={chatRefreshKey}
-            onWizardOpen={handleOpenWizard}
           />
         </div>
 
@@ -121,25 +144,11 @@ export default function App() {
           language={language}
           chatId={activeChatId}
           onChatUpdated={handleChatUpdated}
-          openWizard={openWizard}
         />
-
-        {/* Right Sidebar — Standards / Auto-Fetch / Analytics */}
-        <div className={`hidden lg:flex panel-right`}>
-          <RightPanel
-            standards={standards}
-            health={health}
-            isOpen={rightPanelOpen}
-            onClose={() => setRightPanelOpen(false)}
-            onWizardQuestion={(q) => {
-              // Switch to a new chat and ask the wizard question
-              handleOpenWizard()
-            }}
-          />
-        </div>
       </div>
-      <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white hide-mobile">
-        {t('ministry', language)} | {t('poweredBy', language)}
+      
+      <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white dark:bg-[#111318]">
+        Government of India | Bureau of Indian Standards | ManakMitra AI Assistant
       </footer>
     </div>
   )

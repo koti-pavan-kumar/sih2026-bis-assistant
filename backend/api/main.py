@@ -28,6 +28,10 @@ from backend.data.bis_offices import (
     BIS_REGIONAL_OFFICES, PRODUCT_CATEGORIES,
     find_nearest_centers, get_offices_by_state, get_offices_by_service, get_product_guidance
 )
+from backend.data.certifications import (
+    CERTIFICATION_TYPES, CERTIFICATION_FAQS, CERTIFICATION_OFFICES,
+    get_certification_info, get_all_certifications, get_certification_offices
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -194,6 +198,33 @@ async def get_bis_offices(
 async def get_product_categories():
     """Get all product categories with their BIS standards."""
     return {"categories": PRODUCT_CATEGORIES}
+
+
+@app.get("/api/certifications")
+async def list_certifications():
+    """List all certification types with summaries."""
+    return {"certifications": get_all_certifications()}
+
+
+@app.get("/api/certifications/{cert_type}")
+async def get_certification(cert_type: str):
+    """Get detailed info for a certification type."""
+    cert = get_certification_info(cert_type)
+    if not cert:
+        raise HTTPException(status_code=404, detail="Certification type not found")
+    return cert
+
+
+@app.get("/api/certifications/offices/{state}")
+async def cert_offices_by_state(state: str):
+    """Get certification offices in a state."""
+    return {"offices": get_certification_offices(state), "state": state}
+
+
+@app.get("/api/certifications/faqs")
+async def cert_faqs():
+    """Get certification FAQs."""
+    return {"faqs": CERTIFICATION_FAQS}
 
 
 @app.get("/api/bis-offices/{office_id}")
