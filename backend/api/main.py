@@ -105,6 +105,22 @@ async def query(request: QueryRequest):
         # Assemble context
         context = rag_engine.assemble_context(results)
 
+        # Add BIS offices and certification info to context
+        from backend.data.bis_offices import BIS_REGIONAL_OFFICES
+        from backend.data.certifications import CERTIFICATION_TYPES, CERTIFICATION_FAQS
+        
+        offices_text = "\n\nBIS Regional Offices and Testing Centres:\n"
+        for office in BIS_REGIONAL_OFFICES[:15]:
+            offices_text += f"- {office['name']} ({office['type']}), {office['city']}, {office['state']}: Phone {office['phone']}, Services: {', '.join(office['services'])}\n"
+        
+        certs_text = "\n\nBIS Certification Types:\n"
+        for cert_id, cert in CERTIFICATION_TYPES.items():
+            certs_text += f"- {cert['name']}: {cert['description'][:100]}... Duration: {cert['total_duration']}\n"
+            if cert.get('mandatory_products'):
+                certs_text += f"  Mandatory for: {', '.join(cert['mandatory_products'][:3])}\n"
+        
+        context += offices_text + certs_text
+
         # Generate response with multi-turn context
         answer = llm_generator.generate(processed, context, language, request.conversation_history)
         
