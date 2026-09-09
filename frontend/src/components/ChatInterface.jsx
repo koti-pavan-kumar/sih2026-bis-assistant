@@ -6,7 +6,7 @@ import CertificationWizard from './CertificationWizard'
 import { t } from '../utils/translations'
 import { loadChats, saveChats, getActiveChatId, setActiveChatId } from '../utils/chatStorage'
 
-const REQUEST_TIMEOUT_MS = 45000
+const REQUEST_TIMEOUT_MS = 90000
 const MAX_HISTORY_FOR_CONTEXT = 6
 
 /**

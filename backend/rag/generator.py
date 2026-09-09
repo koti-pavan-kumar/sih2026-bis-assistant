@@ -160,8 +160,8 @@ Provide a comprehensive, structured answer following the 5-section format above.
         prompt = self._build_prompt(query, context, language, conversation_history)
         gemini_key = os.getenv("GEMINI_API_KEY")
         
-        # Try REST API directly (more reliable than deprecated google.generativeai)
-        for model_name in ["gemini-3.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]:
+        # Try REST API directly — try multiple model names for compatibility
+        for model_name in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash-latest"]:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
                 data = {"contents": [{"parts": [{"text": prompt}]}]}
