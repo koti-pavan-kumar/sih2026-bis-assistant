@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import AnalyticsDashboard from './AnalyticsDashboard'
 import CertificationWizard from './CertificationWizard'
+import BISOfficeFinder from './BISOfficeFinder'
 
 /**
  * RightPanel — Right sidebar with Standards list, Auto-Fetch, and Analytics.
@@ -87,6 +88,14 @@ export default function RightPanel({ standards, health, isOpen, onClose, onWizar
             }`}
           >
             Analytics
+          </button>
+          <button
+            onClick={() => setActiveTab('offices')}
+            className={`flex-1 py-2.5 text-xs font-medium transition ${
+              activeTab === 'offices' ? 'text-[#1a2744] dark:text-blue-300 border-b-2 border-[#1a2744] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+            }`}
+          >
+            Offices
           </button>
           <button
             onClick={() => setActiveTab('wizard')}
@@ -240,6 +249,13 @@ export default function RightPanel({ standards, health, isOpen, onClose, onWizar
         {activeTab === 'analytics' && (
           <div className="p-2">
             <AnalyticsDashboard health={health} />
+          </div>
+        )}
+
+        {/* BIS Offices Tab */}
+        {activeTab === 'offices' && (
+          <div className="h-full">
+            <BISOfficeFinder language={language} />
           </div>
         )}
 

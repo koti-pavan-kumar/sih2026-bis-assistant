@@ -24,6 +24,10 @@ from backend.rag.query_processor import QueryProcessor
 from backend.rag.generator import LLMGenerator
 from backend.ingestion.pipeline import DocumentIngestionPipeline
 from backend.ingestion.auto_fetcher import BISAutoFetcher
+from backend.data.bis_offices import (
+    BIS_REGIONAL_OFFICES, PRODUCT_CATEGORIES,
+    find_nearest_centers, get_offices_by_state, get_offices_by_service, get_product_guidance
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -148,6 +152,57 @@ async def query(request: QueryRequest):
     except Exception as e:
         logger.error(f"Query error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
+@app.get("/api/bis-offices")
+async def get_bis_offices(
+    lat: Optional[float] = None,
+    lng: Optional[float] = None,
+    state: Optional[str] = None,
+    service: Optional[str] = None,
+    n: Optional[int] = 10
+):
+    """Get BIS testing centers and offices.
+    
+    - With lat/lng: returns nearest offices sorted by distance
+    - With state: returns offices in that state
+    - With service: returns offices offering that service
+    - Without params: returns all offices
+    """
+    try:
+        if lat is not None and lng is not None:
+            offices = find_nearest_centers(lat, lng, n=n)
+        elif state:
+            offices = get_offices_by_state(state)
+        elif service:
+            offices = get_offices_by_service(service)
+        else:
+            offices = BIS_REGIONAL_OFFICES
+        
+        return {
+            "offices": offices,
+            "total": len(offices),
+            "user_location": {"lat": lat, "lng": lng} if lat and lng else None
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/bis-offices/categories")
+async def get_product_categories():
+    """Get all product categories with their BIS standards."""
+    return {"categories": PRODUCT_CATEGORIES}
+
+
+@app.get("/api/bis-offices/{office_id}")
+async def get_office_detail(office_id: str):
+    """Get detailed info about a specific BIS office."""
+    for office in BIS_REGIONAL_OFFICES:
+        if office["id"] == office_id:
+            return office
+    raise HTTPException(status_code=404, detail="Office not found")
 
 
 @app.post("/api/ingest")
