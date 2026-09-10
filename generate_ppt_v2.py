@@ -380,24 +380,56 @@ def slide_technical(prs):
             p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER; p2.space_before = Pt(1)
             r2 = p2.add_run(); r2.text = t; r2.font.size = Pt(7); r2.font.color.rgb = DARK_TEXT
 
-    # ── User Roles (like sister's center section) ──
-    add_heading(s, 0.5, 6.1, 3, "User Roles:", 13)
+    # ── Bottom Left: Phone Mockups with Screenshots ──
+    add_heading(s, 0.5, 5.6, 3, "App Screenshots:", 13)
 
-    roles = [
-        ("MSME Owner", GREEN_LIGHT), ("Manufacturer", BLUE_LIGHT),
-        ("Quality Manager", ORANGE_LIGHT), ("Testing Lab", PURPLE_LIGHT), ("Cert Body", TEAL_LIGHT),
+    screenshots = [
+        ("screenshots/bis-offices-light.png", "BIS Offices"),
+        ("screenshots/bis-offices-dark.png", "BIS Offices Dark"),
+        ("screenshots/auto-fetch-light.png", "Auto-Fetch"),
+        ("screenshots/auto-fetch-dark.png", "Auto-Fetch Dark"),
     ]
 
-    for i, (role, rbg) in enumerate(roles):
-        rx = 0.5 + i * 1.2
-        rbox = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(rx), Inches(6.4), Inches(1.05), Inches(0.55))
-        rbox.fill.solid(); rbox.fill.fore_color.rgb = rbg; rbox.line.color.rgb = RGBColor(0xdd, 0xdd, 0xdd); rbox.line.width = Pt(1)
-        tf = rbox.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-        r = p.add_run(); r.text = role; r.font.size = Pt(8); r.font.bold = True; r.font.color.rgb = NAVY
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    for i, (img_path, label) in enumerate(screenshots):
+        px = 0.5 + i * 1.5
+        # Phone frame
+        phone = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(px), Inches(5.95), Inches(1.3), Inches(1.1))
+        phone.fill.solid(); phone.fill.fore_color.rgb = WHITE
+        phone.line.color.rgb = RGBColor(0x33, 0x33, 0x33); phone.line.width = Pt(2)
 
-        if i < len(roles) - 1:
-            arr = s.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, Inches(rx + 1.08), Inches(6.55), Inches(0.12), Inches(0.1))
-            arr.fill.solid(); arr.fill.fore_color.rgb = MED_GRAY; arr.line.fill.background()
+        # Try to add image
+        full_path = os.path.join(base_dir, img_path)
+        if os.path.exists(full_path):
+            try:
+                pic = s.shapes.add_picture(full_path, Inches(px + 0.05), Inches(5.98), Inches(1.2), Inches(1.0))
+            except:
+                pass
+        else:
+            # Placeholder
+            tb = s.shapes.add_textbox(Inches(px + 0.1), Inches(6.2), Inches(1.1), Inches(0.5))
+            tf = tb.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+            r = p.add_run(); r.text = label; r.font.size = Pt(8); r.font.color.rgb = MED_GRAY
+
+    # ── Bottom Right: Features list ──
+    add_heading(s, 6.8, 5.6, 3, "Key Features:", 13)
+    feats = [
+        "22 Indian Languages",
+        "6-Section AI Response",
+        "Hallucination-Free RAG",
+        "Live Auto-Fetch",
+        "BIS Office Finder",
+        "Certification Guide",
+        "Multi-User Auth (JWT)",
+        "Dark/Light Mode",
+    ]
+    tb = s.shapes.add_textbox(Inches(6.8), Inches(5.95), Inches(4.0), Inches(1.2))
+    tf = tb.text_frame; tf.word_wrap = True
+    for i, feat in enumerate(feats):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.space_after = Pt(2)
+        r = p.add_run(); r.text = "> "; r.font.size = Pt(9); r.font.color.rgb = ORANGE; r.font.bold = True
+        r2 = p.add_run(); r2.text = feat; r2.font.size = Pt(9); r2.font.bold = True; r2.font.color.rgb = NAVY
 
 
 # ══════════════════════════════════════════════
@@ -616,7 +648,7 @@ def main():
     print("Creating Slide 6: Thank You...")
     slide_thankyou(prs)
 
-    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v2.pptx")
+    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v3.pptx")
     prs.save(output_path)
     print(f"\nPresentation saved: {output_path}")
     print("6 slides, widescreen 16:9 format")
