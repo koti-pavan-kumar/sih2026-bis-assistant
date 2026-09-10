@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1.0">
+<title>ManakMitra - Problems & Solutions | SIH 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    width: 1440px;
+    height: 810px;
+    font-family: 'Segoe UI', 'Calibri', sans-serif;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .slide {
+    width: 1440px;
+    height: 810px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER BAR ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 50px 10px 50px;
+    border-bottom: 3px solid #1a3a6e;
+  }
+
+  .team-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a3a6e;
+    border: 2.5px solid #1a3a6e;
+    border-radius: 30px;
+    padding: 8px 22px;
+    letter-spacing: 1px;
+  }
+
+  .project-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a3a6e;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .sih-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a3a6e;
+  }
+
+  .sih-logo .sih-icon {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, #ff6b35, #1a3a6e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .sih-logo .sih-text {
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  .sih-logo .sih-text .smart { font-size: 13px; color: #ff6b35; }
+  .sih-logo .sih-text .hack { font-size: 15px; color: #1a3a6e; }
+  .sih-logo .sih-text .year { font-size: 14px; color: #1a3a6e; }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    flex: 1;
+    display: flex;
+    padding: 20px 50px 10px 50px;
+    gap: 30px;
+  }
+
+  /* ── LEFT COLUMN (60%) ── */
+  .left-col {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .section-heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1a3a6e;
+    margin-bottom: 2px;
+  }
+
+  .solution-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .solution-list li {
+    font-size: 14.5px;
+    color: #333;
+    line-height: 1.45;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .solution-list li::before {
+    content: '●';
+    position: absolute;
+    left: 0;
+    color: #ff6b35;
+    font-size: 10px;
+    top: 3px;
+  }
+
+  .solution-list li b {
+    color: #1a3a6e;
+    font-weight: 700;
+  }
+
+  .solution-list li em {
+    color: #c0392b;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .solution-list li .highlight {
+    color: #1a3a6e;
+    font-weight: 700;
+  }
+
+  .solution-list li .problem {
+    color: #666;
+  }
+
+  .solution-list li .arrow {
+    color: #ff6b35;
+    font-weight: 700;
+    margin: 0 3px;
+  }
+
+  /* ── RIGHT COLUMN (45%) — Architecture Diagram ── */
+  .right-col {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+
+  .arch-diagram {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Diagram boxes */
+  .box {
+    position: absolute;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 8px;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .box-user { background: #e8f5e9; border: 2px solid #4caf50; color: #2e7d32; width: 100px; height: 34px; top: 0; left: 50%; transform: translateX(-50%); }
+  .box-lang { background: #e3f2fd; border: 2px solid #2196f3; color: #1565c0; width: 110px; height: 34px; top: 50px; left: 50%; transform: translateX(-50%); }
+  .box-rag { background: #1a3a6e; color: white; border: 2px solid #0d2140; width: 130px; height: 38px; top: 105px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 800; }
+  .box-embed { background: #f3e5f5; border: 2px solid #9c27b0; color: #6a1b9a; width: 115px; height: 32px; top: 160px; left: 12%; }
+  .box-faiss { background: #fce4ec; border: 2px solid #e91e63; color: #ad1457; width: 115px; height: 32px; top: 160px; right: 12%; }
+  .box-gemini { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; width: 125px; height: 34px; top: 210px; left: 50%; transform: translateX(-50%); }
+
+  .box-standards { background: #e8eaf6; border: 2px solid #3f51b5; color: #283593; width: 105px; height: 30px; top: 260px; left: 3%; font-size: 10px; }
+  .box-offices { background: #e0f2f1; border: 2px solid #009688; color: #00695c; width: 105px; height: 30px; top: 260px; left: 28%; font-size: 10px; }
+  .box-certs { background: #fff8e1; border: 2px solid #ffc107; color: #f57f17; width: 105px; height: 30px; top: 260px; right: 28%; font-size: 10px; }
+  .box-autofetch { background: #fbe9e7; border: 2px solid #ff5722; color: #bf360c; width: 105px; height: 30px; top: 260px; right: 3%; font-size: 10px; }
+
+  .box-response { background: #e8f5e9; border: 2.5px solid #4caf50; color: #1b5e20; width: 200px; height: 34px; top: 310px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; }
+
+  .box-dashboards { background: #ede7f6; border: 2px solid #673ab7; color: #4527a0; width: 360px; height: 30px; top: 362px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 1px; }
+
+  /* Arrows (using CSS borders) */
+  .arrow-down {
+    position: absolute;
+    width: 2px;
+    background: #999;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: -4px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #999;
+  }
+
+  .a1 { top: 34px; height: 16px; }
+  .a2 { top: 84px; height: 21px; }
+  .a3 { top: 143px; height: 17px; }
+  .a4 { top: 192px; height: 18px; }
+  .a5 { top: 244px; height: 16px; }
+  .a6 { top: 290px; height: 20px; }
+  .a7 { top: 344px; height: 18px; }
+
+  /* Branch arrows */
+  .branch-left {
+    position: absolute;
+    top: 186px;
+    left: 22%;
+    width: 60px;
+    height: 2px;
+    background: #999;
+  }
+  .branch-right {
+    position: absolute;
+    top: 186px;
+    right: 22%;
+    width: 60px;
+    height: 2px;
+    background: #999;
+  }
+
+  .branch-down-left {
+    position: absolute;
+    top: 186px;
+    left: 22%;
+    width: 2px;
+    height: 30px;
+    background: #999;
+  }
+  .branch-down-right {
+    position: absolute;
+    top: 186px;
+    right: 22%;
+    width: 2px;
+    height: 30px;
+    background: #999;
+  }
+
+  /* ── BOTTOM SECTION ── */
+  .bottom {
+    display: flex;
+    padding: 10px 50px 18px 50px;
+    gap: 40px;
+    border-top: 2px solid #e0e0e0;
+  }
+
+  .bottom-left {
+    width: 35%;
+  }
+
+  .bottom-center {
+    width: 65%;
+  }
+
+  /* Venn Diagram */
+  .venn-container {
+    position: relative;
+    width: 260px;
+    height: 170px;
+  }
+
+  .venn-circle {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    color: #333;
+  }
+
+  .venn-top { background: rgba(33, 150, 243, 0.25); border: 2px solid #2196f3; top: 0; left: 60px; }
+  .venn-left { background: rgba(76, 175, 80, 0.25); border: 2px solid #4caf50; top: 45px; left: 10px; }
+  .venn-right { background: rgba(255, 152, 0, 0.25); border: 2px solid #ff9800; top: 45px; right: 10px; }
+  .venn-center {
+    background: rgba(26, 58, 110, 0.35);
+    border: 2.5px solid #1a3a6e;
+    width: 70px;
+    height: 70px;
+    top: 55px;
+    left: 95px;
+    font-size: 8.5px;
+    color: #1a3a6e;
+    font-weight: 800;
+  }
+
+  .venn-label {
+    position: absolute;
+    font-size: 8.5px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .label-top { top: -2px; left: 95px; }
+  .label-left { top: 100px; left: -5px; }
+  .label-right { top: 100px; right: -5px; }
+  .label-bottom { bottom: 0px; left: 75px; }
+
+  /* Innovation bullets */
+  .innovation-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .innovation-list li {
+    font-size: 13.5px;
+    color: #333;
+    line-height: 1.4;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .innovation-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #ff6b35;
+    font-weight: 700;
+  }
+
+  .innovation-list li b {
+    color: #1a3a6e;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 50px;
+    background: #f5f5f5;
+    font-size: 12px;
+    color: #999;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="team-logo">Resonant</div>
+    <div class="project-title">ManakMitra</div>
+    <div class="sih-logo">
+      <div class="sih-text">
+        <div class="smart">SMART INDIA</div>
+        <div class="hack">HACKATHON</div>
+        <div class="year">2026</div>
+      </div>
+      <div class="sih-icon">SIH</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="content">
+
+    <!-- LEFT: Proposed Solution -->
+    <div class="left-col">
+      <div class="section-heading">Proposed Solution:</div>
+      <ul class="solution-list">
+        <li><b>Complex BIS Standards</b> — Standards are technical and hard to understand <span class="arrow">→</span> <b>AI-based Simplification</b> explains technical requirements in <em>simple language</em>.</li>
+        <li><b>Scattered Information</b> — BIS data spread across different sources <span class="arrow">→</span> <b>Unified Platform</b> brings standards, certification &amp; lab info together.</li>
+        <li><b>Changing Standards</b> — Requirements can be revised or updated <span class="arrow">→</span> <b>Live Source Pipeline</b> pulls info from official BIS sources automatically.</li>
+        <li><b>Finding Testing Labs</b> — Users may struggle to find suitable BIS labs <span class="arrow">→</span> <b>Lab Directory</b> with <em>location-based finder</em> &amp; Google Maps directions.</li>
+        <li><b>Complex Certification Process</b> — Users may not know the steps required <span class="arrow">→</span> <b>Step-by-Step Guidance</b> for ISI Mark, Hallmark &amp; Eco Mark.</li>
+        <li><b>AI Hallucinations</b> — AI may generate <em>incorrect regulatory information</em> <span class="arrow">→</span> <b>Source-Grounded RAG</b> bases responses on <em>verified BIS documents</em>.</li>
+        <li><b>Language Barrier</b> — BIS info mostly in English only <span class="arrow">→</span> <b>22 Indian Languages</b> with real-time <em>auto-detect &amp; translation</em> pipeline.</li>
+        <li><b>Different User Needs</b> — MSMEs, manufacturers &amp; individuals differ <span class="arrow">→</span> <b>Context-Aware Assistance</b> tailors guidance per user product.</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: Architecture Diagram -->
+    <div class="right-col">
+      <div class="arch-diagram">
+        <!-- User -->
+        <div class="box box-user">👤 User Query</div>
+        <div class="arrow-down a1"></div>
+        
+        <!-- Language Pipeline -->
+        <div class="box box-lang">🌐 Auto-Detect → Translate (22 Languages)</div>
+        <div class="arrow-down a2"></div>
+        
+        <!-- RAG Engine -->
+        <div class="box box-rag">⚡ RAG Engine (ONNX + FAISS)</div>
+        <div class="arrow-down a3"></div>
+        
+        <!-- Embeddings + Vector Store -->
+        <div class="box box-embed">🧠 ONNX Embeddings<br><span style="font-size:9px;">all-MiniLM-L6-v2</span></div>
+        <div class="box box-faiss">📊 FAISS Vector Store<br><span style="font-size:9px;">28 Standards Indexed</span></div>
+        <div class="arrow-down a4"></div>
+        
+        <!-- Gemini -->
+        <div class="box box-gemini">🤖 Gemini 3.6 Flash (LLM)</div>
+        <div class="arrow-down a5"></div>
+        
+        <!-- Enrichment Sources -->
+        <div class="box box-standards">📚 BIS Standards<br><span style="font-size:9px;">28 IS Codes</span></div>
+        <div class="box box-offices">📍 25+ BIS Offices<br><span style="font-size:9px;">Geolocation</span></div>
+        <div class="box box-certs">📋 Certifications<br><span style="font-size:9px;">ISI, Hallmark, Eco</span></div>
+        <div class="box box-autofetch">🔄 Auto-Fetch<br><span style="font-size:9px;">Live BIS Pipeline</span></div>
+        <div class="arrow-down a6"></div>
+        
+        <!-- Response -->
+        <div class="box box-response">✅ 6-Section Structured Response</div>
+        <div class="arrow-down a7"></div>
+        
+        <!-- Dashboards -->
+        <div class="box box-dashboards">💬 Chat &nbsp;|&nbsp; 📚 Standards Library &nbsp;|&nbsp; 🏢 Testing Centres &nbsp;|&nbsp; 📋 Certifications</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM ── -->
+  <div class="bottom">
+
+    <!-- Venn Diagram -->
+    <div class="bottom-left">
+      <div class="section-heading" style="font-size: 15px; margin-bottom: 8px;">How it addresses the problem:</div>
+      <div class="venn-container">
+        <div class="venn-circle venn-top">
+          <span style="margin-top: 30px;">SIMPLIFY<br>COMPLEX<br>STANDARDS</span>
+        </div>
+        <div class="venn-circle venn-left">
+          <span style="margin-top: 20px; margin-left: 15px;">UNIFIED<br>COMPLIANCE<br>PLATFORM</span>
+        </div>
+        <div class="venn-circle venn-right">
+          <span style="margin-top: 20px; margin-right: 15px;">MULTILINGUAL<br>AI ASSISTANCE<br>(22 Languages)</span>
+        </div>
+        <div class="venn-circle venn-center">
+          MANAK<br>MITRA
+        </div>
+        <div class="venn-label label-top">AI + RAG</div>
+        <div class="venn-label label-left">Standards</div>
+        <div class="venn-label label-right">Accessibility</div>
+        <div class="venn-label label-bottom">Certification + Testing</div>
+      </div>
+    </div>
+
+    <!-- Innovation -->
+    <div class="bottom-center">
+      <div class="section-heading" style="font-size: 15px; margin-bottom: 6px;">Innovation and Uniqueness:</div>
+      <ul class="innovation-list">
+        <li><b>Source-Grounded RAG Architecture</b> — ONNX embeddings + FAISS vector store ensures responses are <b>hallucination-free</b> and cite official BIS document sections.</li>
+        <li><b>Live BIS Information Pipeline</b> — Auto-fetches and indexes new standards from bis.gov.in, keeping the knowledge base <b>always up-to-date</b>.</li>
+        <li><b>22 Indian Languages</b> — Real-time auto-detect → translate → RAG → translate-back pipeline. <b>Telugu, Hindi, Tamil, Bengali</b> and more.</li>
+        <li><b>6-Section Structured Responses</b> — Every answer includes standards, testing, locations, legal basis, QC process, and documents — not just plain text.</li>
+        <li><b>Unified Compliance Ecosystem</b> — Brings standards, certification guidance, laboratory finder, and AI assistance into a <b>single platform</b>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <span>@SIH Idea submission</span>
+    <span>2</span>
+  </div>
+
+</div>
+</body>
+</html>

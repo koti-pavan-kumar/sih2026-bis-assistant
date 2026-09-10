@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1.0">
+<title>ManakMitra - Title Slide | SIH 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px; height: 810px;
+    font-family: 'Segoe UI', 'Calibri', sans-serif;
+    background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 40%, #2c5282 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+      radial-gradient(circle at 15% 25%, rgba(255,107,53,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255,107,53,0.1) 0%, transparent 40%);
+  }
+
+  .content { position: relative; z-index: 1; text-align: center; }
+
+  .team-badge {
+    display: inline-block;
+    border: 2.5px solid rgba(255,255,255,0.6);
+    border-radius: 30px;
+    padding: 10px 30px;
+    color: rgba(255,255,255,0.85);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 40px;
+  }
+
+  .title {
+    font-size: 64px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
+  }
+
+  .title-accent {
+    color: #ff6b35;
+  }
+
+  .subtitle {
+    font-size: 24px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 400;
+    margin-bottom: 50px;
+    max-width: 700px;
+    line-height: 1.5;
+  }
+
+  .tagline {
+    font-size: 18px;
+    color: #ff6b35;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 36px;
+    font-weight: 800;
+    color: #ff6b35;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .sih-badge {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sih-text {
+    text-align: right;
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .sih-text strong { color: white; font-size: 15px; }
+
+  .sih-icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #ff6b35, #ff8a50);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .divider {
+    width: 100px;
+    height: 3px;
+    background: #ff6b35;
+    margin: 0 auto 30px auto;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+
+<div class="sih-badge">
+  <div class="sih-text">
+    <div><strong>SMART INDIA</strong></div>
+    <div><strong>HACKATHON 2026</strong></div>
+  </div>
+  <div class="sih-icon">SIH</div>
+</div>
+
+<div class="content">
+  <div class="team-badge">RESONANT</div>
+  <div class="title">MANAK<span class="title-accent">MITRA</span></div>
+  <div class="divider"></div>
+  <div class="subtitle">AI-Powered BIS Standards Compliance Assistant for Indian MSMEs and Manufacturers</div>
+  <div class="tagline">Your Guide to Bureau of Indian Standards</div>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">28</div>
+      <div class="stat-label">IS Standards</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">22</div>
+      <div class="stat-label">Languages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">25+</div>
+      <div class="stat-label">BIS Offices</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Certifications</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

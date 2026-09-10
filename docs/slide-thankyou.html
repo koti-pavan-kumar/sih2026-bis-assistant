@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1.0">
+<title>ManakMitra - Thank You | SIH 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px; height: 810px;
+    font-family: 'Segoe UI', 'Calibri', sans-serif;
+    background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 40%, #2c5282 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(255,107,53,0.12) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(255,107,53,0.08) 0%, transparent 40%);
+  }
+
+  .content { position: relative; z-index: 1; text-align: center; }
+
+  .thankyou {
+    font-size: 56px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+
+  .accent { color: #ff6b35; }
+
+  .divider {
+    width: 100px; height: 3px;
+    background: #ff6b35;
+    margin: 15px auto 25px auto;
+    border-radius: 2px;
+  }
+
+  .tagline {
+    font-size: 20px;
+    color: rgba(255,255,255,0.8);
+    font-weight: 400;
+    margin-bottom: 40px;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+
+  .team-info {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .team-member {
+    text-align: center;
+  }
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 8px auto;
+  }
+
+  .team-member .name { color: white; font-size: 16px; font-weight: 700; }
+  .team-member .role { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 2px; }
+
+  .cta-box {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 16px 30px;
+    margin-bottom: 30px;
+  }
+
+  .cta-box p { color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 6px; }
+  .cta-box .url { color: #ff6b35; font-size: 18px; font-weight: 700; }
+
+  .links {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+  }
+
+  .links a {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    transition: all 0.3s;
+  }
+
+  .links a:hover {
+    color: white;
+    border-color: #ff6b35;
+  }
+
+  .sih-badge {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sih-text { text-align: right; color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.4; }
+  .sih-text strong { color: white; font-size: 15px; }
+  .sih-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b35, #ff8a50); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 800; }
+
+  .footer {
+    position: absolute;
+    bottom: 15px;
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+
+<div class="sih-badge">
+  <div class="sih-text">
+    <div><strong>SMART INDIA</strong></div>
+    <div><strong>HACKATHON 2026</strong></div>
+  </div>
+  <div class="sih-icon">SIH</div>
+</div>
+
+<div class="content">
+  <div class="thankyou">THANK <span class="accent">YOU</span></div>
+  <div class="divider"></div>
+  <div class="tagline">ManakMitra — Making BIS Standards Accessible to Every Indian Manufacturer</div>
+
+  <div class="team-info">
+    <div class="team-member">
+      <div class="avatar">👨‍💻</div>
+      <div class="name">Pavan Kumar</div>
+      <div class="role">Team Lead / Full Stack</div>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <p>Try ManakMitra live at</p>
+    <div class="url">manakmitra-frontend.vercel.app</div>
+  </div>
+
+  <div class="links">
+    <a href="#">GitHub: koti-pavan-kumar</a>
+    <a href="#">Backend API</a>
+    <a href="#">Documentation</a>
+  </div>
+</div>
+
+<div class="footer">@SIH Idea submission — Team Resonant</div>
+
+</body>
+</html>
