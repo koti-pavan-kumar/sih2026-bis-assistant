@@ -573,7 +573,132 @@ def slide_impact(prs):
 
 
 # ══════════════════════════════════════════════
-#  SLIDE 6: THANK YOU
+#  SLIDE 6: FEASIBILITY & VIABILITY
+# ══════════════════════════════════════════════
+def slide_feasibility(prs):
+    s = prs.slides.add_slide(prs.slide_layouts[6])
+    add_header(s); add_footer(s, 5)
+
+    # Title
+    add_heading(s, 3.5, 1.0, 6, "FEASIBILITY AND VIABILITY", 22)
+
+    # ── LEFT: Feasibility bullets ──
+    add_heading(s, 0.5, 1.55, 4, "Feasibility", 18, RGBColor(0x15, 0x65, 0xc0))
+
+    feas_items = [
+        ("Technical:", " Proven tech stack - React, FastAPI, ONNX, FAISS, Gemini API. Quick to build and deploy MVP."),
+        ("Data:", " BIS standards publicly available on bis.gov.in. 28 standards indexed, expandable to 28,000+."),
+        ("Economic:", " Open-source tools, free cloud tiers (Render + Vercel), zero upfront cost."),
+        ("Multilingual:", " deep-translator supports 22 Indian languages. Auto-detect, translate, process, translate back."),
+        ("User-Friendly:", " ChatGPT-like interface - no training needed. MSMEs can ask in their own language."),
+        ("Scalability:", " Modular RAG architecture. Adding new standards = adding new PDF files. No code changes."),
+    ]
+
+    tb = s.shapes.add_textbox(Inches(0.5), Inches(1.95), Inches(5.8), Inches(2.8))
+    tf = tb.text_frame; tf.word_wrap = True
+    for i, (bp, np) in enumerate(feas_items):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.space_after = Pt(5)
+        r = p.add_run(); r.text = "> "; r.font.size = Pt(11); r.font.color.rgb = ORANGE; r.font.bold = True
+        r2 = p.add_run(); r2.text = bp; r2.font.size = Pt(12); r2.font.bold = True; r2.font.color.rgb = NAVY
+        r3 = p.add_run(); r3.text = np; r3.font.size = Pt(12); r3.font.color.rgb = DARK_TEXT
+
+    # Divider
+    div_h = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.5), Inches(4.8), Inches(5.8), Inches(0.02))
+    div_h.fill.solid(); div_h.fill.fore_color.rgb = RGBColor(0xe0, 0xe0, 0xe0); div_h.line.fill.background()
+
+    # ── LEFT: Viability bullets ──
+    add_heading(s, 0.5, 4.9, 4, "Viability", 18, RGBColor(0x2e, 0x7d, 0x32))
+
+    via_items = [
+        ("Market Demand:", " 63M+ MSMEs in India struggle with BIS compliance. No free AI tool exists for this."),
+        ("Adoption:", " WhatsApp-like chat interface - familiar to Indian users. No app download needed (web-based)."),
+        ("Sustainability:", " Freemium model - free for individuals, paid plans for MSMEs and enterprises."),
+        ("Trust:", " Source-grounded RAG ensures responses cite official BIS documents. No hallucinations."),
+        ("Government Alignment:", " Supports BIS Act 2016 compliance goals. Can integrate with MSME Samadhaan scheme."),
+        ("Partnerships:", " Potential BIS official data provider status. Revenue share on certified leads."),
+    ]
+
+    tb = s.shapes.add_textbox(Inches(0.5), Inches(5.3), Inches(5.8), Inches(1.8))
+    tf = tb.text_frame; tf.word_wrap = True
+    for i, (bp, np) in enumerate(via_items):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.space_after = Pt(5)
+        r = p.add_run(); r.text = "> "; r.font.size = Pt(11); r.font.color.rgb = ORANGE; r.font.bold = True
+        r2 = p.add_run(); r2.text = bp; r2.font.size = Pt(12); r2.font.bold = True; r2.font.color.rgb = NAVY
+        r3 = p.add_run(); r3.text = np; r3.font.size = Pt(12); r3.font.color.rgb = DARK_TEXT
+
+    # Vertical divider
+    div_v = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.5), Inches(1.5), Inches(0.03), Inches(5.5))
+    div_v.fill.solid(); div_v.fill.fore_color.rgb = RGBColor(0xe0, 0xe0, 0xe0); div_v.line.fill.background()
+
+    # ── RIGHT: Use Cases ──
+    uc_box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.8), Inches(1.5), Inches(6.0), Inches(2.8))
+    uc_box.fill.background(); uc_box.line.color.rgb = NAVY; uc_box.line.width = Pt(2)
+
+    add_heading(s, 8.0, 1.6, 4, "Use Cases", 18)
+
+    use_cases = [
+        ("MSME Owner", "Quick standards check\nCertification guidance", "🏭"),
+        ("Manufacturer", "Test requirements\nLab locations", "🔬"),
+        ("Quality Manager", "Standards updates\nCompliance tracking", "👩\u200d💼"),
+        ("Government", "BIS compliance awareness\nPolicy-aligned guidance", "🏛️"),
+        ("Testing Labs", "Reference standards\nClient guidance", "🧪"),
+    ]
+
+    for i, (name, desc, icon) in enumerate(use_cases):
+        ux = 6.9 + i * 1.18
+        # Icon circle
+        ic = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(ux + 0.15), Inches(2.1), Inches(0.6), Inches(0.6))
+        ic.fill.solid(); ic.fill.fore_color.rgb = BLUE_LIGHT; ic.line.color.rgb = SEC_BLUE; ic.line.width = Pt(1)
+        tf = ic.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = icon; r.font.size = Pt(16)
+
+        # Name
+        nb = s.shapes.add_textbox(Inches(ux), Inches(2.75), Inches(0.9), Inches(0.3))
+        tf = nb.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = name; r.font.size = Pt(8); r.font.bold = True; r.font.color.rgb = NAVY
+
+        # Desc
+        db = s.shapes.add_textbox(Inches(ux), Inches(3.0), Inches(0.9), Inches(0.6))
+        tf = db.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = desc; r.font.size = Pt(7); r.font.color.rgb = DARK_TEXT
+
+    # ── RIGHT: Challenges ──
+    ch_box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.8), Inches(4.5), Inches(6.0), Inches(2.5))
+    ch_box.fill.background(); ch_box.line.color.rgb = RGBColor(0xe0, 0xe0, 0xe0); ch_box.line.width = Pt(2)
+
+    add_heading(s, 8.0, 4.6, 4, "Challenges & Mitigations", 16)
+
+    challenges = [
+        ("Data Security", "🔒", "JWT auth + bcrypt\nNo PII stored server-side"),
+        ("User Adoption", "📈", "WhatsApp-like UI\nNo training needed"),
+        ("Scalability", "🌐", "Modular RAG design\nAdd standards = add PDFs"),
+        ("Language Accuracy", "🗣️", "Auto-detect + translate\n22 Indian languages"),
+        ("Data Freshness", "🔄", "Live auto-fetch pipeline\nScrapes bis.gov.in"),
+    ]
+
+    for i, (name, icon, mitigation) in enumerate(challenges):
+        cx = 6.9 + i * 1.18
+        # Icon
+        ic = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx + 0.15), Inches(5.1), Inches(0.5), Inches(0.5))
+        ic.fill.solid(); ic.fill.fore_color.rgb = PURPLE_LIGHT; ic.line.color.rgb = SEC_PURPLE; ic.line.width = Pt(1)
+        tf = ic.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = icon; r.font.size = Pt(14)
+
+        # Name
+        nb = s.shapes.add_textbox(Inches(cx), Inches(5.65), Inches(0.9), Inches(0.3))
+        tf = nb.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = name; r.font.size = Pt(8); r.font.bold = True; r.font.color.rgb = NAVY
+
+        # Mitigation
+        mb = s.shapes.add_textbox(Inches(cx), Inches(5.9), Inches(0.9), Inches(0.6))
+        tf = mb.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = mitigation; r.font.size = Pt(7); r.font.color.rgb = DARK_TEXT
+
+
+# ══════════════════════════════════════════════
+#  SLIDE 7: THANK YOU
 # ══════════════════════════════════════════════
 def slide_thankyou(prs):
     s = prs.slides.add_slide(prs.slide_layouts[6])
@@ -643,15 +768,17 @@ def main():
     slide_technical(prs)
     print("Creating Slide 4: Demo...")
     slide_demo(prs)
-    print("Creating Slide 5: Impact...")
+    print("Creating Slide 5: Feasibility & Viability...")
+    slide_feasibility(prs)
+    print("Creating Slide 6: Impact...")
     slide_impact(prs)
-    print("Creating Slide 6: Thank You...")
+    print("Creating Slide 7: Thank You...")
     slide_thankyou(prs)
 
-    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v3.pptx")
+    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v4.pptx")
     prs.save(output_path)
     print(f"\nPresentation saved: {output_path}")
-    print("6 slides, widescreen 16:9 format")
+    print("7 slides, widescreen 16:9 format")
     print("Open in PowerPoint or Google Slides")
 
 
