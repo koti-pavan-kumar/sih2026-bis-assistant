@@ -518,58 +518,144 @@ def slide_demo(prs):
 # ══════════════════════════════════════════════
 def slide_impact(prs):
     s = prs.slides.add_slide(prs.slide_layouts[6])
-    add_header(s); add_footer(s, 5)
-    add_heading(s, 0.4, 1.1, 6, "Impact & Target Users", 16)
+    add_header(s); add_footer(s, 6)
 
-    metrics = [("63M+", "MSMEs in India"), ("28K+", "BIS Standards"), ("2.5L Cr", "Compliance Market")]
-    for i, (num, label) in enumerate(metrics):
-        mx = 0.4 + i * 2.1
-        mc = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(mx), Inches(1.55), Inches(1.9), Inches(0.9))
-        mc.fill.solid(); mc.fill.fore_color.rgb = NAVY; mc.line.fill.background()
-        tf = mc.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-        r = p.add_run(); r.text = num; r.font.size = Pt(24); r.font.bold = True; r.font.color.rgb = ORANGE
-        p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER
-        r2 = p2.add_run(); r2.text = label; r2.font.size = Pt(9); r2.font.color.rgb = RGBColor(0xcc, 0xcc, 0xcc)
+    add_heading(s, 3.5, 1.0, 6, "IMPACT AND BENEFITS", 22)
 
-    add_heading(s, 0.4, 2.6, 4, "Who Benefits?", 13)
-    users = [("MSMEs & Manufacturers", "Quick standards + cert answers"), ("Construction Companies", "Steel, cement compliance"),
-             ("Testing Labs", "Reference standards"), ("Quality Managers", "Stay updated via auto-fetch")]
-    for i, (ut, ud) in enumerate(users):
-        col, row = i % 2, i // 2
-        ux, uy = 0.4 + col * 3.0, 2.95 + row * 0.9
-        uc = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(ux), Inches(uy), Inches(2.8), Inches(0.75))
-        uc.fill.solid(); uc.fill.fore_color.rgb = WHITE; uc.line.color.rgb = RGBColor(0xe0, 0xe0, 0xe0); uc.line.width = Pt(1)
-        tb = s.shapes.add_textbox(Inches(ux + 0.15), Inches(uy + 0.1), Inches(2.5), Inches(0.55))
-        tf = tb.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]
-        r = p.add_run(); r.text = ut; r.font.size = Pt(10); r.font.bold = True; r.font.color.rgb = NAVY
-        p2 = tf.add_paragraph(); r2 = p2.add_run(); r2.text = ud; r2.font.size = Pt(9); r2.font.color.rgb = DARK_TEXT
+    # ── LEFT: Radar Chart ──
+    add_heading(s, 0.5, 1.55, 5, "Potential impact on the target audience:", 16)
 
-    add_heading(s, 7.0, 1.1, 6, "Development Roadmap", 16)
-    rm_data = [("DONE", "MVP - 28 standards, 22 languages, RAG, auth", SEC_GREEN),
-               ("NOW", "Scale - All 28,000+ standards, PDF viewer, WhatsApp bot", SEC_AMBER),
-               ("FUTURE", "Production - PostgreSQL, mobile app, voice, BIS integration", MED_GRAY)]
-    for i, (phase, desc, color) in enumerate(rm_data):
-        ry = 1.55 + i * 0.8
-        badge = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.0), Inches(ry), Inches(0.9), Inches(0.3))
-        badge.fill.solid(); badge.fill.fore_color.rgb = color; badge.line.fill.background()
-        tf = badge.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-        r = p.add_run(); r.text = phase; r.font.size = Pt(8); r.font.bold = True; r.font.color.rgb = WHITE
-        tb = s.shapes.add_textbox(Inches(8.0), Inches(ry), Inches(4.8), Inches(0.6))
-        tf = tb.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]
-        r = p.add_run(); r.text = desc; r.font.size = Pt(10); r.font.color.rgb = DARK_TEXT
+    radar_box = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.5), Inches(1.95), Inches(5.8), Inches(4.8))
+    radar_box.fill.background(); radar_box.line.color.rgb = NAVY; radar_box.line.width = Pt(2)
 
-    add_heading(s, 0.4, 5.0, 6, "Business Model", 13)
-    biz = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.4), Inches(5.35), Inches(12.4), Inches(1.6))
-    biz.fill.solid(); biz.fill.fore_color.rgb = LIGHT_GRAY; biz.line.color.rgb = NAVY; biz.line.width = Pt(1)
-    tf = biz.text_frame; tf.word_wrap = True; tf.margin_left = Pt(10); tf.margin_top = Pt(6)
-    biz_items = [("Free Tier:", " 10 queries/day for individuals"), ("MSME (Rs.499/mo):", " Unlimited + compliance calendar"),
-                 ("Enterprise (Rs.4,999/mo):", " API + bulk check + support"), ("BIS Partnership:", " Official data provider"),
-                 ("Govt Grant:", " MSME Samadhaan scheme")]
-    for i, (bp, np) in enumerate(biz_items):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph(); p.space_after = Pt(2)
-        r = p.add_run(); r.text = "> "; r.font.size = Pt(10); r.font.color.rgb = ORANGE
-        r2 = p.add_run(); r2.text = bp; r2.font.size = Pt(10); r2.font.bold = True; r2.font.color.rgb = NAVY
-        r3 = p.add_run(); r3.text = np; r3.font.size = Pt(10); r3.font.color.rgb = DARK_TEXT
+    # Radar title
+    rt = s.shapes.add_textbox(Inches(1.5), Inches(2.1), Inches(3.8), Inches(0.35))
+    tf = rt.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+    r = p.add_run(); r.text = "Potential impact from our MVP implementation."; r.font.size = Pt(11); r.font.bold = True; r.font.color.rgb = NAVY
+
+    # Legend
+    lg = s.shapes.add_textbox(Inches(1.2), Inches(2.45), Inches(4.4), Inches(0.3))
+    tf = lg.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+    for label, color in [("Current State  ", RGBColor(0xef, 0x53, 0x50)), ("Target Goal  ", RGBColor(0x9c, 0xcc, 0x65)), ("Projected MVP Impact", RGBColor(0x42, 0xa5, 0xf5))]:
+        r = p.add_run(); r.text = "  "; r.font.size = Pt(8)
+        r2 = p.add_run(); r2.text = label; r2.font.size = Pt(9); r2.font.color.rgb = DARK_TEXT
+
+    # Radar using shapes (simplified visual representation)
+    # Pentagon outline
+    pentagon = s.shapes.add_shape(MSO_SHAPE.HEXAGON, Inches(1.8), Inches(2.9), Inches(3.2), Inches(3.2))
+    pentagon.fill.solid(); pentagon.fill.fore_color.rgb = RGBColor(0xf5, 0xf5, 0xf5)
+    pentagon.line.color.rgb = RGBColor(0xe0, 0xe0, 0xe0); pentagon.line.width = Pt(1)
+    pentagon.rotation = 90
+
+    # Inner pentagons for grid
+    for size, opacity in [(2.6, 0.7), (2.0, 0.5), (1.4, 0.3), (0.8, 0.1)]:
+        inner = s.shapes.add_shape(MSO_SHAPE.HEXAGON, Inches(1.8 + (3.2-size)/2), Inches(2.9 + (3.2-size)/2), Inches(size), Inches(size))
+        inner.fill.solid(); inner.fill.fore_color.rgb = WHITE
+        inner.line.color.rgb = RGBColor(0xe0, 0xe0, 0xe0); inner.line.width = Pt(0.5)
+        inner.rotation = 90
+
+    # Axis labels around radar
+    radar_labels = [
+        (2.9, 2.85, "Compliance Time\nReduction"),
+        (5.1, 3.8, "Understanding\nImprovement"),
+        (4.8, 5.8, "Accessibility\nIncrease"),
+        (1.3, 5.8, "Cost Savings\nfor MSMEs"),
+        (1.0, 3.8, "Accuracy\nImprovement"),
+    ]
+    for lx, ly, lt in radar_labels:
+        tb = s.shapes.add_textbox(Inches(lx), Inches(ly), Inches(1.2), Inches(0.5))
+        tf = tb.text_frame; tf.word_wrap = True; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+        r = p.add_run(); r.text = lt; r.font.size = Pt(8); r.font.bold = True; r.font.color.rgb = NAVY
+
+    # Score indicators (simplified bar representation)
+    scores_data = [
+        ("Compliance Time", 3, 9, 7),
+        ("Understanding", 2, 9, 8),
+        ("Accessibility", 3, 8, 7),
+        ("Cost Savings", 2, 8, 6),
+        ("Accuracy", 3, 9, 7),
+    ]
+
+    for i, (label, current, target, projected) in enumerate(scores_data):
+        sy = 3.1 + i * 0.45
+        # Label
+        tb = s.shapes.add_textbox(Inches(0.7), Inches(sy), Inches(1.3), Inches(0.35))
+        tf = tb.text_frame; p = tf.paragraphs[0]
+        r = p.add_run(); r.text = label; r.font.size = Pt(7); r.font.color.rgb = DARK_TEXT
+
+        # Current bar (red)
+        bar_w = current * 0.12
+        bar = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(2.1), Inches(sy + 0.05), Inches(bar_w), Inches(0.15))
+        bar.fill.solid(); bar.fill.fore_color.rgb = RGBColor(0xef, 0x53, 0x50); bar.line.fill.background()
+
+        # Target bar (green)
+        bar_w2 = target * 0.12
+        bar2 = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(2.1), Inches(sy + 0.22), Inches(bar_w2), Inches(0.15))
+        bar2.fill.solid(); bar2.fill.fore_color.rgb = RGBColor(0x9c, 0xcc, 0x65); bar2.line.fill.background()
+
+        # Projected bar (blue)
+        bar_w3 = projected * 0.12
+        bar3 = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(2.1), Inches(sy + 0.39), Inches(bar_w3), Inches(0.15))
+        bar3.fill.solid(); bar3.fill.fore_color.rgb = RGBColor(0x42, 0xa5, 0xf5); bar3.line.fill.background()
+
+    # Vertical divider
+    div_v = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.5), Inches(1.5), Inches(0.03), Inches(5.5))
+    div_v.fill.solid(); div_v.fill.fore_color.rgb = RGBColor(0xe0, 0xe0, 0xe0); div_v.line.fill.background()
+
+    # ── RIGHT: Benefits + Budget ──
+    add_heading(s, 6.8, 1.55, 6, "Benefits of the solution:", 16)
+
+    benefits = [
+        ("Multilingual Access:", " Supports 22 Indian languages including Telugu, Hindi, Tamil, Bengali."),
+        ("MSME-Friendly:", " Free tool for 63M+ MSMEs who cannot afford compliance consultants."),
+        ("Source-Grounded:", " All responses cite official BIS documents. Zero hallucinations."),
+        ("Always Updated:", " Live auto-fetch pipeline keeps knowledge base current."),
+        ("24/7 Availability:", " Always accessible, reducing dependency on BIS office hours."),
+        ("Unified Platform:", " Standards + certification + labs + AI in one place."),
+        ("Scalable Design:", " Modular RAG. Adding standards = adding PDFs. No code changes."),
+    ]
+
+    tb = s.shapes.add_textbox(Inches(6.8), Inches(1.95), Inches(6.0), Inches(2.6))
+    tf = tb.text_frame; tf.word_wrap = True
+    for i, (bp, np) in enumerate(benefits):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.space_after = Pt(4)
+        r = p.add_run(); r.text = "> "; r.font.size = Pt(10); r.font.color.rgb = ORANGE; r.font.bold = True
+        r2 = p.add_run(); r2.text = bp; r2.font.size = Pt(11); r2.font.bold = True; r2.font.color.rgb = NAVY
+        r3 = p.add_run(); r3.text = np; r3.font.size = Pt(11); r3.font.color.rgb = DARK_TEXT
+
+    # Budget table
+    add_heading(s, 6.8, 4.65, 6, "Major Expenditure Categories:", 14)
+
+    budget_header = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.8), Inches(5.0), Inches(6.0), Inches(0.3))
+    budget_header.fill.solid(); budget_header.fill.fore_color.rgb = NAVY; budget_header.line.fill.background()
+    tf = budget_header.text_frame; p = tf.paragraphs[0]
+    r = p.add_run(); r.text = "  Category          Cost (Rs.)     Budget (%)   Priority"; r.font.size = Pt(9); r.font.bold = True; r.font.color.rgb = WHITE
+
+    budget_rows = [
+        ("Development", "Rs. 1,40,000", "36.36%", "High", RGBColor(0xff, 0xcd, 0xd2)),
+        ("Cloud Infrastructure", "Rs. 1,00,000", "25.98%", "High", RGBColor(0xff, 0xcd, 0xd2)),
+        ("BIS Data Licensing", "Rs. 60,000", "15.58%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
+        ("QA & Testing", "Rs. 50,000", "12.99%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
+        ("Project Management", "Rs. 35,000", "9.09%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
+    ]
+
+    for i, (cat, cost, pct, pri, pri_bg) in enumerate(budget_rows):
+        ry = 5.35 + i * 0.28
+        bg = WHITE if i % 2 == 0 else LIGHT_GRAY
+        row = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.8), Inches(ry), Inches(6.0), Inches(0.28))
+        row.fill.solid(); row.fill.fore_color.rgb = bg; row.line.color.rgb = RGBColor(0xee, 0xee, 0xee); row.line.width = Pt(0.5)
+        tb = s.shapes.add_textbox(Inches(6.9), Inches(ry + 0.02), Inches(5.8), Inches(0.24))
+        tf = tb.text_frame; p = tf.paragraphs[0]
+        r = p.add_run(); r.text = f"{cat:<22}{cost:<16}{pct:<14}"; r.font.size = Pt(9); r.font.color.rgb = DARK_TEXT
+        r2 = p.add_run(); r2.text = pri; r2.font.size = Pt(8); r2.font.bold = True; r2.font.color.rgb = RGBColor(0xc6, 0x28, 0x28) if pri == "High" else RGBColor(0xf5, 0x7f, 0x17)
+
+    # Total row
+    total_row = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.8), Inches(6.75), Inches(6.0), Inches(0.28))
+    total_row.fill.solid(); total_row.fill.fore_color.rgb = LIGHT_GRAY; total_row.line.color.rgb = RGBColor(0xdd, 0xdd, 0xdd); total_row.line.width = Pt(1)
+    tb = s.shapes.add_textbox(Inches(6.9), Inches(6.77), Inches(5.8), Inches(0.24))
+    tf = tb.text_frame; p = tf.paragraphs[0]
+    r = p.add_run(); r.text = f"{'Total':<22}{'Rs. 3,85,000':<16}{'100%':<14}"; r.font.size = Pt(9); r.font.bold = True; r.font.color.rgb = NAVY
 
 
 # ══════════════════════════════════════════════
@@ -775,7 +861,7 @@ def main():
     print("Creating Slide 7: Thank You...")
     slide_thankyou(prs)
 
-    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v4.pptx")
+    output_path = os.path.join(os.path.dirname(__file__), "ManakMitra_SIH2026_v5.pptx")
     prs.save(output_path)
     print(f"\nPresentation saved: {output_path}")
     print("7 slides, widescreen 16:9 format")
