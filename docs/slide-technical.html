@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1.0">
+<title>ManakMitra - Technical Approach | SIH 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1440px; height: 810px; font-family: 'Segoe UI', 'Calibri', sans-serif; background: #fff; overflow: hidden; }
+  .slide { width: 1440px; height: 810px; display: flex; flex-direction: column; position: relative; }
+
+  /* Header */
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 50px 10px 50px; border-bottom: 3px solid #1a3a6e; }
+  .team-logo { font-size: 20px; font-weight: 700; color: #1a3a6e; border: 2.5px solid #1a3a6e; border-radius: 30px; padding: 7px 20px; }
+  .project-title { font-size: 30px; font-weight: 800; color: #1a3a6e; letter-spacing: 2px; text-transform: uppercase; }
+  .sih-logo { display: flex; align-items: center; gap: 10px; }
+  .sih-logo .sih-text { text-align: right; line-height: 1.3; }
+  .sih-logo .sih-text .smart { font-size: 12px; color: #ff6b35; font-weight: 700; }
+  .sih-logo .sih-text .hack { font-size: 14px; color: #1a3a6e; font-weight: 700; }
+  .sih-logo .sih-text .year { font-size: 13px; color: #1a3a6e; }
+  .sih-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #ff6b35, #1a3a6e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 800; }
+
+  /* Main content */
+  .content { flex: 1; display: flex; padding: 18px 50px 8px 50px; gap: 0; }
+
+  /* Vertical divider */
+  .divider-v { width: 2px; background: #e0e0e0; margin: 0 25px; flex-shrink: 0; }
+
+  /* LEFT SIDE */
+  .left { width: 38%; display: flex; flex-direction: column; }
+  .section-heading { font-size: 20px; font-weight: 800; color: #1a3a6e; margin-bottom: 8px; }
+
+  .tech-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .tech-list li { font-size: 15px; color: #333; line-height: 1.4; padding-left: 14px; position: relative; }
+  .tech-list li::before { content: '●'; position: absolute; left: 0; color: #ff6b35; font-size: 9px; top: 5px; }
+  .tech-list li b { color: #1a3a6e; font-weight: 700; }
+
+  .live-url { margin-top: 12px; font-size: 15px; color: #333; }
+  .live-url b { color: #1a3a6e; }
+  .live-url a { color: #2196f3; text-decoration: none; font-weight: 600; }
+
+  /* RIGHT SIDE */
+  .right { width: 60%; display: flex; flex-direction: column; gap: 10px; }
+
+  /* Architecture flow */
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: nowrap; padding: 8px 0; }
+
+  .flow-box {
+    border-radius: 10px;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.35;
+    border: 2px solid;
+    position: relative;
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+
+  .flow-box .icon { font-size: 24px; margin-bottom: 4px; }
+  .flow-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .flow-box p { font-size: 9.5px; color: #555; line-height: 1.3; }
+
+  .fb-user { background: #e8f5e9; border-color: #4caf50; }
+  .fb-user h4 { color: #2e7d32; }
+  .fb-app { background: #e3f2fd; border-color: #2196f3; }
+  .fb-app h4 { color: #1565c0; }
+  .fb-rag { background: #1a3a6e; border-color: #0d2140; color: white; }
+  .fb-rag h4 { color: white; }
+  .fb-rag p { color: rgba(255,255,255,0.8); }
+  .fb-llm { background: #fff3e0; border-color: #ff9800; }
+  .fb-llm h4 { color: #e65100; }
+  .fb-response { background: #e8f5e9; border-color: #4caf50; }
+  .fb-response h4 { color: #2e7d32; }
+
+  .flow-arrow { font-size: 20px; color: #999; flex-shrink: 0; }
+
+  /* Tech Used icons section */
+  .tech-used { display: flex; gap: 10px; padding: 6px 0; }
+
+  .tech-category {
+    background: #f8f9fa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 8px 12px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .tech-category h5 { font-size: 10px; font-weight: 700; color: #1a3a6e; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .tech-icons { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+
+  .tech-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+  }
+
+  .tech-icon-label {
+    font-size: 7px;
+    color: #666;
+    text-align: center;
+    margin-top: 2px;
+    line-height: 1.1;
+  }
+
+  /* User roles */
+  .user-roles {
+    background: #f0f4f8;
+    border: 1.5px solid #1a3a6e;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .role-item { text-align: center; }
+  .role-item .role-icon { font-size: 22px; margin-bottom: 2px; }
+  .role-item .role-name { font-size: 10px; font-weight: 600; color: #1a3a6e; }
+  .role-arrow { color: #999; font-size: 14px; }
+
+  /* Bottom: App mockups */
+  .bottom-bar { padding: 6px 50px 12px 50px; border-top: 1.5px solid #e0e0e0; }
+
+  .bottom-inner { display: flex; gap: 15px; align-items: flex-start; }
+
+  .mockups-section { flex: 1; }
+  .mockups-section h4 { font-size: 12px; font-weight: 700; color: #1a3a6e; margin-bottom: 6px; }
+
+  .mockup-row { display: flex; gap: 10px; }
+
+  .phone-mockup {
+    width: 100px; height: 170px;
+    border: 2px solid #333;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fafafa;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .phone-notch {
+    width: 40px; height: 6px;
+    background: #333;
+    border-radius: 0 0 6px 6px;
+    margin: 0 auto;
+  }
+
+  .phone-screen { padding: 4px 6px; }
+
+  .phone-header { background: #1a3a6e; color: white; padding: 3px 5px; border-radius: 4px; font-size: 7px; font-weight: 700; margin-bottom: 4px; text-align: center; }
+
+  .phone-msg {
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 6.5px;
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+
+  .phone-user { background: #1a3a6e; color: white; text-align: right; border-radius: 6px 6px 2px 6px; margin-left: 20px; }
+  .phone-ai { background: #f0f4f8; color: #333; border-radius: 6px 6px 6px 2px; margin-right: 10px; }
+
+  .phone-section {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-left: 2px solid;
+    border-radius: 3px;
+    padding: 3px 5px;
+    margin-bottom: 2px;
+    font-size: 6px;
+  }
+
+  .ps-blue { border-color: #2196f3; }
+  .ps-green { border-color: #4caf50; }
+  .ps-amber { border-color: #ff9800; }
+
+  /* Features list */
+  .features-side { width: 200px; }
+  .features-side h4 { font-size: 12px; font-weight: 700; color: #1a3a6e; margin-bottom: 6px; }
+  .feat-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .feat-list li { font-size: 10px; color: #333; line-height: 1.3; padding-left: 14px; position: relative; }
+  .feat-list li::before { content: '✦'; position: absolute; left: 0; color: #ff6b35; font-size: 9px; font-weight: 700; }
+  .feat-list li b { color: #1a3a6e; }
+
+  /* Footer */
+  .footer { display: flex; justify-content: space-between; padding: 5px 50px; background: #f5f5f5; font-size: 11px; color: #999; }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="team-logo">Resonant</div>
+    <div class="project-title">ManakMitra</div>
+    <div class="sih-logo">
+      <div class="sih-text">
+        <div class="smart">SMART INDIA</div>
+        <div class="hack">HACKATHON</div>
+        <div class="year">2026</div>
+      </div>
+      <div class="sih-icon">SIH</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="content">
+
+    <!-- LEFT: Tech Stack -->
+    <div class="left">
+      <div class="section-heading">Tech Stack:</div>
+      <ul class="tech-list">
+        <li><b>Frontend:</b> React.js, Vite, Tailwind CSS</li>
+        <li><b>Backend:</b> Python, FastAPI, Uvicorn</li>
+        <li><b>Database &amp; Storage:</b> FAISS Vector Store, JSON user store</li>
+        <li><b>AI &amp; ML:</b> Google Gemini API, ONNX Runtime, Sentence Transformers</li>
+        <li><b>Embeddings:</b> all-MiniLM-L6-v2 (384-dim), FAISS indexing</li>
+        <li><b>Document Processing:</b> PDFPlumber, Text chunking, Vector indexing</li>
+        <li><b>Authentication:</b> JWT tokens, bcrypt password hashing</li>
+        <li><b>Multilingual:</b> deep-translator, langdetect (22 Indian languages)</li>
+        <li><b>Deployment:</b> Git/GitHub, Vercel (Frontend), Render (Backend)</li>
+      </ul>
+
+      <div class="live-url">
+        <b>Live prototype:</b> <a href="#">manakmitra-frontend.vercel.app</a>
+      </div>
+    </div>
+
+    <div class="divider-v"></div>
+
+    <!-- RIGHT: Architecture + Tech Icons -->
+    <div class="right">
+      <div class="section-heading" style="text-align: center;">Architecture Flow:</div>
+
+      <!-- Flow diagram -->
+      <div class="arch-flow">
+        <div class="flow-box fb-user">
+          <div class="icon">👤</div>
+          <h4>User</h4>
+          <p>Enters product query<br>Selects language (22 lang)<br>Optional: voice input</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-app">
+          <div class="icon">🌐</div>
+          <h4>ManakMitra Web App</h4>
+          <p>React + Vite<br>Multilingual UI<br>Chat + Dashboard</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-rag">
+          <div class="icon">⚡</div>
+          <h4>RAG Engine</h4>
+          <p>ONNX Embeddings<br>FAISS Vector Search<br>Gemini 3.6 Flash</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-llm">
+          <div class="icon">🤖</div>
+          <h4>AI Response</h4>
+          <p>6-Section Format<br>Source-grounded<br>Hallucination-free</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box fb-response">
+          <div class="icon">✅</div>
+          <h4>User Gets</h4>
+          <p>Standards + Testing<br>BIS Offices + Certs<br>Documents + QC</p>
+        </div>
+      </div>
+
+      <!-- Tech Used Icons -->
+      <div class="tech-used">
+        <div class="tech-category">
+          <h5>Frontend</h5>
+          <div class="tech-icons">
+            <div><div class="tech-icon">⚛️</div><div class="tech-icon-label">React</div></div>
+            <div><div class="tech-icon">⚡</div><div class="tech-icon-label">Vite</div></div>
+            <div><div class="tech-icon">🎨</div><div class="tech-icon-label">Tailwind</div></div>
+          </div>
+        </div>
+        <div class="tech-category">
+          <h5>Backend</h5>
+          <div class="tech-icons">
+            <div><div class="tech-icon">🐍</div><div class="tech-icon-label">Python</div></div>
+            <div><div class="tech-icon">🚀</div><div class="tech-icon-label">FastAPI</div></div>
+            <div><div class="tech-icon">🖥️</div><div class="tech-icon-label">Uvicorn</div></div>
+          </div>
+        </div>
+        <div class="tech-category">
+          <h5>AI / ML</h5>
+          <div class="tech-icons">
+            <div><div class="tech-icon">🤖</div><div class="tech-icon-label">Gemini</div></div>
+            <div><div class="tech-icon">🧠</div><div class="tech-icon-label">ONNX</div></div>
+            <div><div class="tech-icon">📊</div><div class="tech-icon-label">FAISS</div></div>
+            <div><div class="tech-icon">🔢</div><div class="tech-icon-label">NumPy</div></div>
+          </div>
+        </div>
+        <div class="tech-category">
+          <h5>Data</h5>
+          <div class="tech-icons">
+            <div><div class="tech-icon">📄</div><div class="tech-icon-label">PDF</div></div>
+            <div><div class="tech-icon">📦</div><div class="tech-icon-label">Chunking</div></div>
+            <div><div class="tech-icon">🔍</div><div class="tech-icon-label">Embed</div></div>
+            <div><div class="tech-icon">📚</div><div class="tech-icon-label">Index</div></div>
+          </div>
+        </div>
+        <div class="tech-category">
+          <h5>Services</h5>
+          <div class="tech-icons">
+            <div><div class="tech-icon">🔐</div><div class="tech-icon-label">JWT Auth</div></div>
+            <div><div class="tech-icon">🌐</div><div class="tech-icon-label">22 Lang</div></div>
+            <div><div class="tech-icon">📍</div><div class="tech-icon-label">BIS Map</div></div>
+            <div><div class="tech-icon">🔄</div><div class="tech-icon-label">AutoFetch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Roles -->
+      <div class="user-roles">
+        <div class="role-item"><div class="role-icon">👤</div><div class="role-name">MSME Owner</div></div>
+        <div class="role-arrow">→</div>
+        <div class="role-item"><div class="role-icon">🏭</div><div class="role-name">Manufacturer</div></div>
+        <div class="role-arrow">→</div>
+        <div class="role-item"><div class="role-icon">👩‍💼</div><div class="role-name">Quality Manager</div></div>
+        <div class="role-arrow">→</div>
+        <div class="role-item"><div class="role-icon">🔬</div><div class="role-name">Testing Lab</div></div>
+        <div class="role-arrow">→</div>
+        <div class="role-item"><div class="role-icon">📋</div><div class="role-name">Certification Body</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM: Mockups + Features -->
+  <div class="bottom-bar">
+    <div class="bottom-inner">
+
+      <!-- Phone mockups -->
+      <div class="mockups-section">
+        <h4>App Screenshots:</h4>
+        <div class="mockup-row">
+          <!-- Phone 1: Login -->
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">ManakMitra Login</div>
+              <div style="padding: 8px 4px;">
+                <div style="background:#f0f0f0;border-radius:4px;padding:4px 6px;font-size:7px;color:#999;margin-bottom:4px;">Email address</div>
+                <div style="background:#f0f0f0;border-radius:4px;padding:4px 6px;font-size:7px;color:#999;margin-bottom:6px;">Password</div>
+                <div style="background:#1a3a6e;color:white;text-align:center;padding:4px;border-radius:4px;font-size:7px;font-weight:700;">Sign In</div>
+                <div style="text-align:center;font-size:6px;color:#666;margin-top:4px;">New user? Sign Up</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone 2: Chat -->
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">ManakMitra</div>
+              <div class="phone-msg phone-user">What standards for cement?</div>
+              <div class="phone-msg phone-ai" style="padding:3px;">
+                <div class="phone-section ps-blue"><b>1. IS Standards</b><br>IS 269, IS 455</div>
+                <div class="phone-section ps-green"><b>2. Testing</b><br>IS 4031 compressive</div>
+                <div class="phone-section ps-amber"><b>3. BIS Labs</b><br>Delhi: 011-2323</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone 3: Standards -->
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">BIS Standards</div>
+              <div style="padding:3px;">
+                <div style="background:#e8eaf6;border-radius:4px;padding:4px;margin-bottom:3px;"><div style="font-size:6px;color:#ff6b35;">CEMENT</div><div style="font-size:8px;font-weight:700;color:#1a3a6e;">IS 269</div><div style="font-size:6px;color:#666;">OPC Cement</div></div>
+                <div style="background:#e8f5e9;border-radius:4px;padding:4px;margin-bottom:3px;"><div style="font-size:6px;color:#ff6b35;">STEEL</div><div style="font-size:8px;font-weight:700;color:#1a3a6e;">IS 2062</div><div style="font-size:6px;color:#666;">Structural Steel</div></div>
+                <div style="background:#fff3e0;border-radius:4px;padding:4px;"><div style="font-size:6px;color:#ff6b35;">ELECTRICAL</div><div style="font-size:8px;font-weight:700;color:#1a3a6e;">IS 302</div><div style="font-size:6px;color:#666;">Appliances</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone 4: Offices -->
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">BIS Offices</div>
+              <div style="padding:3px;">
+                <div style="background:#e0f2f1;border-radius:4px;padding:4px;margin-bottom:3px;"><div style="font-size:7px;font-weight:700;color:#00695c;">📍 BIS Delhi</div><div style="font-size:6px;color:#666;">011-23232323</div><div style="font-size:5px;color:#2196f3;">Get Directions →</div></div>
+                <div style="background:#e0f2f1;border-radius:4px;padding:4px;margin-bottom:3px;"><div style="font-size:7px;font-weight:700;color:#00695c;">📍 BIS Mumbai</div><div style="font-size:6px;color:#666;">022-22025678</div><div style="font-size:5px;color:#2196f3;">Get Directions →</div></div>
+                <div style="background:#e0f2f1;border-radius:4px;padding:4px;"><div style="font-size:7px;font-weight:700;color:#00695c;">📍 BIS Chennai</div><div style="font-size:6px;color:#666;">044-28330525</div><div style="font-size:5px;color:#2196f3;">Get Directions →</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features list -->
+      <div class="features-side">
+        <h4>Key Features:</h4>
+        <ul class="feat-list">
+          <li><b>22 Indian Languages</b></li>
+          <li><b>6-Section AI Response</b></li>
+          <li><b>Hallucination-Free RAG</b></li>
+          <li><b>Live Auto-Fetch</b></li>
+          <li><b>BIS Office Finder</b></li>
+          <li><b>Certification Guide</b></li>
+          <li><b>Multi-User Auth (JWT)</b></li>
+          <li><b>Dark/Light Mode</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>@SIH Idea submission</span>
+    <span>4</span>
+  </div>
+
+</div>
+</body>
+</html>
