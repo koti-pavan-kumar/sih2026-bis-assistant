@@ -102,6 +102,182 @@ function ParticleCanvas() {
 }
 
 /* ============================================================
+   HERO BACKDROP — blueprint grid + industrial skyline + grain
+   ============================================================ */
+function HeroBackdrop() {
+  const windows = [
+    [456, 234, '#FF9933'], [474, 234, '#ffffff'], [492, 252, '#FF9933'],
+    [456, 270, '#ffffff'], [474, 288, '#138808'],
+    [614, 176, '#ffffff'], [632, 176, '#FF9933'], [650, 194, '#ffffff'],
+    [614, 212, '#ffffff'], [632, 230, '#4EA8FF'], [650, 248, '#ffffff'],
+    [704, 250, '#FF9933'], [722, 250, '#ffffff'], [704, 268, '#ffffff'], [740, 286, '#138808'],
+    [792, 210, '#ffffff'], [810, 210, '#FF9933'], [828, 228, '#ffffff'],
+    [792, 246, '#ffffff'], [810, 264, '#4EA8FF'], [828, 282, '#ffffff'],
+    [66, 300, '#FF9933'], [90, 300, '#ffffff'], [114, 318, '#ffffff'],
+    [66, 336, '#138808'], [90, 354, '#ffffff'],
+    [216, 318, '#ffffff'], [240, 318, '#FF9933'], [264, 336, '#ffffff'],
+  ]
+  return (
+    <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+      {/* blueprint grid with radial fade */}
+      <div
+        className="absolute inset-0 opacity-[0.10]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.55) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.55) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+          maskImage: 'radial-gradient(110% 90% at 50% 25%, black 25%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(110% 90% at 50% 25%, black 25%, transparent 85%)',
+        }}
+      />
+
+      {/* industrial / infrastructure skyline */}
+      <svg
+        className="absolute inset-x-0 bottom-0 w-full h-[52%]"
+        viewBox="0 0 1440 380"
+        preserveAspectRatio="xMidYMax slice"
+        fill="none"
+      >
+        {/* far background city */}
+        <g fill="#ffffff" opacity="0.05">
+          <rect x="0" y="262" width="92" height="118" />
+          <rect x="100" y="296" width="66" height="84" />
+          <rect x="330" y="244" width="58" height="136" />
+          <rect x="396" y="278" width="52" height="102" />
+          <rect x="864" y="252" width="70" height="128" />
+          <rect x="944" y="286" width="48" height="94" />
+          <rect x="1338" y="242" width="58" height="138" />
+          <rect x="1404" y="276" width="36" height="104" />
+        </g>
+
+        {/* factory with sawtooth roof + chimneys */}
+        <g opacity="0.14" fill="#ffffff">
+          <path d="M40 278 L64 250 L88 278 Z M88 278 L112 250 L136 278 Z M136 278 L160 250 L184 278 Z" />
+          <rect x="40" y="278" width="150" height="102" />
+          <rect x="52" y="184" width="20" height="68" />
+          <rect x="96" y="206" width="15" height="46" />
+          <rect x="204" y="302" width="86" height="78" rx="4" />
+          <ellipse cx="247" cy="302" rx="43" ry="10" />
+        </g>
+        {/* factory smoke */}
+        <g fill="#ffffff">
+          <circle className="mm-smoke" cx="62" cy="180" r="9" opacity="0.30" />
+          <circle className="mm-smoke" cx="62" cy="180" r="6" opacity="0.24" style={{ animationDelay: '-1.8s' }} />
+          <circle className="mm-smoke" cx="103" cy="202" r="7" opacity="0.24" style={{ animationDelay: '-3.4s' }} />
+        </g>
+
+        {/* building under construction + tower crane */}
+        <g opacity="0.15" fill="#ffffff">
+          <rect x="445" y="215" width="95" height="165" />
+          <rect x="548" y="108" width="9" height="272" />
+          <rect x="466" y="108" width="232" height="9" />
+          <rect x="448" y="108" width="34" height="18" />
+          <path d="M552 98 L466 112 M552 98 L698 112" stroke="#ffffff" strokeWidth="2.5" />
+          <rect x="546" y="96" width="13" height="14" />
+        </g>
+        {/* construction floors */}
+        <g stroke="#ffffff" strokeWidth="2" opacity="0.10">
+          <line x1="445" y1="250" x2="540" y2="250" />
+          <line x1="445" y1="290" x2="540" y2="290" />
+          <line x1="445" y1="330" x2="540" y2="330" />
+        </g>
+        {/* crane hoist (animated) */}
+        <g className="mm-hook">
+          <line x1="660" y1="117" x2="660" y2="188" stroke="#ffffff" strokeWidth="2.5" opacity="0.16" />
+          <rect x="651" y="188" width="18" height="12" fill="#ffffff" opacity="0.18" />
+          <rect x="643" y="202" width="34" height="24" fill="#ffffff" opacity="0.14" />
+        </g>
+
+        {/* skyline towers */}
+        <g fill="#ffffff" opacity="0.13">
+          <rect x="600" y="150" width="72" height="230" />
+          <rect x="690" y="225" width="58" height="155" />
+          <rect x="775" y="185" width="85" height="195" />
+        </g>
+        <line x1="636" y1="150" x2="636" y2="118" stroke="#ffffff" strokeWidth="3" opacity="0.16" />
+        <circle className="mm-blink" cx="636" cy="113" r="5" fill="#FF6B6B" opacity="0.8" />
+
+        {/* cable-stayed bridge */}
+        <g opacity="0.14" fill="#ffffff">
+          <rect x="960" y="330" width="344" height="8" />
+          <rect x="1030" y="214" width="13" height="116" />
+          <rect x="1216" y="214" width="13" height="116" />
+          <rect x="1033" y="338" width="8" height="42" />
+          <rect x="1219" y="338" width="8" height="42" />
+        </g>
+        <g stroke="#ffffff" strokeWidth="2" opacity="0.12">
+          <line x1="1036" y1="216" x2="972" y2="330" />
+          <line x1="1036" y1="216" x2="998" y2="330" />
+          <line x1="1036" y1="216" x2="1078" y2="330" />
+          <line x1="1036" y1="216" x2="1108" y2="330" />
+          <line x1="1036" y1="216" x2="1138" y2="330" />
+          <line x1="1222" y1="216" x2="1160" y2="330" />
+          <line x1="1222" y1="216" x2="1190" y2="330" />
+          <line x1="1222" y1="216" x2="1264" y2="330" />
+          <line x1="1222" y1="216" x2="1294" y2="330" />
+          <line x1="1222" y1="216" x2="1324" y2="330" />
+        </g>
+
+        {/* transmission towers + power lines */}
+        <g stroke="#ffffff" strokeWidth="3" fill="none" opacity="0.13">
+          <path d="M1332 380 L1347 302 L1362 380 M1336 352 L1358 352 M1339 330 L1355 330" />
+          <line x1="1330" y1="312" x2="1364" y2="312" />
+          <path d="M1386 380 L1398 322 L1410 380 M1389 356 L1407 356" />
+          <line x1="1384" y1="330" x2="1412" y2="330" />
+        </g>
+        <g stroke="#ffffff" strokeWidth="1.8" opacity="0.10" fill="none">
+          <path d="M1364 312 Q1405 328 1440 322" />
+          <path d="M1364 312 Q1400 344 1440 348" />
+        </g>
+
+        {/* lit windows */}
+        <g opacity="0.85">
+          {windows.map(([x, y, c], i) => (
+            <rect key={i} x={x} y={y} width="9" height="11" fill={c} opacity={c === '#ffffff' ? 0.13 : 0.4} />
+          ))}
+        </g>
+
+        {/* blueprint dimension labels */}
+        <g fill="#ffffff" opacity="0.28" fontFamily="monospace" fontSize="11">
+          <text x="445" y="207">IS 456:2000</text>
+          <text x="600" y="142">IS 1786:2008</text>
+          <text x="963" y="322">IS 2062:2011</text>
+        </g>
+        <g stroke="#ffffff" opacity="0.18">
+          <line x1="445" y1="196" x2="540" y2="196" strokeWidth="1.5" />
+          <line x1="445" y1="191" x2="445" y2="201" strokeWidth="1.5" />
+          <line x1="540" y1="191" x2="540" y2="201" strokeWidth="1.5" />
+        </g>
+
+        {/* ground */}
+        <rect x="0" y="373" width="1440" height="7" fill="#ffffff" opacity="0.16" />
+      </svg>
+
+      {/* glow behind the floating docs */}
+      <div
+        className="absolute right-[6%] top-1/4 w-[560px] h-[560px] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.14), transparent 62%)' }}
+      />
+
+      {/* film grain */}
+      <div
+        className="absolute inset-0 opacity-[0.07] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
+
+      {/* vignette */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'radial-gradient(135% 95% at 50% 8%, transparent 42%, rgba(0,0,35,0.55) 100%)' }}
+      />
+    </div>
+  )
+}
+
+/* ============================================================
    SCROLL REVEAL
    ============================================================ */
 function useReveal() {
@@ -412,6 +588,7 @@ export default function LandingPage({ onNavigate }) {
 
       {/* ================= HERO ================= */}
       <section className="relative text-white overflow-hidden" style={{ background: 'linear-gradient(135deg, #000040 0%, #000080 45%, #1010d0 100%)' }}>
+        <HeroBackdrop />
         <ParticleCanvas />
         {/* aurora blobs */}
         <div className="mm-aurora w-[520px] h-[520px] -left-32 -top-32 bg-orange-500/50" style={{ animationDuration: '16s' }}></div>

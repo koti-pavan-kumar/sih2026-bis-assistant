@@ -369,10 +369,36 @@ html {
   background-size: 42px 42px;
 }
 
+/* --- Hero backdrop: skyline life --- */
+@keyframes mm-smoke {
+  0% { transform: translateY(0) scale(0.55); opacity: 0; }
+  20% { opacity: 0.55; }
+  100% { transform: translateY(-72px) scale(1.7); opacity: 0; }
+}
+@keyframes mm-hook {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(48px); }
+}
+@keyframes mm-blink {
+  0%, 45% { opacity: 0.95; }
+  55%, 100% { opacity: 0.12; }
+}
+.mm-smoke {
+  animation: mm-smoke 5.5s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mm-hook {
+  animation: mm-hook 6.5s ease-in-out infinite;
+}
+.mm-blink {
+  animation: mm-blink 1.6s step-end infinite;
+}
+
 /* --- Reduced motion --- */
 @media (prefers-reduced-motion: reduce) {
   .mm-doc, .mm-aurora, .mm-orbiter, .mm-marquee-track, .mm-chakra,
-  .mm-shine::after, .mm-glow-ring, .mm-pop {
+  .mm-shine::after, .mm-glow-ring, .mm-pop, .mm-smoke, .mm-hook, .mm-blink {
     animation: none !important;
   }
   .mm-reveal { opacity: 1; transform: none; transition: none; }
