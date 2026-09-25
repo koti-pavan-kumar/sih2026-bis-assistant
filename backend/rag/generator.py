@@ -226,11 +226,29 @@ Provide a comprehensive, structured answer following the 6-section format above.
         """
         # Keep only readable excerpt lines — drop blank runs, cap length
         excerpt = context[:1400] + ("..." if len(context) > 1400 else "")
+
+        # Insert a blank line before each section heading so the excerpt reads
+        # section-wise instead of as one solid paragraph:
+        #   "[IS 455:1989 ...]", "1 SCOPE", "2 COMPOSITION", ALL-CAPS headings
+        spaced_lines = []
+        for raw in excerpt.splitlines():
+            line = raw.rstrip()
+            stripped = line.strip()
+            is_heading = bool(
+                re.match(r"^\[IS\s", stripped)
+                or re.match(r"^\d{1,2}\s+[A-Z]", stripped)
+                or (stripped.isupper() and len(stripped) > 3)
+                or stripped.startswith("Bureau of Indian Standards")
+            )
+            if is_heading and spaced_lines and spaced_lines[-1] != "":
+                spaced_lines.append("")
+            spaced_lines.append(line)
+        excerpt = "\n".join(spaced_lines)
+
         return f"""The AI service is briefly unavailable, so here are the raw excerpts found in the BIS knowledge base for your question. Please retry in a few seconds for the full structured answer.
 
-**Your question:** {query}
+**Question:** {query}
 
-**Excerpts found:**
 {excerpt}"""
 
     def extract_citations(self, response: str) -> list:
