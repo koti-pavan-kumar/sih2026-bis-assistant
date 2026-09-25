@@ -410,7 +410,7 @@ function DocStage() {
     { id: 'IS 14543:2016', title: 'Packaged Drinking Water', tag: 'Food & Dairy', color: '#4EA8FF' },
   ]
   return (
-    <div className="relative mm-stage h-[420px] hidden lg:block" aria-hidden="true">
+    <div className="relative mm-stage h-[640px] hidden lg:block" aria-hidden="true">
       {/* rotating chakra watermark */}
       <svg className="mm-chakra absolute -left-10 top-4 w-64 h-64 opacity-[0.12]" viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="46" fill="none" stroke="#fff" strokeWidth="2" />
@@ -434,8 +434,47 @@ function DocStage() {
         </span>
       ))}
 
+      {/* gold ISI standard-mark seal — top right */}
+      <div className="absolute top-0 right-2 mm-doc z-10" style={{ animationDelay: '-2.6s' }}>
+        <div className="w-40 h-40 drop-shadow-[0_18px_30px_rgba(0,0,0,0.35)]">
+          <svg viewBox="0 0 160 160" className="w-full h-full">
+            <defs>
+              <linearGradient id="mmGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#FFF3C4" />
+                <stop offset="45%" stopColor="#F3C748" />
+                <stop offset="100%" stopColor="#B8860B" />
+              </linearGradient>
+              <path id="mmSealPath" d="M80 80 m-58 0 a58 58 0 1 1 116 0 a58 58 0 1 1 -116 0" />
+            </defs>
+            <circle cx="80" cy="80" r="76" fill="url(#mmGold)" />
+            <circle cx="80" cy="80" r="67" fill="none" stroke="#7A5B0E" strokeWidth="2.5" opacity="0.85" />
+            <circle cx="80" cy="80" r="48" fill="#000040" />
+            <text x="80" y="93" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="800" fontSize="36" fill="url(#mmGold)">ISI</text>
+            <g className="mm-chakra" style={{ animationDuration: '40s', transformOrigin: '80px 80px' }}>
+              <text fill="#6B4E0B" fontSize="11" fontWeight="700" letterSpacing="2.6" fontFamily="Arial, sans-serif">
+                <textPath href="#mmSealPath" startOffset="0%">BUREAU OF INDIAN STANDARDS • STANDARD MARK •</textPath>
+              </text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      {/* stats glass card — top left of stage */}
+      <div className="mm-glass absolute top-6 left-0 rounded-xl px-4 py-3 mm-doc z-10 shadow-xl" style={{ animationDelay: '-4.2s' }}>
+        <div className="text-[10px] text-blue-200 font-medium uppercase tracking-wider">New standards this month</div>
+        <div className="flex items-end gap-3 mt-2">
+          <span className="text-2xl font-extrabold text-white leading-none">+18</span>
+          <svg width="76" height="30" viewBox="0 0 76 30">
+            {[6, 10, 9, 14, 17, 22, 28].map((h, i) => (
+              <rect key={i} x={i * 11} y={30 - h} width="7" height={h} rx="2"
+                fill={i % 2 ? '#138808' : '#FF9933'} opacity={0.55 + i * 0.065} />
+            ))}
+          </svg>
+        </div>
+      </div>
+
       {/* document cards */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center pt-32">
         <div className="relative w-[320px]">
           {docs.map((d, i) => (
             <div key={d.id}
@@ -720,6 +759,17 @@ export default function LandingPage({ onNavigate }) {
       {/* ================= LIVE DEMO PREVIEW ================= */}
       <section className="py-24 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #000040, #000080 60%, #1010c8)' }}>
         <div className="mm-aurora w-[420px] h-[420px] -right-20 top-10 bg-orange-500/40" style={{ animationDuration: '19s' }}></div>
+        {/* blueprint grid backdrop */}
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)',
+            backgroundSize: '56px 56px',
+            maskImage: 'radial-gradient(95% 90% at 50% 50%, black 25%, transparent 92%)',
+            WebkitMaskImage: 'radial-gradient(95% 90% at 50% 50%, black 25%, transparent 92%)',
+          }}
+        ></div>
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="mm-reveal">
@@ -751,8 +801,22 @@ export default function LandingPage({ onNavigate }) {
             </div>
 
             {/* animated chat mockup */}
-            <div className="mm-reveal">
-              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+            <div className="mm-reveal relative">
+              {/* stacked document peeking behind */}
+              <div className="absolute -bottom-6 -left-5 w-full h-full rounded-3xl bg-white/10 border border-white/25 rotate-[-2.5deg]"></div>
+              <div className="absolute -bottom-3 -left-2 w-full h-full rounded-3xl bg-white/15 border border-white/30 rotate-[1.5deg]"></div>
+              {/* floating chips */}
+              <div className="absolute -top-5 -left-4 mm-glass rounded-full px-4 py-2 mm-doc z-20 shadow-xl" style={{ animationDelay: '-1.5s' }}>
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Icon name="zap" className="w-3.5 h-3.5 text-[#FF9933]" /> 2.4s average response
+                </span>
+              </div>
+              <div className="absolute -bottom-6 right-8 mm-glass rounded-full px-4 py-2 mm-doc z-20 shadow-xl" style={{ animationDelay: '-3.5s' }}>
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Icon name="check" className="w-3.5 h-3.5 text-green-400" /> 100% source verified
+                </span>
+              </div>
+              <div className="relative z-10 bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20">
                 <div className="bg-[#000080] px-5 py-3.5 flex items-center gap-3">
                   <div className="w-8 h-8 bg-white/15 rounded-lg grid place-items-center text-white text-xs font-bold">BIS</div>
                   <div className="text-white">
