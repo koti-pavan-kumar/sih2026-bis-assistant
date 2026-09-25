@@ -18,6 +18,7 @@ class LLMGenerator:
         self.ollama_url = None
         self.ollama_model = None
         self.gemini_model = None
+        self.last_error = None  # Last LLM failure reason (reported via /api/health)
         self._detect_llm()
 
     def _detect_llm(self):
@@ -159,37 +160,78 @@ Provide a comprehensive, structured answer following the 6-section format above.
         return self._generate_template(query, context, language)
 
     def _generate_gemini(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
-        """Generate using Gemini via REST API (avoids deprecated library issues)."""
+        """Generate using Gemini via REST API (avoids deprecated library issues).
+
+        Tries multiple model names, retries transient failures (429/5xx/timeouts),
+        and records the failure reason in self.last_error so /api/health can expose it.
+        """
         prompt = self._build_prompt(query, context, language, conversation_history)
         gemini_key = os.getenv("GEMINI_API_KEY")
-        
-        # Try REST API directly — try multiple model names for compatibility
-        for model_name in ["gemini-3.6-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
-            try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
-                data = {"contents": [{"parts": [{"text": prompt}]}]}
-                resp = httpx.post(url, json=data, timeout=60.0)
-                if resp.status_code == 200:
-                    result = resp.json()
-                    text = result["candidates"][0]["content"]["parts"][0]["text"]
-                    logger.info(f"Using Gemini ({model_name})")
-                    return text
-                else:
-                    logger.warning(f"Gemini {model_name} returned {resp.status_code}: {resp.text[:200]}")
-            except Exception as e:
-                logger.warning(f"Gemini {model_name} error: {e}")
-                continue
-        
+        if not gemini_key:
+            self.last_error = "GEMINI_API_KEY is not set"
+            return self._generate_template(query, context, language)
+
+        # Newest/known-good models first; unknown models 404 fast and are skipped.
+        model_names = [
+            "gemini-3.6-flash",
+            "gemini-3.8-flash",
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+        ]
+        errors = []
+
+        for model_name in model_names:
+            url = (
+                f"https://generativelanguage.googleapis.com/v1beta/models/"
+                f"{model_name}:generateContent"
+            )
+            headers = {"x-goog-api-key": gemini_key}
+            data = {"contents": [{"parts": [{"text": prompt}]}]}
+
+            # Up to 2 attempts per model: retry timeouts, 429s and 5xxs only.
+            for attempt in range(2):
+                try:
+                    resp = httpx.post(url, json=data, headers=headers, timeout=70.0)
+                    if resp.status_code == 200:
+                        result = resp.json()
+                        text = result["candidates"][0]["content"]["parts"][0]["text"]
+                        if text and text.strip():
+                            self.last_error = None
+                            logger.info(f"Using Gemini ({model_name})")
+                            return text
+                        errors.append(f"{model_name}: empty response")
+                        break  # empty response — no point retrying this model
+
+                    status = resp.status_code
+                    errors.append(f"{model_name}: HTTP {status} {resp.text[:160]}")
+                    logger.warning(f"Gemini {model_name} returned {status}: {resp.text[:200]}")
+                    if status in (404, 400, 401, 403):
+                        break  # bad model name or bad key — try next model
+                    # 429 / 5xx → fall through to retry
+                except Exception as e:
+                    # Network/timeout — safe to retry once
+                    msg = str(e).replace(gemini_key, "***")
+                    errors.append(f"{model_name}: {msg}")
+                    logger.warning(f"Gemini {model_name} error: {msg}")
+
+        self.last_error = "; ".join(errors)[-600:] or "no models attempted"
+        logger.error(f"All Gemini models failed, using template fallback. {self.last_error}")
         return self._generate_template(query, context, language)
 
     def _generate_template(self, query: str, context: str, language: str) -> str:
-        """Template fallback when no LLM is available."""
-        return f"""Based on the available BIS standard excerpts, here is the relevant information:
+        """Friendly fallback when no LLM is available.
 
-**Query:** {query}
+        The first line doubles as a marker: the frontend detects it and renders
+        plain text instead of trying to parse fake section headers out of raw context.
+        """
+        # Keep only readable excerpt lines — drop blank runs, cap length
+        excerpt = context[:1400] + ("..." if len(context) > 1400 else "")
+        return f"""The AI service is briefly unavailable, so here are the raw excerpts found in the BIS knowledge base for your question. Please retry in a few seconds for the full structured answer.
 
-**Context found:**
-{context[:1500]}{'...' if len(context) > 1500 else ''}"""
+**Your question:** {query}
+
+**Excerpts found:**
+{excerpt}"""
 
     def extract_citations(self, response: str) -> list:
         """Extract IS citations from the response."""

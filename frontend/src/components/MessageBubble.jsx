@@ -25,6 +25,12 @@ const SECTION_CONFIG = {
 function parseStructuredResponse(text) {
   if (!text) return { intro: '', sections: [] }
 
+  // Raw fallback from the backend when the LLM is down — never try to parse
+  // section headers out of raw context; render it as plain text instead.
+  if (/^\s*(Based on the available BIS standard excerpts|The AI service is briefly unavailable)/.test(text)) {
+    return { intro: '', sections: [], plain: true }
+  }
+
   // Remove ### heading markers
   let cleaned = text
     .replace(/\$\\pm\s*(\d+)(?:\\\.(\d+))?\$?/g, '±$1.$2')
@@ -69,7 +75,9 @@ function parseStructuredResponse(text) {
     ]
     const isTitleLine = titleKeywords.some(kw => line.toLowerCase().includes(kw))
       && line.length < 80  // Headers are short
-      && (line.includes(':') || line.startsWith('#') || line.startsWith('**') || /^\d/.test(line))
+      // Require an actual header signal — not just a colon (a colon-only rule
+      // misfires on context lines like "Marking Requirements:")
+      && (line.startsWith('#') || line.startsWith('**') || /^section\s*\d/i.test(line) || /^\d+[.)]?\s/.test(line))
 
     if (isTitleLine && !currentSection) {
       const matched = titleKeywords.find(kw => line.toLowerCase().includes(kw))
@@ -162,7 +170,7 @@ export default function MessageBubble({ message, onRetry }) {
         }`}>
           {isUser ? (
             <p className="text-sm">{message.content}</p>
-          ) : parsed ? (
+          ) : parsed && !parsed.plain ? (
             <div className="space-y-4">
               {/* Intro text */}
               {parsed.intro && (

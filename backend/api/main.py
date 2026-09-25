@@ -78,7 +78,10 @@ async def health():
         "status": "healthy",
         "indexed_chunks": total_chunks,
         "standards": len(standards),
-        "llm_provider": llm_generator.llm_provider or "template"
+        "llm_provider": llm_generator.llm_provider or "template",
+        # Last LLM failure reason (None = last generation succeeded).
+        # Lets us see from outside WHY Gemini is failing (bad key, quota, timeout).
+        "llm_last_error": getattr(llm_generator, "last_error", None)
     }
 
 
@@ -126,8 +129,14 @@ async def query(request: QueryRequest):
         
         # Always translate response to user's selected language
         # (Gemini sometimes ignores the language instruction in the prompt)
+        # Skip translation for the no-LLM fallback so its first-line marker
+        # stays intact (the frontend detects it and renders plain text).
         response_lang = request.response_language or "en"
-        if response_lang in query_processor.supported_languages:
+        is_fallback = answer.startswith((
+            "The AI service is briefly unavailable",
+            "Based on the available BIS standard excerpts",
+        ))
+        if response_lang in query_processor.supported_languages and not is_fallback:
             try:
                 from deep_translator import GoogleTranslator
                 # Auto-detect source language, translate to user's selected language
