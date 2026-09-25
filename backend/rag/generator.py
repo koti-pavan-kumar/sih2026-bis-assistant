@@ -57,11 +57,18 @@ class LLMGenerator:
     def generate(self, query: str, context: str, language: str = "en", conversation_history: list = None) -> str:
         """Generate a response using the available LLM."""
         if self.llm_provider == "ollama":
-            return self._generate_ollama(query, context, language, conversation_history)
+            answer = self._generate_ollama(query, context, language, conversation_history)
         elif self.llm_provider == "gemini":
-            return self._generate_gemini(query, context, language, conversation_history)
+            answer = self._generate_gemini(query, context, language, conversation_history)
         else:
-            return self._generate_template(query, context, language)
+            answer = self._generate_template(query, context, language)
+
+        # Some models echo the language instruction as the very first line
+        # ("Respond in English.") — strip it so answers start with real content.
+        if answer:
+            stripped = re.sub(r"^\s*Respond in [A-Za-z]+[.!]?\s*\n?", "", answer).strip()
+            answer = stripped or answer
+        return answer
 
     # Language code to language name mapping
     LANGUAGE_NAMES = {
