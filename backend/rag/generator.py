@@ -3,6 +3,7 @@ LLM Response Generator — Generates cited responses using Ollama or Gemini.
 """
 import os
 import re
+import time
 import logging
 import httpx
 from typing import Optional
@@ -171,13 +172,16 @@ Provide a comprehensive, structured answer following the 6-section format above.
             self.last_error = "GEMINI_API_KEY is not set"
             return self._generate_template(query, context, language)
 
-        # Newest/known-good models first; unknown models 404 fast and are skipped.
+        # Known-good model chain: primary + variants that survive deprecations.
+        # 503 (high demand) is transient — retry with backoff before moving on.
         model_names = [
             "gemini-3.6-flash",
+            "gemini-flash-lite-latest",
             "gemini-3.8-flash",
-            "gemini-2.5-flash",
-            "gemini-2.0-flash",
+            "gemini-flash-latest",
         ]
+        retryable_statuses = {429, 500, 502, 503, 504}
+        dead_statuses = {400, 401, 403, 404}  # bad key or retired model — don't retry
         errors = []
 
         for model_name in model_names:
@@ -188,8 +192,8 @@ Provide a comprehensive, structured answer following the 6-section format above.
             headers = {"x-goog-api-key": gemini_key}
             data = {"contents": [{"parts": [{"text": prompt}]}]}
 
-            # Up to 2 attempts per model: retry timeouts, 429s and 5xxs only.
-            for attempt in range(2):
+            # Up to 3 attempts per model with increasing backoff for 429/5xx.
+            for attempt in range(3):
                 try:
                     resp = httpx.post(url, json=data, headers=headers, timeout=70.0)
                     if resp.status_code == 200:
@@ -205,14 +209,17 @@ Provide a comprehensive, structured answer following the 6-section format above.
                     status = resp.status_code
                     errors.append(f"{model_name}: HTTP {status} {resp.text[:160]}")
                     logger.warning(f"Gemini {model_name} returned {status}: {resp.text[:200]}")
-                    if status in (404, 400, 401, 403):
-                        break  # bad model name or bad key — try next model
-                    # 429 / 5xx → fall through to retry
+                    if status in dead_statuses:
+                        break  # retired model or bad key — next model
+                    # 429 / 5xx → backoff and retry this model
                 except Exception as e:
                     # Network/timeout — safe to retry once
                     msg = str(e).replace(gemini_key, "***")
                     errors.append(f"{model_name}: {msg}")
                     logger.warning(f"Gemini {model_name} error: {msg}")
+
+                if attempt < 2:
+                    time.sleep(1.5 * (attempt + 1))
 
         self.last_error = "; ".join(errors)[-600:] or "no models attempted"
         logger.error(f"All Gemini models failed, using template fallback. {self.last_error}")
