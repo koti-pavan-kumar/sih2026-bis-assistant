@@ -183,3 +183,197 @@ html {
   height: 3px;
   background: linear-gradient(90deg, #dd6b20 0%, #dd6b20 33%, #ffffff 33%, #ffffff 66%, #276749 66%, #276749 100%);
 }
+
+/* ============================================================
+   MANAKMITRA LANDING — VISUAL EFFECTS ENGINE
+   ============================================================ */
+
+/* --- Keyframes --- */
+@keyframes mm-float {
+  0%, 100% { transform: translateY(0px) rotate(var(--mm-rot, 0deg)); }
+  50% { transform: translateY(-18px) rotate(var(--mm-rot, 0deg)); }
+}
+@keyframes mm-float-slow {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-26px) scale(1.02); }
+}
+@keyframes mm-aurora {
+  0% { transform: translate(-8%, -6%) scale(1); opacity: 0.55; }
+  33% { transform: translate(6%, 4%) scale(1.15); opacity: 0.8; }
+  66% { transform: translate(-4%, 8%) scale(0.95); opacity: 0.6; }
+  100% { transform: translate(-8%, -6%) scale(1); opacity: 0.55; }
+}
+@keyframes mm-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes mm-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes mm-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 153, 51, 0.45); }
+  50% { box-shadow: 0 0 0 14px rgba(255, 153, 51, 0); }
+}
+@keyframes mm-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes mm-shine {
+  from { transform: translateX(-120%) skewX(-20deg); }
+  to { transform: translateX(240%) skewX(-20deg); }
+}
+@keyframes mm-pop-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes mm-orbit {
+  from { transform: rotate(0deg) translateX(var(--mm-orbit-r, 240px)) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(var(--mm-orbit-r, 240px)) rotate(-360deg); }
+}
+@keyframes mm-wobble {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* --- Scroll reveal --- */
+.mm-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.mm-reveal.mm-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Glass surfaces --- */
+.mm-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.mm-glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* --- 3D stage + floating documents --- */
+.mm-stage {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+.mm-doc {
+  animation: mm-float 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.mm-doc:nth-child(2) { animation-delay: -2.2s; }
+.mm-doc:nth-child(3) { animation-delay: -4.4s; }
+
+.mm-orbiter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: mm-orbit linear infinite;
+}
+
+/* --- Aurora blobs --- */
+.mm-aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  animation: mm-aurora ease-in-out infinite;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+/* --- Marquee --- */
+.mm-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: mm-marquee 38s linear infinite;
+}
+.mm-marquee-wrap:hover .mm-marquee-track { animation-play-state: paused; }
+
+/* --- 3D tilt cards --- */
+.mm-tilt {
+  transform: perspective(900px) rotateX(var(--mm-rx, 0deg)) rotateY(var(--mm-ry, 0deg));
+  transition: transform 0.18s ease-out, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+}
+.mm-tilt > * { transform: translateZ(28px); }
+
+/* --- Shimmer button --- */
+.mm-shine {
+  position: relative;
+  overflow: hidden;
+}
+.mm-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: mm-shine 3.4s ease-in-out infinite;
+  animation-delay: 1.2s;
+  pointer-events: none;
+}
+
+/* --- Caret for typewriter --- */
+.mm-caret::after {
+  content: '|';
+  margin-left: 1px;
+  animation: mm-caret 0.9s step-end infinite;
+  color: #ff9933;
+}
+
+/* --- Pop-in (staggered with inline delay) --- */
+.mm-pop {
+  animation: mm-pop-in 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/* --- Glow ring for badges --- */
+.mm-glow-ring {
+  animation: mm-glow-pulse 2.6s ease-out infinite;
+}
+
+/* --- Chakra watermark rotation --- */
+.mm-chakra {
+  animation: mm-spin-slow 90s linear infinite;
+}
+
+/* --- Feature card gradient top edge --- */
+.mm-edge::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(90deg, #ff9933, #ffffff, #138808);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mm-edge:hover::before { opacity: 1; }
+
+/* --- Section background texture (subtle grid) --- */
+.mm-grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 0, 128, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 128, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .mm-doc, .mm-aurora, .mm-orbiter, .mm-marquee-track, .mm-chakra,
+  .mm-shine::after, .mm-glow-ring, .mm-pop {
+    animation: none !important;
+  }
+  .mm-reveal { opacity: 1; transform: none; transition: none; }
+}
