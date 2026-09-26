@@ -6,7 +6,9 @@ import CertificationWizard from './CertificationWizard'
 import { t } from '../utils/translations'
 import { loadChats, saveChats, getActiveChatId, setActiveChatId } from '../utils/chatStorage'
 
-const REQUEST_TIMEOUT_MS = 90000
+// Render free tier cold start can take ~60-90s; +Gemini response needs headroom,
+// otherwise the first message after idle always dies with "Request timed out"
+const REQUEST_TIMEOUT_MS = 120000
 const MAX_HISTORY_FOR_CONTEXT = 6
 
 /**

@@ -12,6 +12,7 @@ import CertificationsPage from './pages/CertificationsPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import AutoFetchPage from './pages/AutoFetchPage'
 import { getActiveChatId, setActiveChatId } from './utils/chatStorage'
+import apiFetch from './utils/apiFetch'
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -40,7 +41,7 @@ export default function App() {
   // Load standards when on main app or chat page
   useEffect(() => {
     if (page === 'app') {
-      fetch('/api/standards')
+      apiFetch('/api/standards')
         .then(r => r.json())
         .then(d => setStandards(d.standards || []))
         .catch(() => {})
@@ -50,7 +51,7 @@ export default function App() {
   const handleHealthUpdate = (healthData) => {
     setHealth(healthData)
     if (healthData) {
-      fetch('/api/standards')
+      apiFetch('/api/standards')
         .then(r => r.json())
         .then(d => setStandards(d.standards || []))
         .catch(() => {})

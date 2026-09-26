@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 /**
  * StandardsPage — Full-page display of all indexed BIS standards.
@@ -10,7 +11,7 @@ export default function StandardsPage({ onNavigate, darkMode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/standards')
+    apiFetch('/api/standards')
       .then(r => r.json())
       .then(d => {
         setStandards(d.standards || [])

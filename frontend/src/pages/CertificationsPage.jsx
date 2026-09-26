@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 const STEP_STATUS_ICONS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 
@@ -14,12 +15,14 @@ export default function CertificationsPage({ onNavigate, language, darkMode }) {
   const [activeSection, setActiveSection] = useState('types') // types | process | faq
 
   useEffect(() => {
-    fetch('/api/certifications')
+    // apiFetch retries through the Render cold start (~60s) instead of
+    // leaving this page empty when the backend is asleep
+    apiFetch('/api/certifications')
       .then(r => r.json())
       .then(d => setCertifications(d.certifications || []))
       .catch(() => {})
 
-    fetch('/api/certifications/faqs')
+    apiFetch('/api/certifications/faqs')
       .then(r => r.json())
       .then(d => setFaqs(d.faqs || []))
       .catch(() => {})

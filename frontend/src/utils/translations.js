@@ -11,6 +11,8 @@ const translations = {
     disconnected: "Disconnected",
     checking: "Checking...",
     backendNotReachable: "Backend not reachable",
+    wakingUp: "Waking up…",
+    wakingUpDetails: "Free server sleeping — first load takes ~60s",
     // Sidebar
     standards: "Standards",
     autoFetch: "Auto-Fetch",
@@ -95,6 +97,8 @@ const translations = {
     disconnected: "डिस्कनेक्टेड",
     checking: "जांच हो रही है...",
     backendNotReachable: "बैकएंड उपलब्ध नहीं है",
+    wakingUp: "जाग रहा है…",
+    wakingUpDetails: "फ्री सर्वर सो रहा है — पहली लोड में ~60s लगेंगे",
     standards: "मानक",
     autoFetch: "ऑटो-फ़ेच",
     analytics: "एनालिटिक्स",

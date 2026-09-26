@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 /**
  * AnalyticsPage — Full-page analytics dashboard.
@@ -9,11 +10,11 @@ export default function AnalyticsPage({ onNavigate, darkMode }) {
   const [standards, setStandards] = useState([])
 
   useEffect(() => {
-    fetch('/api/health')
+    apiFetch('/api/health')
       .then(r => r.json())
       .then(d => setHealth(d))
       .catch(() => {})
-    fetch('/api/standards')
+    apiFetch('/api/standards')
       .then(r => r.json())
       .then(d => setStandards(d.standards || []))
       .catch(() => {})

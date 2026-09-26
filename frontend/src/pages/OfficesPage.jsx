@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 const EMOJI_MAP = {
   "Headquarters": "🏛️",
@@ -29,7 +30,7 @@ export default function OfficesPage({ onNavigate, darkMode }) {
   ]
 
   useEffect(() => {
-    fetch('/api/bis-offices')
+    apiFetch('/api/bis-offices')
       .then(r => r.json())
       .then(d => setOffices(d.offices || []))
       .catch(() => {})

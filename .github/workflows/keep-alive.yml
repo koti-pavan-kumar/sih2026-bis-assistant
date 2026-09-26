@@ -1,0 +1,35 @@
+name: Keep Backend Awake
+
+# Render's free plan spins the service down after 15 minutes without inbound
+# traffic, which made the site show "Disconnected / Backend not reachable"
+# whenever the owner's PC was off. Pinging every 10 minutes keeps it warm.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    name: Ping Render health endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Wake backend
+        run: |
+          URL="https://manakmitra-backend.onrender.com/api/health"
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt..."
+            # First request after sleep can take ~60-90s (cold start), hence long max-time
+            if code=$(curl -s -o /tmp/health.json -w "%{http_code}" -m 100 "$URL"); then
+              echo "HTTP $code"
+              if [ "$code" = "200" ]; then
+                echo "Backend awake: $(cat /tmp/health.json)"
+                exit 0
+              fi
+            else
+              echo "curl failed (timeout or connection error)"
+            fi
+            sleep 20
+          done
+          echo "Backend did not respond after 3 attempts"
+          exit 1
