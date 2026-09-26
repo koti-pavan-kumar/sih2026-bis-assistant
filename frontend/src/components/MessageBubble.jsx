@@ -23,13 +23,21 @@ const SECTION_CONFIG = {
  * Looks for ### N. Section Title patterns.
  */
 function parseStructuredResponse(text) {
-  if (!text) return { intro: '', sections: [] }
+  if (!text) return { heading: '', intro: '', sections: [] }
 
   // Raw fallback from the backend when the LLM is down — never try to parse
   // section headers out of raw context; render it as plain text instead.
   if (/^\s*(Based on the available BIS standard excerpts|The AI service is briefly unavailable)/.test(text)) {
-    return { intro: '', sections: [], plain: true }
+    return { heading: '', intro: '', sections: [], plain: true }
   }
+
+  // Dynamic title heading: a single '#' / '##' line (### is reserved for
+  // section headers) naming the product/standard this answer is about.
+  let heading = ''
+  text = text.replace(/^[ \t]*#{1,2}(?!#)[ \t]*(.+?)[ \t]*$/m, (_, h) => {
+    heading = h.replace(/[#+]/g, '').trim()
+    return ''
+  })
 
   // Remove ### heading markers
   let cleaned = text
@@ -52,10 +60,12 @@ function parseStructuredResponse(text) {
 
     // Detect section headers in multiple formats the AI might output:
     // "### 1. Title", "**1. Title**", "1. Title", "Section 1: Title"
+    // Anchored at line start and restricted to 1–6: a loose pattern turns
+    // fragments like "...minimum 50.0% ..." into bogus "SECTION 0" cards.
     const sectionMatch = 
-      line.match(/#{0,3}\s*\*{0,2}\s*(\d)\.\s*(.+?)\s*\*{0,2}\s*$/)
-      || line.match(/Section\s+(\d)\s*[:\-–]\s*(.+)/i)
-      || line.match(/^(\d)\s*[:\-–]\s+(.+)/)
+      line.match(/^#{0,3}\s*\*{0,2}\s*([1-6])\.\s+(.+?)\s*\*{0,2}$/)
+      || line.match(/^Section\s+([1-6])\s*[:\-–]\s*(.+)/i)
+      || line.match(/^([1-6])\s*[:\-–]\s+(.+)/)
 
     if (sectionMatch) {
       currentSection = {
@@ -117,7 +127,7 @@ function parseStructuredResponse(text) {
     }
   }
 
-  return { intro, sections: validSections }
+  return { heading, intro, sections: validSections }
 }
 
 /**
@@ -172,6 +182,15 @@ export default function MessageBubble({ message, onRetry }) {
             <p className="text-sm">{message.content}</p>
           ) : parsed && !parsed.plain ? (
             <div className="space-y-4">
+              {/* Dynamic answer heading — title of the product/standard asked */}
+              {parsed.heading && (
+                <div className="rounded-lg bg-[#eaf1fb] dark:bg-[#1e2a44] border border-[#c9dcf5] dark:border-[#2e4a7f] px-4 py-2.5">
+                  <h2 className="text-[15px] sm:text-base font-extrabold leading-snug text-[#16337a] dark:text-blue-200">
+                    {parsed.heading}
+                  </h2>
+                </div>
+              )}
+
               {/* Intro text */}
               {parsed.intro && (
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{parsed.intro}</p>

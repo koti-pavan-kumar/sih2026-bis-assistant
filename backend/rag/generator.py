@@ -68,7 +68,51 @@ class LLMGenerator:
         if answer:
             stripped = re.sub(r"^\s*Respond in [A-Za-z]+[.!]?\s*\n?", "", answer).strip()
             answer = stripped or answer
+            # Drop any preamble the model emitted before "### 1." and make sure
+            # the answer opens with a single dynamic '# <product/topic>' heading.
+            if answer and not self._is_template_fallback(answer):
+                answer = self._ensure_heading(answer, query)
         return answer
+
+    # First line of an answer must be a 1-2 hash heading (never ###, which is
+    # reserved for section headers).
+    _HEADING_RE = re.compile(r"^[ \t]*#{1,2}(?!#)[ \t]*(.+?)[ \t]*$", re.M)
+    # First real section header: "### 1. ...", "1. ...", "Section 1: ..."
+    _SECTION_START_RE = re.compile(r"^[ \t]*#{0,3}[ \t]*\*{0,2}[ \t]*[1-6][.]?[ \t]+\S", re.M)
+    _TEMPLATE_MARKERS = (
+        "The AI service is briefly unavailable",
+        "Based on the available BIS standard excerpts",
+    )
+
+    def _is_template_fallback(self, answer: str) -> bool:
+        return any(answer.lstrip().startswith(m) for m in self._TEMPLATE_MARKERS)
+
+    def _ensure_heading(self, answer: str, query: str) -> str:
+        """Guarantee the answer starts with exactly one dynamic '# heading'.
+
+        Everything the model wrote before the first section header is preamble
+        (echoed fragments like "1]. 1]. Testing Requirements...") and is
+        discarded — only the heading line is kept from it. If the model never
+        emitted a heading, one is derived from the user's query so the title is
+        still different and relevant for every search.
+        """
+        start_match = self._SECTION_START_RE.search(answer)
+        heading_match = self._HEADING_RE.search(answer)
+
+        # Keep only a heading taken from the preamble; drop the rest of it.
+        if start_match:
+            body = answer[start_match.start():]
+        else:
+            body = answer  # no section headers — keep the whole answer
+
+        if heading_match and heading_match.start() < (start_match.start() if start_match else len(answer)):
+            heading = heading_match.group(1).strip().strip("#").strip()
+        else:
+            heading = re.sub(r"\s+", " ", query).strip().rstrip("?!. ") or "BIS Standards"
+
+        if body.strip().startswith(f"# {heading}") or body.strip().startswith(f"## {heading}"):
+            return body  # already the first line
+        return f"# {heading}\n\n{body.lstrip()}"
 
     # Language code to language name mapping
     LANGUAGE_NAMES = {
@@ -98,11 +142,18 @@ class LLMGenerator:
 
         return f"""You are ManakMitra, an expert AI assistant on Indian Standards (BIS) published by the Bureau of Indian Standards.
 
-Answer the user's question using the provided standard excerpts. You MUST respond in this EXACT 6-section format:
+Answer the user's question using the provided standard excerpts. You MUST respond in this EXACT format:
 
 {lang_instruction}
 
 ## MANDATORY RESPONSE FORMAT:
+
+LINE 1 — DYNAMIC TITLE HEADING:
+# <the specific product, material, or standard this question is about>
+Example: # Packaged Pasteurized Liquid Milk (Full Cream, Toned, Standardized)
+The heading MUST be specific to THIS user's question and different for every query — never a generic title. Use exactly one '#' and write NOTHING before it (no preamble, no restating the question).
+
+Then the 6 sections, starting immediately with:
 
 ### 1. Applicable IS Standards
 List every relevant IS standard number with a brief explanation of WHY each applies to the user's product/query. Format: IS XXXX:YYYY — [what it covers] — [why it applies]. Cite the source section/clause.
@@ -133,6 +184,7 @@ CRITICAL RULES:
 8. Translate technical terms accurately in non-English languages
 9. Use the conversation history for follow-up questions
 10. Section 6 (Documents Required) MUST list specific document names, not just categories
+11. Line 1 is always the '#' heading for the asked product/standard, line 2 is blank, line 3 starts "### 1.". No text before, between, or after the sections.
 
 FORMAT EXAMPLE for each section:
 ### 1. Applicable IS Standards
