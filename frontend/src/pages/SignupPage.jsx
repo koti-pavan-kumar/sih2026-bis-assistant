@@ -12,12 +12,11 @@ const INDIAN_STATES = [
 
 /**
  * SignupPage — Professional government-style registration page.
- * Multi-step form with user type, personal info, and organization details.
+ * One registration for everyone: personal info + location only.
  * Stores registered users in localStorage.
  */
 export default function SignupPage({ onNavigate }) {
   const [step, setStep] = useState(1)
-  const [userType, setUserType] = useState('')
   const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
@@ -25,8 +24,6 @@ export default function SignupPage({ onNavigate }) {
     phone: '',
     password: '',
     confirmPassword: '',
-    organization: '',
-    gstNumber: '',
     state: '',
     district: '',
   })
@@ -48,9 +45,6 @@ export default function SignupPage({ onNavigate }) {
     if (formData.password.length < 6) { setError('Password must be at least 6 characters.'); return }
     if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.'); return }
     if (!formData.state) { setError('Please select your state.'); return }
-    if (userType === 'msme' && !formData.organization.trim()) {
-      setError('Please enter your organization name.'); return
-    }
 
     // Attempt registration
     const result = register({
@@ -58,9 +52,6 @@ export default function SignupPage({ onNavigate }) {
       email: formData.email,
       phone: formData.phone,
       password: formData.password,
-      userType: userType,
-      organization: formData.organization,
-      gstNumber: formData.gstNumber,
       state: formData.state,
       district: formData.district,
     })
@@ -70,8 +61,8 @@ export default function SignupPage({ onNavigate }) {
       return
     }
 
-    // Registration successful — move to step 3
-    setStep(3)
+    // Registration successful — move to step 2
+    setStep(2)
   }
 
   const handleGoToApp = () => {
@@ -120,7 +111,7 @@ export default function SignupPage({ onNavigate }) {
         <div className="w-full max-w-lg">
           {/* Progress Steps */}
           <div className="flex items-center justify-center mb-8">
-            {[1, 2, 3].map((s) => (
+            {[1, 2].map((s) => (
               <React.Fragment key={s}>
                 <div className="flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -129,10 +120,10 @@ export default function SignupPage({ onNavigate }) {
                     {step > s ? '✓' : s}
                   </div>
                   <span className="text-[10px] text-gray-500 mt-1">
-                    {s === 1 ? 'User Type' : s === 2 ? 'Details' : 'Complete'}
+                    {s === 1 ? 'Details' : 'Complete'}
                   </span>
                 </div>
-                {s < 3 && (
+                {s < 2 && (
                   <div className={`w-16 h-0.5 mx-2 mt-[-16px] ${
                     step > s ? 'bg-[#000080]' : 'bg-gray-200'
                   }`}></div>
@@ -158,67 +149,16 @@ export default function SignupPage({ onNavigate }) {
                 </div>
               )}
 
-              {/* Step 1: User Type */}
+              {/* Step 1: Details Form */}
               {step === 1 && (
-                <div>
-                  <h2 className="text-xl font-bold text-[#000080] text-center mb-2">Register on ManakMitra</h2>
-                  <p className="text-sm text-gray-500 text-center mb-6">Select your user type</p>
-
-                  <div className="space-y-3">
-                    {[
-                      { id: 'msme', icon: '🏭', title: 'MSME / Manufacturer', desc: 'Find standards for your products, get certification guidance', color: 'border-[#FF9933] hover:bg-orange-50' },
-                      { id: 'individual', icon: '👤', title: 'Individual / Consumer', desc: 'Verify product specifications, check quality standards', color: 'border-[#000080] hover:bg-blue-50' },
-                      { id: 'official', icon: '🏛️', title: 'BIS Official', desc: 'Access analytics, track compliance awareness', color: 'border-[#138808] hover:bg-green-50' },
-                    ].map((type) => (
-                      <button
-                        key={type.id}
-                        onClick={() => { setUserType(type.id); setStep(2); setError('') }}
-                        className={`w-full text-left p-5 border-2 rounded-xl transition ${type.color} ${
-                          userType === type.id ? 'ring-2 ring-[#000080]' : ''
-                        }`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <span className="text-3xl">{type.icon}</span>
-                          <div>
-                            <div className="font-bold text-[#000080]">{type.title}</div>
-                            <div className="text-xs text-gray-500 mt-0.5">{type.desc}</div>
-                          </div>
-                          <svg className="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Demo skip */}
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => {
-                        localStorage.removeItem('manakmitra_chat_history')
-                        localStorage.setItem('manakmitra_user', JSON.stringify({
-                          name: 'Guest', email: '', userType: 'guest', loggedIn: false,
-                        }))
-                        onNavigate('app')
-                      }}
-                      className="text-sm text-gray-400 hover:text-[#000080] transition"
-                    >
-                      Skip registration → Try demo
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Details Form */}
-              {step === 2 && (
                 <form onSubmit={handleRegister}>
                   <div className="flex items-center gap-2 mb-6">
-                    <button type="button" onClick={() => { setStep(1); setError('') }} className="text-gray-400 hover:text-gray-600">
+                    <button type="button" onClick={() => { onNavigate('landing'); setError('') }} className="text-gray-400 hover:text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </button>
                     <div>
-                      <h2 className="text-lg font-bold text-[#000080]">
-                        {userType === 'msme' ? 'MSME Registration' : userType === 'official' ? 'Official Registration' : 'Individual Registration'}
-                      </h2>
-                      <p className="text-xs text-gray-500">Step 2 of 3 — Your details</p>
+                      <h2 className="text-lg font-bold text-[#000080]">Create your account</h2>
+                      <p className="text-xs text-gray-500">Step 1 of 2 — Your details</p>
                     </div>
                   </div>
 
@@ -260,23 +200,6 @@ export default function SignupPage({ onNavigate }) {
                       </div>
                     </div>
 
-                    {userType === 'msme' && (
-                      <>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-700 mb-1">Organization Name *</label>
-                          <input type="text" value={formData.organization} onChange={(e) => update('organization', e.target.value)}
-                            placeholder="Your company/factory name"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-700 mb-1">GST Number (optional)</label>
-                          <input type="text" value={formData.gstNumber} onChange={(e) => update('gstNumber', e.target.value)}
-                            placeholder="22AAAAA0000A1Z5"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
-                        </div>
-                      </>
-                    )}
-
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">State *</label>
@@ -305,12 +228,28 @@ export default function SignupPage({ onNavigate }) {
                       className="w-full bg-[#000080] hover:bg-[#000060] text-white font-bold py-3 rounded-xl text-sm transition shadow-sm">
                       Register →
                     </button>
+
+                    <div className="mt-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem('manakmitra_chat_history')
+                          localStorage.setItem('manakmitra_user', JSON.stringify({
+                            name: 'Guest', email: '', userType: 'guest', loggedIn: false,
+                          }))
+                          onNavigate('app')
+                        }}
+                        className="text-sm text-gray-400 hover:text-[#000080] transition"
+                      >
+                        Skip registration → Try demo
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}
 
-              {/* Step 3: Complete */}
-              {step === 3 && (
+              {/* Step 2: Complete */}
+              {step === 2 && (
                 <div className="text-center py-4">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

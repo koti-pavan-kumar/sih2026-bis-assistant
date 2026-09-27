@@ -6,7 +6,6 @@ import { login, setGuest } from '../utils/auth'
  * Validates credentials against registered users stored in localStorage.
  */
 export default function LoginPage({ onNavigate }) {
-  const [userType, setUserType] = useState('msme')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -96,27 +95,6 @@ export default function LoginPage({ onNavigate }) {
                 <p className="text-sm text-gray-500 mt-1">Access Indian Standards in your language</p>
               </div>
 
-              {/* User Type Tabs */}
-              <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
-                {[
-                  { id: 'msme', label: 'MSME', icon: '🏭' },
-                  { id: 'individual', label: 'Individual', icon: '👤' },
-                  { id: 'official', label: 'BIS Official', icon: '🏛️' },
-                ].map((type) => (
-                  <button
-                    key={type.id}
-                    onClick={() => setUserType(type.id)}
-                    className={`flex-1 py-2.5 text-xs font-semibold rounded-md transition ${
-                      userType === type.id
-                        ? 'bg-white text-[#000080] shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {type.icon} {type.label}
-                  </button>
-                ))}
-              </div>
-
               {/* Error Banner */}
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2">
@@ -128,14 +106,12 @@ export default function LoginPage({ onNavigate }) {
               {/* Login Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                    {userType === 'official' ? 'Official Email ID' : 'Email Address'}
-                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email Address</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError('') }}
-                    placeholder={userType === 'official' ? 'official@bis.gov.in' : 'you@company.com'}
+                    placeholder="you@company.com"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] transition"
                   />
                 </div>
@@ -201,12 +177,6 @@ export default function LoginPage({ onNavigate }) {
                 </button>
               </div>
 
-              {/* BIS Official note */}
-              {userType === 'official' && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
-                  <strong>BIS Officials:</strong> Use your official @bis.gov.in email. Contact IT admin for credentials.
-                </div>
-              )}
             </div>
           </div>
 

@@ -915,9 +915,9 @@ export default function LandingPage({ onNavigate }) {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: 'building', title: 'MSMEs & Manufacturers', desc: 'Find applicable IS standards for your product. Get certification guidance. Understand compliance requirements in your language.', action: 'Register as MSME', from: '#FF9933', to: '#FF6B00' },
-              { icon: 'users', title: 'Consumers & Traders', desc: 'Verify product specifications. Understand quality marks. Check if a product meets Indian safety standards.', action: 'Register as Consumer', from: '#1D6BFF', to: '#000080' },
-              { icon: 'shield', title: 'BIS Officials', desc: 'Access analytics on most-queried standards. Identify knowledge gaps. Track compliance awareness across regions.', action: 'Official Login', from: '#138808', to: '#0A5F05' },
+              { icon: 'building', title: 'MSMEs & Manufacturers', desc: 'Find applicable IS standards for your product. Get certification guidance. Understand compliance requirements in your language.', action: 'Register Now', from: '#FF9933', to: '#FF6B00' },
+              { icon: 'users', title: 'Consumers & Traders', desc: 'Verify product specifications. Understand quality marks. Check if a product meets Indian safety standards.', action: 'Register Now', from: '#1D6BFF', to: '#000080' },
+              { icon: 'shield', title: 'BIS Officials', desc: 'Access analytics on most-queried standards. Identify knowledge gaps. Track compliance awareness across regions.', action: 'Sign In', from: '#138808', to: '#0A5F05' },
             ].map((type, i) => (
               <div key={i} className="mm-reveal" style={{ transitionDelay: `${i * 100}ms` }}>
                 <TiltCard className="h-full">
