@@ -156,10 +156,6 @@ export default function App() {
           onNavigate={navigate}
         />
       </div>
-      
-      <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white dark:bg-[#111318]">
-        {t('footerLine', language)}
-      </footer>
     </div>
   )
 }

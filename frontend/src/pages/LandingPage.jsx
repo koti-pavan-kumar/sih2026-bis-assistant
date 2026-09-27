@@ -574,21 +574,6 @@ export default function LandingPage({ onNavigate }) {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* ================= TOP GOVERNMENT BAR ================= */}
-      <div className="bg-[#000080] text-white text-xs py-1.5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-4">
-            <span>🇮🇳 Government of India</span>
-            <span className="text-blue-300 hidden sm:inline">|</span>
-            <span className="hidden sm:inline text-blue-200">Ministry of Consumer Affairs, Food & Public Distribution</span>
-          </div>
-          <div className="hidden md:flex items-center gap-4 text-blue-200">
-            <span>Bureau of Indian Standards</span>
-          </div>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-      </div>
-
       {/* ================= HEADER ================= */}
       <header className="bg-white/85 backdrop-blur-xl border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
