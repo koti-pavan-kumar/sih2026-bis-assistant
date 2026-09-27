@@ -76,15 +76,6 @@ export default function SignupPage({ onNavigate }) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Government Bar */}
-      <div className="bg-[#000080] text-white text-xs py-1.5">
-        <div className="max-w-7xl mx-auto px-6 flex items-center gap-4">
-          <span>🇮🇳 Government of India</span>
-          <span className="text-blue-300">|</span>
-          <span>Ministry of Consumer Affairs, Food & Public Distribution</span>
-        </div>
-      </div>
-
       {/* Header */}
       <header className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
