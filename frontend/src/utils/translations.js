@@ -3,6 +3,8 @@
  * Covers all UI labels used in the application.
  */
 
+import { uiTranslations } from './uiTranslations'
+
 const translations = {
   en: {
     // Header
@@ -540,6 +542,9 @@ export const LANGUAGE_NAMES = {
 
 // Get translation for a key in a language (fallback to English)
 export function t(key, lang = "en") {
+  // Newer chrome/Auto-Fetch strings cover all 19 selectable languages.
+  const ui = uiTranslations[lang]
+  if (ui && ui[key] != null && ui[key] !== "") return ui[key]
   const langTranslations = translations[lang] || translations.en;
   return langTranslations[key] || translations.en[key] || key;
 }

@@ -2,15 +2,21 @@ import React, { useState } from 'react'
 import ConnectionStatus from './ConnectionStatus'
 import LanguageSelector from './LanguageSelector'
 import ProfileMenu from './ProfileMenu'
+import { t } from '../utils/translations'
 
 const NAV_ITEMS = [
-  { id: 'app', label: '💬 Chat', shortLabel: 'Chat' },
-  { id: 'standards', label: '📚 Standards', shortLabel: 'Standards' },
-  { id: 'certifications', label: '📋 Certifications', shortLabel: 'Certs' },
-  { id: 'offices', label: '🔬 Testing Centres', shortLabel: 'Offices' },
-  { id: 'auto-fetch', label: '🔄 Auto-Fetch', shortLabel: 'Fetch' },
-  { id: 'analytics', label: '📊 Analytics', shortLabel: 'Analytics' },
+  { id: 'app', labelKey: 'chat', shortLabel: 'Chat' },
+  { id: 'standards', labelKey: 'standards', shortLabel: 'Standards' },
+  { id: 'certifications', labelKey: 'navCertifications', shortLabel: 'Certs' },
+  { id: 'offices', labelKey: 'navTestingCentres', shortLabel: 'Offices' },
+  { id: 'auto-fetch', labelKey: 'autoFetch', shortLabel: 'Fetch' },
+  { id: 'analytics', labelKey: 'analytics', shortLabel: 'Analytics' },
 ]
+
+const NAV_ICONS = {
+  app: '💬', standards: '📚', certifications: '📋',
+  offices: '🔬', 'auto-fetch': '🔄', analytics: '📊',
+}
 
 export default function Header({ currentPage, onNavigate, health, onHealthUpdate, language, onLanguageChange, darkMode, onToggleDarkMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -92,7 +98,7 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
                   : 'text-blue-200/70 border-transparent hover:text-white hover:bg-white/5'
               }`}
             >
-              {item.label}
+              {NAV_ICONS[item.id]} {t(item.labelKey, language)}
             </button>
           ))}
         </nav>
@@ -110,7 +116,7 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
                     : 'text-blue-200/70 hover:text-white hover:bg-white/5 border-l-transparent'
                 }`}
               >
-                {item.label}
+                {NAV_ICONS[item.id]} {t(item.labelKey, language)}
               </button>
             ))}
           </nav>

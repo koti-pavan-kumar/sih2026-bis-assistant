@@ -13,6 +13,7 @@ import AnalyticsPage from './pages/AnalyticsPage'
 import AutoFetchPage from './pages/AutoFetchPage'
 import { getActiveChatId, setActiveChatId } from './utils/chatStorage'
 import apiFetch from './utils/apiFetch'
+import { t } from './utils/translations'
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -92,7 +93,7 @@ export default function App() {
     offices: <OfficesPage onNavigate={navigate} darkMode={darkMode} />,
     certifications: <CertificationsPage onNavigate={navigate} language={language} darkMode={darkMode} />,
     analytics: <AnalyticsPage onNavigate={navigate} darkMode={darkMode} />,
-    'auto-fetch': <AutoFetchPage onNavigate={navigate} darkMode={darkMode} />,
+    'auto-fetch': <AutoFetchPage onNavigate={navigate} language={language} darkMode={darkMode} />,
   }
 
   if (fullPages[page]) {
@@ -110,7 +111,7 @@ export default function App() {
         />
         {fullPages[page]}
         <footer className="text-center py-3 text-xs text-gray-400 border-t bg-white dark:bg-[#111318]">
-          Government of India | Bureau of Indian Standards | ManakMitra AI Assistant
+          {t('footerLine', language)}
         </footer>
       </div>
     )
@@ -137,6 +138,7 @@ export default function App() {
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}
             refreshKey={chatRefreshKey}
+            language={language}
           />
         </div>
 
@@ -149,7 +151,7 @@ export default function App() {
       </div>
       
       <footer className="text-center py-2 text-xs text-gray-400 border-t bg-white dark:bg-[#111318]">
-        Government of India | Bureau of Indian Standards | ManakMitra AI Assistant
+        {t('footerLine', language)}
       </footer>
     </div>
   )

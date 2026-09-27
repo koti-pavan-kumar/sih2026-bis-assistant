@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
+import { t } from '../utils/translations'
 
 /**
  * AutoFetchPage — Full-page auto-fetch management.
  * Fetch new BIS standards from bis.gov.in, check updates, view history.
  */
-export default function AutoFetchPage({ onNavigate, darkMode }) {
+export default function AutoFetchPage({ onNavigate, language = 'en', darkMode }) {
   const [fetching, setFetching] = useState(false)
   const [fetchResult, setFetchResult] = useState(null)
   const [history, setHistory] = useState(null)
@@ -70,12 +71,11 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
             onClick={() => onNavigate('app')}
             className="text-blue-300 hover:text-white text-xs mb-4 flex items-center gap-1"
           >
-            ← Back to ManakMitra
+            {t('backToManakMitra', language)}
           </button>
-          <h1 className="text-3xl font-bold mb-2">🔄 Auto-Fetch Standards</h1>
+          <h1 className="text-3xl font-bold mb-2">🔄 {t('autoFetchHeroTitle', language)}</h1>
           <p className="text-blue-200 text-sm max-w-2xl">
-            Automatically discover and ingest new BIS standards from bis.gov.in.
-            Keep your knowledge base up-to-date with the latest government standards.
+            {t('autoFetchHeroDesc', language)}
           </p>
         </div>
       </div>
@@ -83,20 +83,20 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* How It Works */}
         <div className="mb-8 bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-6 shadow-sm">
-          <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">How Auto-Fetch Works</h2>
+          <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-4">{t('howAutoFetchWorks', language)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              { step: '1', icon: '🔍', title: 'Scan BIS Website', desc: 'Scrapes bis.gov.in for new standard announcements and gazette notifications' },
-              { step: '2', icon: '📥', title: 'Download PDFs', desc: 'Downloads available standard PDF documents from BIS servers' },
-              { step: '3', icon: '🧠', title: 'Ingest & Index', desc: 'Parses PDFs into chunks, creates embeddings, adds to FAISS vector store' },
-              { step: '4', icon: '✅', title: 'Ready to Query', desc: 'New standards are immediately searchable through the AI assistant' },
+              { step: '1', icon: '🔍', titleKey: 'stepScan', descKey: 'stepScanDesc' },
+              { step: '2', icon: '📥', titleKey: 'stepDownload', descKey: 'stepDownloadDesc' },
+              { step: '3', icon: '🧠', titleKey: 'stepIngest', descKey: 'stepIngestDesc' },
+              { step: '4', icon: '✅', titleKey: 'stepReady', descKey: 'stepReadyDesc' },
             ].map(item => (
               <div key={item.step} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-[#1a2744] dark:bg-blue-900/30 text-white flex items-center justify-center text-xl mx-auto mb-2">
                   {item.icon}
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-1">{item.title}</h3>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400">{item.desc}</p>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-1">{t(item.titleKey, language)}</h3>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400">{t(item.descKey, language)}</p>
               </div>
             ))}
           </div>
@@ -115,10 +115,10 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
           >
             <div className="text-2xl mb-2">{fetching ? '⏳' : '🔄'}</div>
             <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-              {fetching ? 'Fetching from BIS...' : 'Fetch & Ingest New Standards'}
+              {fetching ? t('fetchingFromBIS', language) : t('fetchAndIngest', language)}
             </h3>
             <p className="text-[10px] text-gray-500 mt-1">
-              {fetching ? 'This may take 30-60 seconds' : 'Scrape bis.gov.in for new standards, download PDFs, and index them'}
+              {fetching ? t('fetchingTime', language) : t('fetchBtnDesc', language)}
             </p>
           </button>
 
@@ -128,8 +128,8 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
             className="p-6 rounded-xl border-2 border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] hover:border-gray-300 dark:hover:border-gray-500 transition text-left disabled:opacity-60"
           >
             <div className="text-2xl mb-2">{checking ? '⏳' : '🔍'}</div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{checking ? 'Checking…' : 'Check for Updates'}</h3>
-            <p className="text-[10px] text-gray-500 mt-1">Quick check — see what new standards are available without downloading</p>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{checking ? t('checkingNow', language) : t('checkForUpdates', language)}</h3>
+            <p className="text-[10px] text-gray-500 mt-1">{t('checkBtnDesc', language)}</p>
           </button>
 
           <button
@@ -137,15 +137,15 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
             className="p-6 rounded-xl border-2 border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] hover:border-gray-300 dark:hover:border-gray-500 transition text-left"
           >
             <div className="text-2xl mb-2">📋</div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">View Fetch History</h3>
-            <p className="text-[10px] text-gray-500 mt-1">See all previously fetched standards and their status</p>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('viewFetchHistory', language)}</h3>
+            <p className="text-[10px] text-gray-500 mt-1">{t('historyBtnDesc', language)}</p>
           </button>
         </div>
 
         {/* Check Result — human-readable summary instead of raw JSON */}
         {checkResult && (
           <div className="mb-6 bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">🔍 Check Results</h3>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">🔍 {t('checkResults', language)}</h3>
             {checkResult.error ? (
               <div className="text-xs text-red-600 dark:text-red-400">Error: {checkResult.error}</div>
             ) : (
@@ -155,19 +155,19 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
                     <div className="text-xl font-bold text-blue-700 dark:text-blue-300">
                       {(checkResult.new_items || []).length}
                     </div>
-                    <div className="text-[10px] text-blue-600 dark:text-blue-400">New Available</div>
+                    <div className="text-[10px] text-blue-600 dark:text-blue-400">{t('newAvailable', language)}</div>
                   </div>
                   <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-gray-700 dark:text-gray-200">
                       {checkResult.total_fetched ?? '—'}
                     </div>
-                    <div className="text-[10px] text-gray-500">Total Fetched</div>
+                    <div className="text-[10px] text-gray-500">{t('totalFetched', language)}</div>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-green-700 dark:text-green-300">
                       {checkResult.standards_indexed ?? '—'}
                     </div>
-                    <div className="text-[10px] text-green-600 dark:text-green-400">Standards Indexed</div>
+                    <div className="text-[10px] text-green-600 dark:text-green-400">{t('standardsIndexed', language)}</div>
                   </div>
                   <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
                     <div className="text-[13px] font-bold text-purple-700 dark:text-purple-300 leading-snug">
@@ -175,14 +175,14 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
                         ? new Date(checkResult.last_check).toLocaleString()
                         : '—'}
                     </div>
-                    <div className="text-[10px] text-purple-600 dark:text-purple-400">Last Checked</div>
+                    <div className="text-[10px] text-purple-600 dark:text-purple-400">{t('lastChecked', language)}</div>
                   </div>
                 </div>
 
                 {(checkResult.new_items || []).length > 0 ? (
                   <div>
                     <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                      New standards found on bis.gov.in:
+                      {t('newListTitle', language)}
                     </p>
                     <div className="space-y-1.5 max-h-48 overflow-y-auto">
                       {checkResult.new_items.map((item, i) => (
@@ -195,13 +195,13 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
                       ))}
                     </div>
                     <p className="text-[11px] text-gray-500 mt-2">
-                      Click “Fetch &amp; Ingest New Standards” to download and index them.
+                      {t('clickFetchHint', language)}
                     </p>
                   </div>
                 ) : (
                   <p className="text-xs text-gray-600 dark:text-gray-400">
-                    ✅ No new standards found — your knowledge base is up to date
-                    {checkResult.last_check ? ` (checked ${new Date(checkResult.last_check).toLocaleString()})` : ''}.
+                    ✅ {t('upToDate', language)}
+                    {checkResult.last_check ? ` (${t('checkedLabel', language)} ${new Date(checkResult.last_check).toLocaleString()})` : ''}.
                   </p>
                 )}
               </div>
@@ -213,7 +213,7 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
         {fetchResult && (
           <div className="mb-6 bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-              {fetchResult.error ? '❌ Fetch Error' : '✅ Fetch Results'}
+              {fetchResult.error ? `❌ ${t('fetchErrorTitle', language)}` : `✅ ${t('fetchResultsTitle', language)}`}
             </h3>
             {fetchResult.error ? (
               <div className="text-xs text-red-600 dark:text-red-400">{fetchResult.error}</div>
@@ -222,25 +222,25 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
                 {fetchResult.new_standards_found !== undefined && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-blue-700 dark:text-blue-300">{fetchResult.new_standards_found}</div>
-                    <div className="text-[10px] text-blue-600 dark:text-blue-400">New Found</div>
+                    <div className="text-[10px] text-blue-600 dark:text-blue-400">{t('newFound', language)}</div>
                   </div>
                 )}
                 {fetchResult.downloaded !== undefined && (
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-green-700 dark:text-green-300">{fetchResult.downloaded}</div>
-                    <div className="text-[10px] text-green-600 dark:text-green-400">Downloaded</div>
+                    <div className="text-[10px] text-green-600 dark:text-green-400">{t('downloadedStat', language)}</div>
                   </div>
                 )}
                 {fetchResult.ingested_chunks !== undefined && (
                   <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-purple-700 dark:text-purple-300">{fetchResult.ingested_chunks}</div>
-                    <div className="text-[10px] text-purple-600 dark:text-purple-400">Chunks Ingested</div>
+                    <div className="text-[10px] text-purple-600 dark:text-purple-400">{t('chunksIngested', language)}</div>
                   </div>
                 )}
                 {fetchResult.total_indexed !== undefined && (
                   <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 text-center">
                     <div className="text-xl font-bold text-orange-700 dark:text-orange-300">{fetchResult.total_indexed}</div>
-                    <div className="text-[10px] text-orange-600 dark:text-orange-400">Total Indexed</div>
+                    <div className="text-[10px] text-orange-600 dark:text-orange-400">{t('totalIndexedStat', language)}</div>
                   </div>
                 )}
               </div>
@@ -252,10 +252,10 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
         {history && (
           <div ref={historyRef} className="bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm scroll-mt-24">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-              📋 Fetch History ({history.length} items)
+              📋 {t('fetchHistory', language)} ({history.length} {t('itemsWord', language)})
             </h3>
             {history.length === 0 ? (
-              <p className="text-xs text-gray-500 text-center py-4">No standards fetched yet. Click "Fetch & Ingest" to start.</p>
+              <p className="text-xs text-gray-500 text-center py-4">{t('noItemsFetched', language)}</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {[...history].reverse().map((item, i) => (
@@ -276,7 +276,7 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
                         ? 'bg-green-100 dark:bg-green-800/30 text-green-700 dark:text-green-300'
                         : 'bg-yellow-100 dark:bg-yellow-800/30 text-yellow-700 dark:text-yellow-300'
                     }`}>
-                      {item.pdf_downloaded ? '✓ Downloaded' : '⏳ Pending'}
+                      {item.pdf_downloaded ? t('downloadedLabel', language) : `⏳ ${t('pending', language)}`}
                     </span>
                   </div>
                 ))}

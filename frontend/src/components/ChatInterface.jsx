@@ -222,7 +222,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
               <polyline points="3 6 5 6 21 6"/>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
             </svg>
-            Clear chat
+            {t('clearChat', language)}
           </button>
         )}
       </div>
@@ -240,8 +240,8 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                   <div className="w-16 h-16 bg-[#1a2744] dark:bg-[#2c5282] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <span className="text-2xl">🏛️</span>
                   </div>
-                  <h2 className="text-2xl font-bold text-[#1a2744] dark:text-gray-100">BIS Standards AI Assistant</h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-md mx-auto">Ask any question about Indian Standards in 20 languages. Get instant, cited answers from official BIS documents.</p>
+                  <h2 className="text-2xl font-bold text-[#1a2744] dark:text-gray-100">{t('heroTitle', language)}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-md mx-auto">{t('heroDesc', language)}</p>
                 </div>
 
                 {/* Two main options */}
@@ -253,11 +253,11 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                         <span className="text-lg">💬</span>
                       </div>
                       <div>
-                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">Ask a Question</h3>
-                        <p className="text-[11px] text-gray-500 dark:text-gray-400">Free-text or voice query</p>
+                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">{t('askCardTitle', language)}</h3>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">{t('askCardSubtitle', language)}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">Type or speak in any language about any BIS standard</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">{t('askCardDesc', language)}</p>
                     <div className="space-y-2">
                       {[
                         { q: 'What is min yield stress for Fe 500?', lang: 'EN' },
@@ -280,11 +280,11 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                         <span className="text-lg">📋</span>
                       </div>
                       <div>
-                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">Certification Wizard</h3>
-                        <p className="text-[11px] text-gray-500 dark:text-gray-400">Guided standard lookup</p>
+                        <h3 className="font-bold text-[#1a2744] dark:text-gray-100">{t('certificationWizard', language)}</h3>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400">{t('askCardSubtitle', language)}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">Don't know which standard applies? Let us guide you step by step.</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">{t('wizardCardDesc', language)}</p>
                     <div className="space-y-2">
                       {[
                         { cat: '🏗️ Cement & Concrete', count: '5 standards' },
@@ -298,7 +298,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                       ))}
                     </div>
                     <div className="mt-4 text-xs font-semibold text-[#dd6b20] flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Start Wizard →
+                      {t('startWizard', language)}
                     </div>
                   </div>
                 </div>
@@ -307,14 +307,14 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                 <div className="max-w-3xl mx-auto">
                   <div className="flex items-center justify-center gap-6 text-[11px] text-gray-400 dark:text-gray-500">
                     {[
-                      { icon: '🎤', label: 'Voice Input' },
-                      { icon: '🌐', label: '20 Languages' },
-                      { icon: '📎', label: 'Source Citations' },
-                      { icon: '🔗', label: 'Official BIS Links' },
+                      { icon: '🎤', labelKey: 'voiceInput' },
+                      { icon: '🌐', labelKey: 'twentyLanguages' },
+                      { icon: '📎', labelKey: 'sourceCitations' },
+                      { icon: '🔗', labelKey: 'officialBisLinks' },
                     ].map((f, i) => (
                       <span key={i} className="flex items-center gap-1.5">
                         <span>{f.icon}</span>
-                        <span>{f.label}</span>
+                        <span>{t(f.labelKey, language)}</span>
                       </span>
                     ))}
                   </div>

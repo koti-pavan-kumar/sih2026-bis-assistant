@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { loadChats, saveChats, getActiveChatId, setActiveChatId } from '../utils/chatStorage'
+import { t } from '../utils/translations'
 
 /**
  * Create a new empty chat session.
@@ -18,7 +19,7 @@ function createNewChat() {
  * ChatList — Left sidebar showing all chat sessions for the current user.
  * Each user has their own independent chat list.
  */
-export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWizardOpen }) {
+export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWizardOpen, language = 'en' }) {
   const [chats, setChats] = useState([])
   const [hoveredId, setHoveredId] = useState(null)
 
@@ -94,7 +95,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
             <line x1="12" y1="5" x2="12" y2="19"/>
             <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          New Chat
+          {t('newChat', language)}
         </button>
       </div>
 
@@ -124,9 +125,9 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
 
               {/* Chat info */}
               <div className="flex-1 min-w-0">
-                <div className="truncate text-sm font-medium">{chat.title || 'New Chat'}</div>
+                <div className="truncate text-sm font-medium">{chat.title || t('newChat', language)}</div>
                 {messageCount > 0 && (
-                  <div className="text-xs text-gray-400 mt-0.5">{messageCount} messages</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{messageCount} {t('messagesWord', language)}</div>
                 )}
               </div>
 
@@ -157,22 +158,22 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
             className="w-full flex items-center gap-2 bg-[#dd6b20] dark:bg-[#7c4a1e] hover:bg-[#c05621] dark:hover:bg-[#9a5f2a] text-white py-2.5 px-3 rounded-lg text-sm font-semibold transition"
           >
             <span>📋</span>
-            Certification Wizard
+            {t('certificationWizard', language)}
           </button>
         </div>
         {/* Quick stats */}
         <div className="px-3 pb-3">
           <div className="bg-white/50 dark:bg-[#1a1d23] rounded-xl p-3.5 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 dark:text-gray-400">Standards Indexed</span>
+              <span className="text-gray-500 dark:text-gray-400">{t('standardsIndexed', language)}</span>
               <span className="font-bold text-[#000080] dark:text-blue-300">23</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 dark:text-gray-400">Languages</span>
+              <span className="text-gray-500 dark:text-gray-400">{t('languagesWord', language)}</span>
               <span className="font-bold text-[#000080] dark:text-blue-300">20</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 dark:text-gray-400">Your Chats</span>
+              <span className="text-gray-500 dark:text-gray-400">{t('yourChats', language)}</span>
               <span className="font-bold text-[#000080] dark:text-blue-300">{chats.length}</span>
             </div>
           </div>

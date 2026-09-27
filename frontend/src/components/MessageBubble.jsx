@@ -1,5 +1,6 @@
 import React from 'react'
 import { getBISDocumentURL } from '../utils/urls'
+import { t } from '../utils/translations'
 
 const LANGUAGE_LABELS = {
   en: '🇬🇧 English', hi: '🇮🇳 हिंदी', bn: '🇮🇳 বাংলা', ta: '🇮🇳 தமிழ்',
@@ -306,7 +307,7 @@ function RenderLine({ line }) {
  * One standard in Section 1: big IS heading, content, "Why this standard
  * applies" box, and a button straight to the official government document.
  */
-function StandardEntry({ entry }) {
+function StandardEntry({ entry, language }) {
   const url = getBISDocumentURL(entry.is, entry.title)
 
   return (
@@ -342,7 +343,7 @@ function StandardEntry({ entry }) {
       {entry.why && (
         <div className="mt-2 rounded-md border border-blue-200 dark:border-blue-800 bg-white/70 dark:bg-blue-950/30 px-3 py-2">
           <div className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1">
-            Why this standard applies
+            {t('whyThisStandard', language)}
           </div>
           <p className="text-[14px] leading-relaxed text-gray-700 dark:text-gray-300">
             <RenderLine line={entry.why} />
@@ -358,7 +359,7 @@ function StandardEntry({ entry }) {
           rel="noopener noreferrer"
           className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#1a2744] hover:bg-[#2a3f6b] dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-[13px] font-semibold px-4 py-2 transition"
         >
-          📄 View Original Source
+          📄 {t('viewSource', language)}
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
           </svg>
@@ -368,7 +369,7 @@ function StandardEntry({ entry }) {
   )
 }
 
-export default function MessageBubble({ message, onRetry }) {
+export default function MessageBubble({ message, onRetry, language = 'en' }) {
   const isUser = message.role === 'user'
   const isError = message.isError
   const parsed = !isUser && !isError ? parseStructuredResponse(message.content) : null
@@ -417,9 +418,9 @@ export default function MessageBubble({ message, onRetry }) {
                         {config.icon}
                       </div>
                       <div>
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Section {section.num}</span>
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{t('sectionWord', language)} {section.num}</span>
                         <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight">
-                          {config.label || section.title}
+                          {SECTION_CONFIG[section.num] ? t(`sec${section.num}`, language) : (config.label || section.title)}
                         </h3>
                       </div>
                     </div>
@@ -440,7 +441,7 @@ export default function MessageBubble({ message, onRetry }) {
                                   </p>
                                 ))}
                                 {entries.map((e, k) => (
-                                  <StandardEntry key={`std-${k}`} entry={e} />
+                                  <StandardEntry key={`std-${k}`} entry={e} language={language} />
                                 ))}
                               </>
                             )
@@ -484,7 +485,7 @@ export default function MessageBubble({ message, onRetry }) {
                                   rel="noopener noreferrer"
                                   className="ml-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
                                 >
-                                  🔗 Official Link
+                                  🔗 {t('officialLink', language)}
                                 </a>
                               ))}
                             </div>
