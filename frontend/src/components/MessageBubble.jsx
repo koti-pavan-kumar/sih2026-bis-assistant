@@ -172,22 +172,44 @@ function parseStructuredResponse(text) {
     // "### 1. Title", "**1. Title**", "1. Title", "Section 1: Title"
     // Anchored at line start and restricted to 1–6: a loose pattern turns
     // fragments like "...minimum 50.0% ..." into bogus "SECTION 0" cards.
-    const sectionMatch = 
-      line.match(/^#{0,3}\s*\*{0,2}\s*([1-6])\.\s+(.+?)\s*\*{0,2}$/)
-      || line.match(/^Section\s+([1-6])\s*[:\-–]\s*(.+)/i)
-      || line.match(/^([1-6])\s*[:\-–]\s+(.+)/)
+    // "### 5. Title", "**5. Title**", bare "5. Title", "Section 5: Title".
+    // The bare "N." form is ambiguous: numbered LIST items
+    // ("1. Submit an online application through the portal at https://….")
+    // also match it. Only accept a bare number when the line is written as a
+    // title — no # / ** marker, short, and not ending in a sentence stop.
+    let secNum = null
+    let secTitle = ''
+    const numbered = line.match(/^(#{0,3})\s*\*{0,2}\s*([1-6])\.\s+(.+?)\s*\*{0,2}$/)
+    if (numbered) {
+      const marked = numbered[1].length > 0 || /^\*{1,2}\s*[1-6]\./.test(line)
+      const listItem = !marked && (line.length > 80 || /[.!?]$/.test(line))
+      // Unmarked numbers never go backwards: inside Section 5, a bare
+      // "1. …" line is a list item, not a return to Section 1.
+      const backwards = !marked && currentSection && Number(numbered[2]) <= Number(currentSection.num)
+      if (!listItem && !backwards) {
+        secNum = numbered[2]
+        secTitle = numbered[3]
+      }
+    } else {
+      const worded = line.match(/^Section\s+([1-6])\s*[:\-–]\s*(.+)/i)
+        || line.match(/^([1-6])\s*[:\-–]\s+(.+)/)
+      if (worded) {
+        secNum = worded[1]
+        secTitle = worded[2]
+      }
+    }
 
-    if (sectionMatch) {
+    if (secNum) {
       // A repeated header with the SAME number as the open section is really a
       // sub-heading inside it (e.g. "2. Microbiological Safety" under Section 2)
       // — keep it as an item instead of letting duplicate-merge swallow it.
-      if (currentSection && sectionMatch[1] === currentSection.num) {
+      if (currentSection && secNum === currentSection.num) {
         currentSection.items.push(line)
         continue
       }
       currentSection = {
-        num: sectionMatch[1],
-        title: sectionMatch[2].replace(/\*+/g, '').trim(),
+        num: secNum,
+        title: secTitle.replace(/\*+/g, '').trim(),
         items: []
       }
       sections.push(currentSection)
