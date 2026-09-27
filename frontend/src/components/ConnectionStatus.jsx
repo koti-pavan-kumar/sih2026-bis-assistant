@@ -97,6 +97,27 @@ export default function ConnectionStatus({ onHealthUpdate, language = 'en' }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Re-check immediately when the tab is shown or focused. Background tabs
+  // throttle timers, and a judge opening the site deserves instant status —
+  // this also triggers the wake request right away if the backend slept.
+  useEffect(() => {
+    const recheck = () => {
+      if (document.visibilityState && document.visibilityState !== 'visible') return
+      if (inFlightRef.current || !aliveRef.current) return
+      clearTimeout(timerRef.current)
+      wakeAttemptsRef.current = 0
+      checkHealth({ waking: true })
+    }
+    document.addEventListener('visibilitychange', recheck)
+    window.addEventListener('focus', recheck)
+    window.addEventListener('online', recheck)
+    return () => {
+      document.removeEventListener('visibilitychange', recheck)
+      window.removeEventListener('focus', recheck)
+      window.removeEventListener('online', recheck)
+    }
+  }, [checkHealth])
+
   const statusConfig = {
     connected: {
       color: 'text-green-300',

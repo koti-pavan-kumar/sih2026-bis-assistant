@@ -1,11 +1,19 @@
 name: Keep Backend Awake
 
 # Render's free plan spins the service down after 15 minutes without inbound
-# traffic, which made the site show "Disconnected / Backend not reachable"
-# whenever the owner's PC was off. Pinging every 10 minutes keeps it warm.
+# traffic, and the first request after that takes 60-90s (cold start) — judges
+# would see a slow site. This workflow pings the health endpoint to keep it warm.
+#
+# IMPORTANT: GitHub frequently delays or skips scheduled runs (community
+# reports show multi-hour gaps even for */10 crons — our own history had
+# 160-284 min gaps). To compensate, THREE offset schedules fire every ~5 min
+# at staggered minutes, so even if GitHub only materializes a fraction of them
+# the backend still sees a request well inside its 15-minute sleep window.
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
+    - cron: '2-57/5 * * * *'
+    - cron: '4-59/5 * * * *'
   workflow_dispatch: {}
 
 jobs:
