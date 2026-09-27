@@ -373,6 +373,31 @@ Provide a comprehensive, structured answer following the 6-section format above.
         # stays well below — those must still go through the translator.
         return letters > 0 and hits / letters >= 0.25
 
+    @classmethod
+    def looks_english(cls, text: str) -> bool:
+        """True when the answer is predominantly Latin script (English).
+
+        The mirror of _already_in_language for the reverse direction: catches
+        answers the model wrote in another language even though English was
+        selected (typically because it mimicked a non-English conversation
+        history), so the caller can translate them back.
+        """
+        letters = hits = 0
+        for ch in text:
+            if not ch.isalpha():
+                continue
+            letters += 1
+            try:
+                name = unicodedata.name(ch, "")
+            except ValueError:
+                continue
+            if "LATIN" in name:
+                hits += 1
+        # 0.75: a genuine English answer is essentially all Latin letters;
+        # even with English titles and citations mixed in, an answer with a
+        # substantial non-English body falls well below this.
+        return letters > 0 and hits / letters >= 0.75
+
     def _mask_protected_spans(self, text: str):
         """Replace citations/URLs/labels with placeholder tokens.
 
@@ -415,7 +440,7 @@ ANSWER TO TRANSLATE:
         so parsing keeps working. Returns the original text whenever
         translation is unnecessary or fails — never worse than before.
         """
-        if not text or language == "en" or self.llm_provider is None:
+        if not text or self.llm_provider is None:
             return text
         if language not in self.LANGUAGE_NAMES:
             return text

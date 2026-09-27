@@ -124,8 +124,13 @@ async def query(request: QueryRequest):
         
         context += offices_text + certs_text
 
-        # Generate response with multi-turn context
-        answer = llm_generator.generate(processed, context, language, request.conversation_history)
+        # Generate the response directly in the language the user selected.
+        # Passing the auto-detected INPUT language here made English requests
+        # answer in Hindi: langdetect misclassifies short queries such as
+        # "steel doors", process_query defaults its 'auto' branch to 'hi',
+        # and no back-translation ever ran for response_lang == "en".
+        response_lang = request.response_language or "en"
+        answer = llm_generator.generate(processed, context, response_lang, request.conversation_history)
         
         # Always translate the response to the user's selected language.
         # (Gemini sometimes ignores the language instruction in the prompt, and
@@ -134,13 +139,17 @@ async def query(request: QueryRequest):
         # citations/URLs masked.)
         # Skip translation for the no-LLM fallback so its first-line marker
         # stays intact (the frontend detects it and renders plain text).
-        response_lang = request.response_language or "en"
         is_fallback = answer.startswith((
             "The AI service is briefly unavailable",
             "Based on the available BIS standard excerpts",
         ))
-        if response_lang != "en" and not is_fallback:
-            answer = llm_generator.translate_answer(answer, response_lang)
+        if not is_fallback:
+            if response_lang != "en":
+                answer = llm_generator.translate_answer(answer, response_lang)
+            elif not llm_generator.looks_english(answer):
+                # The model answered in another language anyway (it sometimes
+                # mimics a non-English conversation history) — translate back.
+                answer = llm_generator.translate_answer(answer, "en")
 
         # Extract citations
         citations = llm_generator.extract_citations(answer)
