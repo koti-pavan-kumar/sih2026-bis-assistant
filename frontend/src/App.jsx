@@ -132,7 +132,7 @@ export default function App() {
       
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar — Chat List */}
-        <div className="w-64 flex-shrink-0 hidden md:flex flex-col panel-left">
+        <div className="w-80 flex-shrink-0 hidden md:flex flex-col panel-left">
           <ChatList
             onChatSelect={handleChatSelect}
             activeChatId={activeChatId}

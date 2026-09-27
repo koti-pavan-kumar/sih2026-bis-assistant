@@ -313,17 +313,17 @@ function StandardEntry({ entry }) {
     <div className="py-3 first:pt-0 border-t border-blue-100/80 dark:border-blue-900/40 first:border-t-0">
       {/* Big IS heading */}
       <h4 className="flex items-baseline flex-wrap gap-x-2 leading-snug">
-        <span className="text-[15px] sm:text-base font-extrabold text-[#16337a] dark:text-blue-200">
+        <span className="text-[17px] sm:text-[19px] font-extrabold text-[#16337a] dark:text-blue-200">
           {entry.is}
         </span>
         {entry.title && (
-          <span className="text-[13px] font-bold text-gray-600 dark:text-gray-300">— {entry.title}</span>
+          <span className="text-sm font-bold text-gray-600 dark:text-gray-300">— {entry.title}</span>
         )}
       </h4>
 
       {/* Content below the heading */}
       {entry.content.length > 0 && (
-        <div className="mt-1.5 space-y-1 text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+        <div className="mt-2 space-y-1.5 text-[15px] leading-relaxed text-gray-700 dark:text-gray-300">
           {entry.content.map((c, i) => {
             const isBullet = /^[-•*]\s/.test(c)
             return isBullet ? (
@@ -341,10 +341,10 @@ function StandardEntry({ entry }) {
       {/* Why this standard applies */}
       {entry.why && (
         <div className="mt-2 rounded-md border border-blue-200 dark:border-blue-800 bg-white/70 dark:bg-blue-950/30 px-3 py-2">
-          <div className="text-[9px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-0.5">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1">
             Why this standard applies
           </div>
-          <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-[14px] leading-relaxed text-gray-700 dark:text-gray-300">
             <RenderLine line={entry.why} />
           </p>
         </div>
@@ -356,7 +356,7 @@ function StandardEntry({ entry }) {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-[#1a2744] hover:bg-[#2a3f6b] dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-[11px] font-semibold px-3 py-1.5 transition"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#1a2744] hover:bg-[#2a3f6b] dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-[13px] font-semibold px-4 py-2 transition"
         >
           📄 View Original Source
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -384,13 +384,13 @@ export default function MessageBubble({ message, onRetry }) {
               : 'bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] text-gray-800 dark:text-gray-200'
         }`}>
           {isUser ? (
-            <p className="text-sm">{message.content}</p>
+            <p className="text-[15px] leading-relaxed">{message.content}</p>
           ) : parsed && !parsed.plain ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Dynamic answer heading — title of the product/standard asked */}
               {parsed.heading && (
                 <div className="rounded-lg bg-[#eaf1fb] dark:bg-[#1e2a44] border border-[#c9dcf5] dark:border-[#2e4a7f] px-4 py-2.5">
-                  <h2 className="text-[15px] sm:text-base font-extrabold leading-snug text-[#16337a] dark:text-blue-200">
+                  <h2 className="text-base sm:text-lg font-extrabold leading-snug text-[#16337a] dark:text-blue-200">
                     {parsed.heading}
                   </h2>
                 </div>
@@ -398,7 +398,7 @@ export default function MessageBubble({ message, onRetry }) {
 
               {/* Intro text */}
               {parsed.intro && (
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{parsed.intro}</p>
+                <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed">{parsed.intro}</p>
               )}
 
               {/* 6-Section Cards */}
@@ -417,15 +417,15 @@ export default function MessageBubble({ message, onRetry }) {
                         {config.icon}
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Section {section.num}</span>
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Section {section.num}</span>
+                        <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight">
                           {config.label || section.title}
                         </h3>
                       </div>
                     </div>
 
                     {/* Section Content */}
-                    <div className={`space-y-1.5 ${section.num === '1' ? '' : 'ml-[42px]'}`}>
+                    <div className={`space-y-2 ${section.num === '1' ? '' : 'ml-[42px]'}`}>
                       {(() => {
                         // Section 1: each standard as its own block — big heading,
                         // content, "Why this standard applies", official-source button.
@@ -435,7 +435,7 @@ export default function MessageBubble({ message, onRetry }) {
                             return (
                               <>
                                 {prelude.map((p, k) => (
-                                  <p key={`pre-${k}`} className="text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+                                  <p key={`pre-${k}`} className="text-[15px] leading-relaxed text-gray-700 dark:text-gray-300">
                                     <RenderLine line={p} />
                                   </p>
                                 ))}
@@ -454,7 +454,7 @@ export default function MessageBubble({ message, onRetry }) {
                             return (
                               <div key={j} className="mt-3 first:mt-0 flex items-center gap-2">
                                 <span className="h-3.5 w-1 rounded bg-[#1a2744] dark:bg-blue-400" />
-                                <span className="text-[11px] font-bold uppercase tracking-wider text-[#1a2744] dark:text-blue-300">
+                                <span className="text-xs font-bold uppercase tracking-wider text-[#1a2744] dark:text-blue-300">
                                   {sub}
                                 </span>
                               </div>
@@ -466,7 +466,7 @@ export default function MessageBubble({ message, onRetry }) {
                           const hasLink = /https?:\/\//.test(item)
 
                           return (
-                            <div key={j} className={`text-xs leading-relaxed ${
+                            <div key={j} className={`text-[15px] leading-relaxed ${
                               isBullet ? 'flex items-start gap-1.5' : ''
                             } ${isSubItem ? 'ml-4' : ''}`}>
                               {isBullet && (

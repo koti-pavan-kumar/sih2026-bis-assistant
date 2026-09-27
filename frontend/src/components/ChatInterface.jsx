@@ -227,7 +227,8 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-3">
         {showWizard ? (
           <CertificationWizard onAskQuestion={handleWizardQuestion} language={language} />
         ) : (
@@ -343,6 +344,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
             <div ref={messagesEnd} />
           </>
         )}
+        </div>
       </div>
 
       {/* Input bar */}
@@ -358,13 +360,13 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !loading && handleSend()}
               placeholder={t('askPlaceholder', language)}
-              className="flex-1 border border-gray-300 dark:border-[#3a3d45] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] dark:bg-[#1a1d23] dark:text-gray-200 disabled:bg-gray-100 dark:disabled:bg-[#252830]"
+              className="flex-1 border border-gray-300 dark:border-[#3a3d45] rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080] dark:bg-[#1a1d23] dark:text-gray-200 disabled:bg-gray-100 dark:disabled:bg-[#252830]"
               disabled={loading}
             />
             <button
               onClick={() => handleSend()}
               disabled={loading || !input.trim()}
-              className="bg-[#FF9933] hover:bg-[#E88A2D] text-white px-6 py-3 rounded-xl font-semibold text-sm transition disabled:opacity-50"
+              className="bg-[#FF9933] hover:bg-[#E88A2D] text-white px-6 py-3 rounded-xl font-semibold text-[15px] transition disabled:opacity-50"
             >
               {t('askButton', language)}
             </button>
