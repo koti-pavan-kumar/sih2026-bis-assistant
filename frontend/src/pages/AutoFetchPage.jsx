@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 
 /**
  * AutoFetchPage — Full-page auto-fetch management.
@@ -9,6 +9,8 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
   const [fetchResult, setFetchResult] = useState(null)
   const [history, setHistory] = useState(null)
   const [checkResult, setCheckResult] = useState(null)
+  const [checking, setChecking] = useState(false)
+  const historyRef = useRef(null)
 
   const handleFetch = useCallback(async () => {
     setFetching(true)
@@ -26,16 +28,19 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
 
   const handleCheck = useCallback(async () => {
     setCheckResult(null)
+    setChecking(true)
     try {
       const res = await fetch('/api/fetch-check')
       const data = await res.json()
       setCheckResult(data)
     } catch (err) {
       setCheckResult({ error: err.message })
+    } finally {
+      setChecking(false)
     }
   }, [])
 
-  const handleHistory = useCallback(async () => {
+  const handleHistory = useCallback(async ({ scroll = false } = {}) => {
     try {
       const res = await fetch('/api/fetch-history')
       const data = await res.json()
@@ -43,11 +48,18 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
     } catch {
       setHistory([])
     }
+    // On button click only: bring the freshly-refreshed history into view so
+    // the click has a visible effect even when the list was already on screen.
+    if (scroll) {
+      requestAnimationFrame(() => {
+        historyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
   }, [])
 
   useEffect(() => {
     handleHistory()
-  }, [])
+  }, [handleHistory])
 
   return (
     <div className="min-h-screen">
@@ -112,15 +124,16 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
 
           <button
             onClick={handleCheck}
-            className="p-6 rounded-xl border-2 border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] hover:border-gray-300 dark:hover:border-gray-500 transition text-left"
+            disabled={checking}
+            className="p-6 rounded-xl border-2 border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] hover:border-gray-300 dark:hover:border-gray-500 transition text-left disabled:opacity-60"
           >
-            <div className="text-2xl mb-2">🔍</div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">Check for Updates</h3>
+            <div className="text-2xl mb-2">{checking ? '⏳' : '🔍'}</div>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">{checking ? 'Checking…' : 'Check for Updates'}</h3>
             <p className="text-[10px] text-gray-500 mt-1">Quick check — see what new standards are available without downloading</p>
           </button>
 
           <button
-            onClick={handleHistory}
+            onClick={() => handleHistory({ scroll: true })}
             className="p-6 rounded-xl border-2 border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] hover:border-gray-300 dark:hover:border-gray-500 transition text-left"
           >
             <div className="text-2xl mb-2">📋</div>
@@ -129,15 +142,68 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
           </button>
         </div>
 
-        {/* Check Result */}
+        {/* Check Result — human-readable summary instead of raw JSON */}
         {checkResult && (
           <div className="mb-6 bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">🔍 Check Results</h3>
             {checkResult.error ? (
               <div className="text-xs text-red-600 dark:text-red-400">Error: {checkResult.error}</div>
             ) : (
-              <div className="text-xs text-gray-700 dark:text-gray-300">
-                <pre className="whitespace-pre-wrap">{JSON.stringify(checkResult, null, 2)}</pre>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
+                    <div className="text-xl font-bold text-blue-700 dark:text-blue-300">
+                      {(checkResult.new_items || []).length}
+                    </div>
+                    <div className="text-[10px] text-blue-600 dark:text-blue-400">New Available</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-3 text-center">
+                    <div className="text-xl font-bold text-gray-700 dark:text-gray-200">
+                      {checkResult.total_fetched ?? '—'}
+                    </div>
+                    <div className="text-[10px] text-gray-500">Total Fetched</div>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
+                    <div className="text-xl font-bold text-green-700 dark:text-green-300">
+                      {checkResult.standards_indexed ?? '—'}
+                    </div>
+                    <div className="text-[10px] text-green-600 dark:text-green-400">Standards Indexed</div>
+                  </div>
+                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
+                    <div className="text-[13px] font-bold text-purple-700 dark:text-purple-300 leading-snug">
+                      {checkResult.last_check
+                        ? new Date(checkResult.last_check).toLocaleString()
+                        : '—'}
+                    </div>
+                    <div className="text-[10px] text-purple-600 dark:text-purple-400">Last Checked</div>
+                  </div>
+                </div>
+
+                {(checkResult.new_items || []).length > 0 ? (
+                  <div>
+                    <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                      New standards found on bis.gov.in:
+                    </p>
+                    <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                      {checkResult.new_items.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2 text-xs">
+                          <span className="font-bold text-gray-900 dark:text-white">
+                            {item.is_number}{item.year ? `:${item.year}` : ''}
+                          </span>
+                          {item.title && <span className="text-gray-500 dark:text-gray-400 truncate ml-3">{item.title}</span>}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-2">
+                      Click “Fetch &amp; Ingest New Standards” to download and index them.
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    ✅ No new standards found — your knowledge base is up to date
+                    {checkResult.last_check ? ` (checked ${new Date(checkResult.last_check).toLocaleString()})` : ''}.
+                  </p>
+                )}
               </div>
             )}
           </div>
@@ -184,7 +250,7 @@ export default function AutoFetchPage({ onNavigate, darkMode }) {
 
         {/* History */}
         {history && (
-          <div className="bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm">
+          <div ref={historyRef} className="bg-white dark:bg-[#1a1d23] border border-gray-200 dark:border-[#2a2d35] rounded-xl p-5 shadow-sm scroll-mt-24">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
               📋 Fetch History ({history.length} items)
             </h3>
