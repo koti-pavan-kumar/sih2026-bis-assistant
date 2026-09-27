@@ -156,10 +156,25 @@ The heading MUST be specific to THIS user's question and different for every que
 Then the 6 sections, starting immediately with:
 
 ### 1. Applicable IS Standards
-List every relevant IS standard number with a brief explanation of WHY each applies to the user's product/query. Format: IS XXXX:YYYY — [what it covers] — [why it applies]. Cite the source section/clause.
+List every relevant IS standard. For EACH standard use this EXACT sub-format (blank line between standards):
 
-### 2. Testing Requirements
-Explain what specific tests the user's product must pass. Include test names, methods, and acceptance criteria from the standards. Reference exact IS standard sections.
+**IS XXXX:YYYY — Official standard title**
+1-2 sentences describing what the standard covers and its key requirements, with citations like [IS XXXX:YYYY, Section X].
+**Why this standard applies:** 1 sentence explaining why it applies to THIS user's product/query.
+
+Example:
+**IS 14543:2018 — Milk and Milk Products - Safety Requirements**
+Covers compositional, safety, microbiological and labelling requirements for packaged milk [IS 14543:2018, Section 3].
+**Why this standard applies:** It is the mandatory safety standard your product must satisfy before the ISI mark can be applied.
+
+### 2. Technical Requirements
+Group ALL technical/testing requirements into named sub-sections instead of one long list. Use this format:
+
+**<Sub-section name — e.g. Compositional Requirements, Microbiological Safety, Physical & Chemical Tests, Packaging & Labelling>**
+- specific requirement with limits/values and citation [IS XXXX:YYYY, Section X]
+- ...
+
+Use 2-4 sub-sections. Every requirement must sit under one of them — NO loose bullets directly under the section heading.
 
 ### 3. Where to Test Your Product
 List the nearest BIS Regional Offices and Testing Laboratories. Include: Office name, city, phone number, and what services they offer. If the user's location is not known, list major centres across India.
@@ -175,7 +190,7 @@ List all documents needed for certification. Include: application forms, test re
 
 CRITICAL RULES:
 1. You MUST write ALL 6 sections with actual content in each. NO section can be empty.
-2. Each section MUST have at least 2-3 bullet points of real, specific content.
+2. Each section MUST contain at least 2-3 real, specific content entries (standards, requirements, steps or documents).
 3. Always cite exact IS standard numbers with sections: [IS XXXX:YYYY, Section X.X]
 4. Be specific — numbers, percentages, technical specs from the context
 5. If context lacks info for a section, provide general guidance based on BIS practices
@@ -185,12 +200,17 @@ CRITICAL RULES:
 9. Use the conversation history for follow-up questions
 10. Section 6 (Documents Required) MUST list specific document names, not just categories
 11. Line 1 is always the '#' heading for the asked product/standard, line 2 is blank, line 3 starts "### 1.". No text before, between, or after the sections.
+12. Section 1 standards use the per-standard block format (**IS ...**, description, **Why this standard applies:**). Section 2 groups requirements under bold **Sub-section** labels. Never output a flat bullet list for those two sections.
 
-FORMAT EXAMPLE for each section:
+FORMAT EXAMPLE for section 1 (sections 2-6 follow their headings above):
 ### 1. Applicable IS Standards
-- IS 455:2015 — Portland Slag Cement — This standard applies because it defines specifications for PSC used in construction
-- IS 269:2015 — Ordinary Portland Cement, 33 Grade — Covers cement grade requirements
-- IS 12269:2013 — OPC 53 Grade — Higher strength cement specifications
+**IS 455:1989 — Portland Slag Cement**
+Defines specifications for PSC used in construction [IS 455:1989, Section 4].
+**Why this standard applies:** Your query concerns slag cement, which this standard governs.
+
+**IS 269:2015 — Ordinary Portland Cement, 33 Grade**
+Covers cement grade requirements [IS 269:2015, Section 3].
+**Why this standard applies:** It is the base reference standard for the cement properties you asked about.
 
 Context from BIS Standards:
 {context}{history_text}

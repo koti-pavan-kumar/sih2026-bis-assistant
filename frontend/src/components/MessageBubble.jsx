@@ -1,5 +1,5 @@
 import React from 'react'
-import { getBISDocumentURL, getGoogleSearchURL } from '../utils/urls'
+import { getBISDocumentURL } from '../utils/urls'
 
 const LANGUAGE_LABELS = {
   en: '🇬🇧 English', hi: '🇮🇳 हिंदी', bn: '🇮🇳 বাংলা', ta: '🇮🇳 தமிழ்',
@@ -11,11 +11,121 @@ const LANGUAGE_LABELS = {
 // Section configs — icons, colors, labels (6 sections)
 const SECTION_CONFIG = {
   '1': { icon: '📋', label: 'Applicable IS Standards', color: 'blue', bgClass: 'bg-blue-50 dark:bg-blue-900/15 border-blue-200 dark:border-blue-800', iconBg: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' },
-  '2': { icon: '🔬', label: 'Testing Requirements', color: 'purple', bgClass: 'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800', iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' },
+  '2': { icon: '🔬', label: 'Technical Requirements', color: 'purple', bgClass: 'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800', iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' },
   '3': { icon: '📍', label: 'Where to Test', color: 'green', bgClass: 'bg-green-50 dark:bg-green-900/15 border-green-200 dark:border-green-800', iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
   '4': { icon: '⚖️', label: 'Mandatory or Voluntary?', color: 'amber', bgClass: 'bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800', iconBg: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300' },
   '5': { icon: '📝', label: 'Certification Process & Quality Control', color: 'indigo', bgClass: 'bg-indigo-50 dark:bg-indigo-900/15 border-indigo-200 dark:border-indigo-800', iconBg: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300' },
   '6': { icon: '📄', label: 'Documents Required', color: 'rose', bgClass: 'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800', iconBg: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300' },
+}
+
+// Title-keyword → section number (label text may change; this mapping must not)
+const KEYWORD_SECTION_NUM = {
+  'applicable is standard': '1', 'testing requirement': '2', 'technical requirement': '2',
+  'where to test': '3', 'mandatory': '4', 'voluntary': '4', 'certification process': '5',
+  'documents required': '6', 'documents and information': '6', 'document': '6',
+}
+
+/**
+ * Group Section-1 lines into per-standard entries for block rendering.
+ * Handles the new block format (**IS X — Title**, description,
+ * **Why this standard applies:** …) and legacy one-line bullets
+ * ("IS 455:2015 — Title — reason").
+ * Returns { entries: [{ is, title, content, why }], prelude: [lines before first IS] }.
+ */
+function parseStandardEntries(items) {
+  const entries = []
+  const prelude = []
+  let current = null
+  let whyMode = false
+
+  const stripBold = (s) => s.replace(/^\*+/, '').replace(/\*+$/, '').trim()
+  const whyText = (w) => {
+    // Only strip an explicit "Why ...:" label — never a mid-text colon
+    // (e.g. inside "[IS 14543:2018, Section 3]").
+    if (/^why\b[^:]*:/i.test(w)) return w.replace(/^[^:]*:/, '').trim()
+    return w.trim()
+  }
+
+  for (const raw of items) {
+    const line = raw.replace(/^\s*[•\-*]\s+/, '').trim()
+    if (!line) continue
+    const bare = stripBold(line)
+
+    // New standard entry — line starts with an IS number
+    if (/^IS\s*\d/i.test(bare)) {
+      const parts = bare.split(/\s+[—–]\s+/)
+      current = { is: stripBold(parts[0]), title: '', content: [], why: '' }
+      entries.push(current)
+      whyMode = false
+
+      const rest = parts.slice(1).map(stripBold).filter(Boolean)
+      if (rest.length > 0) {
+        let whyIdx = rest.findIndex(s => /^why\b/i.test(s) || /^this standard applies\b/i.test(s))
+        if (whyIdx < 0 && rest.length >= 2 && /^(why|this standard|it applies|it is|because)/i.test(rest[rest.length - 1])) {
+          whyIdx = rest.length - 1
+        }
+        const contentSegs = rest.filter((_, idx) => idx !== whyIdx)
+        if (whyIdx >= 0) current.why = whyText(rest[whyIdx])
+
+        if (contentSegs.length >= 2) {
+          current.title = contentSegs[0]
+          current.content.push(...contentSegs.slice(1))
+        } else if (contentSegs.length === 1) {
+          const t = contentSegs[0]
+          if (t.length <= 110 && !/[.!?,;]$/.test(t)) current.title = t
+          else current.content.push(t)
+        }
+      }
+      continue
+    }
+
+    // "Why this standard applies: …" on its own line
+    if (current && /^why\s+(?:this\s+standard\s+)?(?:it\s+)?applies/i.test(bare)) {
+      const colon = bare.indexOf(':')
+      const after = colon >= 0 ? stripBold(bare.slice(colon + 1)) : ''
+      if (after) {
+        current.why = after
+        whyMode = false
+      } else {
+        whyMode = true // reason continues on following lines
+      }
+      continue
+    }
+
+    if (!current) { prelude.push(bare); continue }
+    if (whyMode) current.why = current.why ? `${current.why} ${stripBold(line)}` : stripBold(line)
+    else current.content.push(bare)
+  }
+
+  // If no title was parsed, promote a title-looking first content line.
+  for (const e of entries) {
+    if (!e.title && e.content.length > 0) {
+      const first = e.content[0].trim()
+      if (first.length <= 110 && !/[.!?]$/.test(first) && !/^[-•*]/.test(first) && !/^why\b/i.test(first)) {
+        e.title = first
+        e.content.shift()
+      }
+    }
+  }
+
+  return { entries, prelude }
+}
+
+/**
+ * Detect a sub-group heading inside a section (e.g. Section 2's test categories).
+ * Accepted styles: "## Name", "**Name**", and (Section 2 only) "2. Name".
+ */
+function subgroupTitle(line, sectionNum) {
+  if (sectionNum === '1') return null
+  let m
+  if ((m = line.match(/^#{1,4}\s+(.+)$/))) return stripMarkers(m[1])
+  if ((m = line.match(/^\*\*([^*]+)\*\*:?\s*$/))) return stripMarkers(m[1])
+  if (sectionNum === '2' && (m = line.match(/^(?:#{0,3}\s*)?\d{1,2}[.)]\s+(.+)$/))) return stripMarkers(m[1])
+  return null
+}
+
+function stripMarkers(s) {
+  return s.replace(/\*+/g, '').replace(/\s*[:：]\s*$/, '').trim()
 }
 
 /**
@@ -68,6 +178,13 @@ function parseStructuredResponse(text) {
       || line.match(/^([1-6])\s*[:\-–]\s+(.+)/)
 
     if (sectionMatch) {
+      // A repeated header with the SAME number as the open section is really a
+      // sub-heading inside it (e.g. "2. Microbiological Safety" under Section 2)
+      // — keep it as an item instead of letting duplicate-merge swallow it.
+      if (currentSection && sectionMatch[1] === currentSection.num) {
+        currentSection.items.push(line)
+        continue
+      }
       currentSection = {
         num: sectionMatch[1],
         title: sectionMatch[2].replace(/\*+/g, '').trim(),
@@ -79,7 +196,7 @@ function parseStructuredResponse(text) {
 
     // Detect section headers by title keywords (even without number prefix)
     const titleKeywords = [
-      'applicable is standard', 'testing requirement', 'where to test',
+      'applicable is standard', 'testing requirement', 'technical requirement', 'where to test',
       'mandatory', 'voluntary', 'certification process', 'documents required',
       'documents and information', 'document'
     ]
@@ -91,7 +208,7 @@ function parseStructuredResponse(text) {
 
     if (isTitleLine && !currentSection) {
       const matched = titleKeywords.find(kw => line.toLowerCase().includes(kw))
-      const num = Object.keys(SECTION_CONFIG).find(k => SECTION_CONFIG[k].label.toLowerCase().includes(matched)) || String(sections.length + 1)
+      const num = KEYWORD_SECTION_NUM[matched] || String(sections.length + 1)
       currentSection = { num, title: line.replace(/\*+/g, '').replace(/^#{0,3}\s*/, '').trim(), items: [] }
       sections.push(currentSection)
       continue
@@ -151,15 +268,81 @@ function RenderLine({ line }) {
         }
 
         // Highlight IS standard numbers
-        const isParts = part.split(/(IS\s+\d{4}(?::\d{4})?)/g)
+        const isParts = part.split(/(IS\s+\d{3,5}(?::\d{4})?)/g)
         return isParts.map((ip, j) => {
-          if (/^IS\s+\d{4}/.test(ip)) {
+          if (/^IS\s+\d{3,5}/.test(ip)) {
             return <span key={`${i}-${j}`} className="font-mono font-bold text-[#1a2744] dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 px-1 rounded">{ip}</span>
           }
           return <span key={`${i}-${j}`}>{ip}</span>
         })
       })}
     </span>
+  )
+}
+
+/**
+ * One standard in Section 1: big IS heading, content, "Why this standard
+ * applies" box, and a button straight to the official government document.
+ */
+function StandardEntry({ entry }) {
+  const url = getBISDocumentURL(entry.is, entry.title)
+
+  return (
+    <div className="py-3 first:pt-0 border-t border-blue-100/80 dark:border-blue-900/40 first:border-t-0">
+      {/* Big IS heading */}
+      <h4 className="flex items-baseline flex-wrap gap-x-2 leading-snug">
+        <span className="text-[15px] sm:text-base font-extrabold text-[#16337a] dark:text-blue-200">
+          {entry.is}
+        </span>
+        {entry.title && (
+          <span className="text-[13px] font-bold text-gray-600 dark:text-gray-300">— {entry.title}</span>
+        )}
+      </h4>
+
+      {/* Content below the heading */}
+      {entry.content.length > 0 && (
+        <div className="mt-1.5 space-y-1 text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+          {entry.content.map((c, i) => {
+            const isBullet = /^[-•*]\s/.test(c)
+            return isBullet ? (
+              <div key={i} className="flex items-start gap-1.5">
+                <span className="text-gray-400 mt-0.5 flex-shrink-0">•</span>
+                <span><RenderLine line={c.replace(/^[-•*]\s+/, '')} /></span>
+              </div>
+            ) : (
+              <p key={i}><RenderLine line={c} /></p>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Why this standard applies */}
+      {entry.why && (
+        <div className="mt-2 rounded-md border border-blue-200 dark:border-blue-800 bg-white/70 dark:bg-blue-950/30 px-3 py-2">
+          <div className="text-[9px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-0.5">
+            Why this standard applies
+          </div>
+          <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+            <RenderLine line={entry.why} />
+          </p>
+        </div>
+      )}
+
+      {/* Official source button */}
+      {url && (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-[#1a2744] hover:bg-[#2a3f6b] dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-[11px] font-semibold px-3 py-1.5 transition"
+        >
+          📄 View Original Source
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      )}
+    </div>
   )
 }
 
@@ -220,37 +403,72 @@ export default function MessageBubble({ message, onRetry }) {
                     </div>
 
                     {/* Section Content */}
-                    <div className="space-y-1.5 ml-[42px]">
-                      {section.items.map((item, j) => {
-                        const isBullet = /^\s*[•\-*]\s/.test(item)
-                        const isSubItem = /^\s{2,}[•\-*]\s/.test(item)
-                        const hasLink = /https?:\/\//.test(item)
+                    <div className={`space-y-1.5 ${section.num === '1' ? '' : 'ml-[42px]'}`}>
+                      {(() => {
+                        // Section 1: each standard as its own block — big heading,
+                        // content, "Why this standard applies", official-source button.
+                        if (section.num === '1') {
+                          const { entries, prelude } = parseStandardEntries(section.items)
+                          if (entries.length > 0) {
+                            return (
+                              <>
+                                {prelude.map((p, k) => (
+                                  <p key={`pre-${k}`} className="text-xs leading-relaxed text-gray-700 dark:text-gray-300">
+                                    <RenderLine line={p} />
+                                  </p>
+                                ))}
+                                {entries.map((e, k) => (
+                                  <StandardEntry key={`std-${k}`} entry={e} />
+                                ))}
+                              </>
+                            )
+                          }
+                        }
 
-                        return (
-                          <div key={j} className={`text-xs leading-relaxed ${
-                            isBullet ? 'flex items-start gap-1.5' : ''
-                          } ${isSubItem ? 'ml-4' : ''}`}>
-                            {isBullet && (
-                              <span className="text-gray-400 mt-0.5 flex-shrink-0">•</span>
-                            )}
-                            <span className="text-gray-700 dark:text-gray-300">
-                              <RenderLine line={isBullet ? item.replace(/^\s*[•\-*]\s*/, '') : item} />
-                            </span>
-                            {/* Render links */}
-                            {hasLink && item.match(/(https?:\/\/[^\s)]+)/g)?.map((url, k) => (
-                              <a
-                                key={k}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="ml-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
-                              >
-                                🔗 Official Link
-                              </a>
-                            ))}
-                          </div>
-                        )
-                      })}
+                        // Other sections: bullet lines with sub-group headings
+                        return section.items.map((item, j) => {
+                          const sub = subgroupTitle(item, section.num)
+                          if (sub) {
+                            return (
+                              <div key={j} className="mt-3 first:mt-0 flex items-center gap-2">
+                                <span className="h-3.5 w-1 rounded bg-[#1a2744] dark:bg-blue-400" />
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-[#1a2744] dark:text-blue-300">
+                                  {sub}
+                                </span>
+                              </div>
+                            )
+                          }
+
+                          const isBullet = /^\s*[•\-*]\s/.test(item)
+                          const isSubItem = /^\s{2,}[•\-*]\s/.test(item)
+                          const hasLink = /https?:\/\//.test(item)
+
+                          return (
+                            <div key={j} className={`text-xs leading-relaxed ${
+                              isBullet ? 'flex items-start gap-1.5' : ''
+                            } ${isSubItem ? 'ml-4' : ''}`}>
+                              {isBullet && (
+                                <span className="text-gray-400 mt-0.5 flex-shrink-0">•</span>
+                              )}
+                              <span className="text-gray-700 dark:text-gray-300">
+                                <RenderLine line={isBullet ? item.replace(/^\s*[•\-*]\s*/, '') : item} />
+                              </span>
+                              {/* Render links */}
+                              {hasLink && item.match(/(https?:\/\/[^\s)]+)/g)?.map((url, k) => (
+                                <a
+                                  key={k}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
+                                >
+                                  🔗 Official Link
+                                </a>
+                              ))}
+                            </div>
+                          )
+                        })
+                      })()}
                     </div>
                   </div>
                 )
@@ -271,45 +489,6 @@ export default function MessageBubble({ message, onRetry }) {
                 {LANGUAGE_LABELS[message.language] || message.language}
               </span>
             )}
-          </div>
-        )}
-
-        {/* Source cards */}
-        {!isUser && message.sources && message.sources.length > 0 && (
-          <div className="mt-3 space-y-1.5">
-            <div className="text-[10px] text-gray-400 font-medium flex items-center gap-1">
-              <span>📄</span> Official Sources
-            </div>
-            {message.sources.map((s, i) => {
-              const bisUrl = getBISDocumentURL(s.is_number, s.title)
-              const googleUrl = getGoogleSearchURL(s.is_number, s.title)
-              const href = bisUrl || googleUrl
-              return (
-                <a
-                  key={i}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block source-card px-3 py-2 text-xs transition group"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="font-bold text-[#1a2744] dark:text-blue-300 group-hover:text-blue-600 dark:group-hover:text-blue-200">
-                      <span className="inline-flex items-center gap-1">
-                        {s.is_number}
-                        <svg className="w-3 h-3 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="text-gray-400 text-[10px]">{Math.round(s.score * 100)}% match</div>
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400 truncate mt-0.5">{s.title}</div>
-                  <span className="text-[10px] text-[#1a2744] dark:text-blue-300 font-medium opacity-0 group-hover:opacity-100 transition">
-                    View Official Document →
-                  </span>
-                </a>
-              )
-            })}
           </div>
         )}
 

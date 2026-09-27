@@ -40,13 +40,20 @@ const DIRECT_PDF_SERIES = {
 export function getBISDocumentURL(isNumber, title = '') {
   if (!isNumber) return ''
 
-  // Extract IS number and year from strings like "IS 14543:2018".
-  // Numbers can be 3-5 digits (IS 456, IS 6307, IS 18841).
-  const match = isNumber.match(/IS\s+(\d{3,5})(?::(\d{4}))?/)
-  if (!match) return ''
-
-  const isNum = match[1]
-  const isYear = match[2] || ''
+  // Extract IS number and year. Handles canonical "IS 14543:2018" as well as
+  // the model's split-part quirks: "IS 1454 3:2018" (→ IS 14543:2018) and
+  // "IS 1574 2" / "IS 1489 (Part 1):1991" (→ base number for portal search).
+  let match = isNumber.match(/IS\s+(\d{3,5})\s+(\d)\s*:\s*(\d{4})/) // "IS 1454 3:2018"
+  let isNum, isYear
+  if (match) {
+    isNum = `${match[1]}${match[2]}`
+    isYear = match[3]
+  } else {
+    match = isNumber.match(/IS\s+(\d{3,5})(?::(\d{4}))?/)
+    if (!match) return ''
+    isNum = match[1]
+    isYear = match[2] || ''
+  }
   const key = `IS ${isNum}${isYear ? `:${isYear}` : ''}`
 
   // 1. Direct PDF of the full standard text (verified open-access mirror)
