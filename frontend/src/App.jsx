@@ -120,6 +120,12 @@ export default function App() {
   // ─── Main Chat Page (2-column: chats + messages) ──────────
   return (
     <div className={`flex flex-col h-screen ${darkMode ? 'dark bg-[#0f1115]' : 'bg-gray-50'}`}>
+      {/* Thin Indian-tricolor accent bar (orange → cream → green) */}
+      <div
+        className="h-1.5 w-full flex-shrink-0"
+        style={{ background: 'linear-gradient(to right, #FF9933 0%, #FFF8EC 50%, #138808 100%)' }}
+        aria-hidden="true"
+      />
       <Header
         currentPage={page}
         onNavigate={navigate}
@@ -147,6 +153,7 @@ export default function App() {
           language={language}
           chatId={activeChatId}
           onChatUpdated={handleChatUpdated}
+          onNavigate={navigate}
         />
       </div>
       

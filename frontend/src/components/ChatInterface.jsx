@@ -15,7 +15,7 @@ const MAX_HISTORY_FOR_CONTEXT = 6
  * ChatInterface — Displays messages for a specific chat session.
  * Each user has their own independent chat storage.
  */
-export default function ChatInterface({ language = 'en', chatId, onChatUpdated, openWizard }) {
+export default function ChatInterface({ language = 'en', chatId, onChatUpdated, openWizard, onNavigate }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -199,7 +199,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
           <button
             onClick={() => setShowWizard(false)}
             className={`text-sm font-medium transition ${
-              !showWizard ? 'text-[#000080] dark:text-blue-300 border-b-2 border-[#000080] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+              !showWizard ? 'text-[var(--bis-navy)] dark:text-blue-300 border-b-2 border-[var(--bis-navy)] dark:border-blue-300' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
             } pb-1`}
           >
             {t('chat', language)}
@@ -327,6 +327,7 @@ export default function ChatInterface({ language = 'en', chatId, onChatUpdated, 
                 message={msg}
                 onRetry={msg.isError ? () => handleRetry(msg.retryQuery) : undefined}
                 language={language}
+                onNavigate={onNavigate}
               />
             ))}
             {loading && (

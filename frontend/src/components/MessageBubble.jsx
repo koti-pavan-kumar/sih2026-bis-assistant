@@ -9,21 +9,113 @@ const LANGUAGE_LABELS = {
   as: '🇮🇳 অসমীয়া', ne: '🇮🇳 नेपाली', sa: '🇮🇳 संस्कृतम्',
 }
 
-// Section configs — icons, colors, labels (6 sections)
-const SECTION_CONFIG = {
-  '1': { icon: '📋', label: 'Applicable IS Standards', color: 'blue', bgClass: 'bg-blue-50 dark:bg-blue-900/15 border-blue-200 dark:border-blue-800', iconBg: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' },
-  '2': { icon: '🔬', label: 'Technical Requirements', color: 'purple', bgClass: 'bg-purple-50 dark:bg-purple-900/15 border-purple-200 dark:border-purple-800', iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' },
-  '3': { icon: '📍', label: 'Where to Test', color: 'green', bgClass: 'bg-green-50 dark:bg-green-900/15 border-green-200 dark:border-green-800', iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300' },
-  '4': { icon: '⚖️', label: 'Mandatory or Voluntary?', color: 'amber', bgClass: 'bg-amber-50 dark:bg-amber-900/15 border-amber-200 dark:border-amber-800', iconBg: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300' },
-  '5': { icon: '📝', label: 'Certification Process & Quality Control', color: 'indigo', bgClass: 'bg-indigo-50 dark:bg-indigo-900/15 border-indigo-200 dark:border-indigo-800', iconBg: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300' },
-  '6': { icon: '📄', label: 'Documents Required', color: 'rose', bgClass: 'bg-rose-50 dark:bg-rose-900/15 border-rose-200 dark:border-rose-800', iconBg: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300' },
+// ─── Section icons — simple outline/stroke SVGs (never emoji), navy ───
+const SECTION_ICON_PATHS = {
+  // Applicable IS Standards — open book
+  '1': 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25',
+  // Technical Requirements — beaker
+  '2': 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
+  // Where to Test — map pin
+  '3': 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
+  // Mandatory or Voluntary — balance scale
+  '4': 'M12 4v16M8.5 20h7M4.5 8h15M4.5 8L2 13h5L4.5 8zM19.5 8L17 13h5L19.5 8z',
+  // Certification Process & Quality Control — clipboard check
+  '5': 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4',
+  // Documents Required — document with text lines
+  '6': 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
 }
+// Fallback for any future/unknown section number — plain outline document
+const FALLBACK_ICON_PATH = 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'
+
+function SectionIcon({ path, className }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d={path} />
+    </svg>
+  )
+}
+
+// Section numbers that have localized titles (sec1..sec6 in uiTranslations)
+const KNOWN_SECTIONS = new Set(['1', '2', '3', '4', '5', '6'])
 
 // Title-keyword → section number (label text may change; this mapping must not)
 const KEYWORD_SECTION_NUM = {
   'applicable is standard': '1', 'testing requirement': '2', 'technical requirement': '2',
   'where to test': '3', 'mandatory': '4', 'voluntary': '4', 'certification process': '5',
   'documents required': '6', 'documents and information': '6', 'document': '6',
+}
+
+// ─── Section 4 verdict detection (mandatory vs voluntary) ───────────────
+// Driven purely by what the AI response already says — works across the
+// supported languages, with English keywords as a universal fallback.
+const VERDICT_KEYWORDS = {
+  mandatory: [
+    /\bmandatory\b/gi, /\bcompulsory\b/gi,
+    /अनिवार्य/g, /बाध्यतामूलक/g, /बंधनकारक/g,
+    /ફરજિયાત/g, /اجباری/g, /لازمی/g,
+    /বাধ্যতামূলক/g, /கட்டாய/g, /తప్పనిసరి/g,
+    /ಕಡ್ಡಾಯ|ಬಾಧ್ಯತ/g, /നിർബന്ധ/g,
+    /ਬੰਧਨਕਾਰੀ|ਲੋੜਪੂਰਨ/g, /ବାଧ୍ୟତା|ଆବଶ୍ୟକ/g,
+  ],
+  voluntary: [
+    /\bvoluntary\b/gi,
+    /स्वैच्छिक/g, /સ્વૈચ્છિક/g, /اختیاری/g,
+    /স্বেচ্ছিক/g, /தன்னார்வ|விருப்ப/g, /స్వచ్ఛంద|ఐచ్ఛిక/g,
+    /ಐಚ್ಛಿಕ|ಸ್ವಯಂಪ್ರೇರಿತ/g, /സ്വൈച്ഛിക|ഐച്ഛിക/g,
+    /ਸਵੈਚਛਿਕ|ਵਿਕਲਪ/g, /ସ୍ଵେଚ୍ଛ|ଐଚ୍ଛିକ/g,
+  ],
+}
+
+/**
+ * Detect whether Section 4's existing text states the certification is
+ * mandatory or voluntary. Question restatements ("Is BIS Certification
+ * Mandatory?") are ignored; negations ("no compulsory order", "not
+ * voluntary") flip the hit. Returns 'mandatory' | 'voluntary' | null.
+ */
+function detectVerdict(items) {
+  const text = (items || []).filter(l => !l.includes('?')).join('\n')
+  if (!text) return null
+
+  const hits = []
+  for (const kind of ['mandatory', 'voluntary']) {
+    for (const re of VERDICT_KEYWORDS[kind]) {
+      re.lastIndex = 0
+      let m
+      while ((m = re.exec(text))) {
+        if (!m[0]) { re.lastIndex += 1; continue }
+        const before = text.slice(Math.max(0, m.index - 14), m.index)
+        const negated = /\b(?:not|non|no)\s[-\s]*$/i.test(before)
+        hits.push({
+          kind: negated ? (kind === 'mandatory' ? 'voluntary' : 'mandatory') : kind,
+          index: m.index,
+        })
+      }
+    }
+  }
+  if (hits.length === 0) return null
+
+  const counts = { mandatory: 0, voluntary: 0 }
+  hits.forEach(h => { counts[h.kind] += 1 })
+  if (counts.mandatory !== counts.voluntary) {
+    return counts.mandatory > counts.voluntary ? 'mandatory' : 'voluntary'
+  }
+  hits.sort((a, b) => a.index - b.index)
+  return hits[0].kind
+}
+
+/** Field-style lines ("**Gazette Notification:** …") that may follow a
+ *  mandatory verdict as structured details. */
+function isFieldLine(line) {
+  return /^\*\*[^*:]{2,70}:\*\*\s*\S/.test(line) || /^\*\*[^*:]{2,70}:\s*\*\*\s*\S/.test(line)
 }
 
 /**
@@ -294,7 +386,7 @@ function RenderLine({ line }) {
         const isParts = part.split(/(IS\s+\d{3,5}(?::\d{4})?)/g)
         return isParts.map((ip, j) => {
           if (/^IS\s+\d{3,5}/.test(ip)) {
-            return <span key={`${i}-${j}`} className="font-mono font-bold text-[#1a2744] dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 px-1 rounded">{ip}</span>
+            return <span key={`${i}-${j}`} className="font-mono font-bold text-[var(--bis-navy)] dark:text-blue-300 bg-[#F2F4F7] dark:bg-[#252830] px-1 rounded">{ip}</span>
           }
           return <span key={`${i}-${j}`}>{ip}</span>
         })
@@ -305,20 +397,21 @@ function RenderLine({ line }) {
 
 /**
  * One standard in Section 1: big IS heading, content, "Why this standard
- * applies" box, and a button straight to the official government document.
+ * applies" card, and an outlined pill button straight to the official
+ * government document.
  */
 function StandardEntry({ entry, language }) {
   const url = getBISDocumentURL(entry.is, entry.title)
 
   return (
-    <div className="py-3 first:pt-0 border-t border-blue-100/80 dark:border-blue-900/40 first:border-t-0">
+    <div className="py-3 first:pt-0 border-t border-gray-200/80 dark:border-[#2a2d35] first:border-t-0">
       {/* Big IS heading */}
       <h4 className="flex items-baseline flex-wrap gap-x-2 leading-snug">
-        <span className="text-[17px] sm:text-[19px] font-extrabold text-[#16337a] dark:text-blue-200">
+        <span className="text-lg sm:text-xl font-bold text-[var(--bis-navy)] dark:text-blue-200">
           {entry.is}
         </span>
         {entry.title && (
-          <span className="text-sm font-bold text-gray-600 dark:text-gray-300">— {entry.title}</span>
+          <span className="text-sm font-semibold text-[var(--bis-navy)] dark:text-blue-300">— {entry.title}</span>
         )}
       </h4>
 
@@ -339,11 +432,27 @@ function StandardEntry({ entry, language }) {
         </div>
       )}
 
-      {/* Why this standard applies */}
+      {/* Why this standard applies — white card, info icon + bold navy label */}
       {entry.why && (
-        <div className="mt-2 rounded-md border border-blue-200 dark:border-blue-800 bg-white/70 dark:bg-blue-950/30 px-3 py-2">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400 mb-1">
-            {t('whyThisStandard', language)}
+        <div className="mt-2 rounded-xl border border-gray-200 dark:border-[#2a2d35] bg-white dark:bg-[#1a1d23] px-3.5 py-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <svg
+              className="w-4 h-4 flex-shrink-0 text-[var(--bis-navy)] dark:text-blue-300"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" />
+              <path d="M12 8h.01" />
+            </svg>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--bis-navy)] dark:text-blue-300">
+              {t('whyThisStandard', language)}
+            </span>
           </div>
           <p className="text-[14px] leading-relaxed text-gray-700 dark:text-gray-300">
             <RenderLine line={entry.why} />
@@ -351,17 +460,17 @@ function StandardEntry({ entry, language }) {
         </div>
       )}
 
-      {/* Official source button */}
+      {/* Official source — outlined navy pill button */}
       {url && (
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[#1a2744] hover:bg-[#2a3f6b] dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-[13px] font-semibold px-4 py-2 transition"
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--bis-navy)] bg-transparent text-[var(--bis-navy)] dark:border-blue-300 dark:text-blue-300 text-[13px] font-semibold px-4 py-1.5 hover:bg-[#E8F0FE] dark:hover:bg-blue-900/30 transition"
         >
-          📄 {t('viewSource', language)}
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
+          {t('viewSource', language)}
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
           </svg>
         </a>
       )}
@@ -369,7 +478,7 @@ function StandardEntry({ entry, language }) {
   )
 }
 
-export default function MessageBubble({ message, onRetry, language = 'en' }) {
+export default function MessageBubble({ message, onRetry, language = 'en', onNavigate }) {
   const isUser = message.role === 'user'
   const isError = message.isError
   const parsed = !isUser && !isError ? parseStructuredResponse(message.content) : null
@@ -390,10 +499,22 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
             <div className="space-y-3">
               {/* Dynamic answer heading — title of the product/standard asked */}
               {parsed.heading && (
-                <div className="rounded-lg bg-[#eaf1fb] dark:bg-[#1e2a44] border border-[#c9dcf5] dark:border-[#2e4a7f] px-4 py-2.5">
-                  <h2 className="text-base sm:text-lg font-extrabold leading-snug text-[#16337a] dark:text-blue-200">
+                <div className="rounded-xl bg-[#F2F4F7] dark:bg-[#252830] border border-gray-200 dark:border-[#2a2d35] px-4 py-3">
+                  <h2 className="text-base sm:text-lg font-bold leading-snug text-[var(--bis-navy)] dark:text-blue-200">
                     {parsed.heading}
                   </h2>
+                </div>
+              )}
+
+              {/* Accent badges */}
+              {parsed.heading && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[#E8F0FE] text-[var(--bis-navy)] px-3 py-1 text-[11px] font-bold tracking-wide">
+                    Official BIS Source-Backed
+                  </span>
+                  <span className="rounded-full bg-[#DCFCE7] text-[#14532D] px-3 py-1 text-[11px] font-bold tracking-wide">
+                    Scheme-I (ISI Mark)
+                  </span>
                 </div>
               )}
 
@@ -402,36 +523,87 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
                 <p className="text-[15px] text-gray-700 dark:text-gray-300 leading-relaxed">{parsed.intro}</p>
               )}
 
-              {/* 6-Section Cards */}
+              {/* Section Cards — unified neutral background, numbered navy headings */}
               {parsed.sections.map((section, i) => {
-                const config = SECTION_CONFIG[section.num] || {
-                  icon: '📌', label: section.title,
-                  bgClass: 'bg-gray-50 dark:bg-gray-900/15 border-gray-200 dark:border-gray-800',
-                  iconBg: 'bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-300'
+                const known = KNOWN_SECTIONS.has(section.num)
+                const iconPath = SECTION_ICON_PATHS[section.num] || FALLBACK_ICON_PATH
+                const title = known ? t(`sec${section.num}`, language) : (section.title || '')
+                const sectionNum = String(section.num).padStart(2, '0')
+
+                // Section 4 — verdict callout driven by the existing response text
+                const verdict = section.num === '4' ? detectVerdict(section.items) : null
+                let renderItems = section.items
+                let detailLines = []
+                if (section.num === '4' && verdict === 'mandatory') {
+                  const fields = section.items.filter(isFieldLine)
+                  if (fields.length >= 2) {
+                    renderItems = section.items.filter(l => !fields.includes(l))
+                    detailLines = fields
+                  }
                 }
+                const sec4Source = (section.items.join(' ').match(/https?:\/\/[^\s)]+/g) || ['https://bis.gov.in'])[0]
 
                 return (
-                  <div key={i} className={`rounded-xl border p-4 ${config.bgClass}`}>
-                    {/* Section Header */}
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${config.iconBg}`}>
-                        {config.icon}
+                  <div key={i} className="rounded-xl border bg-white dark:bg-[#1a1d23] border-gray-200 dark:border-[#2a2d35] p-4">
+                    {/* Section heading — icon + "NN — Title", single line, navy */}
+                    <h3 className="flex items-center gap-2.5 mb-3 text-2xl sm:text-3xl font-bold leading-snug text-[var(--bis-navy)] dark:text-blue-200">
+                      <SectionIcon path={iconPath} className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0" />
+                      <span>{sectionNum} — {title}</span>
+                    </h3>
+
+                    {/* Section 4 — statutory verdict callout */}
+                    {verdict && (
+                      <div className={`rounded-xl border p-4 mb-4 ${
+                        verdict === 'mandatory'
+                          ? 'bg-[#FEF2F2] border-red-200 dark:border-red-900/60'
+                          : 'bg-[#F0FDF4] border-green-200 dark:border-green-900/60'
+                      }`}>
+                        <div className={`text-[11px] font-bold uppercase tracking-wider ${
+                          verdict === 'mandatory'
+                            ? 'text-[#991B1B] dark:text-red-300'
+                            : 'text-[#166534] dark:text-green-300'
+                        }`}>
+                          Statutory Regulatory Status in India:
+                        </div>
+                        <div className={`mt-1.5 text-2xl sm:text-3xl font-bold leading-tight ${
+                          verdict === 'mandatory'
+                            ? 'text-[#B91C1C] dark:text-red-300'
+                            : 'text-[#15803D] dark:text-green-300'
+                        }`}>
+                          {verdict === 'mandatory' ? 'MANDATORY (COMPULSORY)' : 'VOLUNTARY'}
+                        </div>
+                        <p className="mt-1.5 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                          {verdict === 'mandatory'
+                            ? 'Covered under the BIS Act, 2016 and compulsory certification orders.'
+                            : 'Covered under the BIS Act, 2016 — no compulsory certification order applies.'}
+                        </p>
+                        <a
+                          href={sec4Source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`mt-3 inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-white text-sm font-semibold transition ${
+                            verdict === 'mandatory'
+                              ? 'bg-[#B91C1C] hover:bg-[#991B1B]'
+                              : 'bg-[#15803D] hover:bg-[#166534]'
+                          }`}
+                        >
+                          {t('viewSource', language)}
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
                       </div>
-                      <div>
-                        <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{t('sectionWord', language)} {section.num}</span>
-                        <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight">
-                          {SECTION_CONFIG[section.num] ? t(`sec${section.num}`, language) : (config.label || section.title)}
-                        </h3>
-                      </div>
-                    </div>
+                    )}
 
                     {/* Section Content */}
-                    <div className={`space-y-2 ${section.num === '1' ? '' : 'ml-[42px]'}`}>
+                    <div className={`space-y-2 ${
+                      verdict ? 'pt-4 border-t border-gray-200 dark:border-[#2a2d35]' : ''
+                    }`}>
                       {(() => {
                         // Section 1: each standard as its own block — big heading,
                         // content, "Why this standard applies", official-source button.
                         if (section.num === '1') {
-                          const { entries, prelude } = parseStandardEntries(section.items)
+                          const { entries, prelude } = parseStandardEntries(renderItems)
                           if (entries.length > 0) {
                             return (
                               <>
@@ -449,13 +621,13 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
                         }
 
                         // Other sections: bullet lines with sub-group headings
-                        return section.items.map((item, j) => {
+                        return renderItems.map((item, j) => {
                           const sub = subgroupTitle(item, section.num)
                           if (sub) {
                             return (
                               <div key={j} className="mt-3 first:mt-0 flex items-center gap-2">
-                                <span className="h-3.5 w-1 rounded bg-[#1a2744] dark:bg-blue-400" />
-                                <span className="text-xs font-bold uppercase tracking-wider text-[#1a2744] dark:text-blue-300">
+                                <span className="h-3.5 w-1 rounded bg-[var(--bis-navy)] dark:bg-blue-400" />
+                                <span className="text-xs font-bold uppercase tracking-wider text-[var(--bis-navy)] dark:text-blue-300">
                                   {sub}
                                 </span>
                               </div>
@@ -483,9 +655,13 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
                                   href={url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="ml-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5"
+                                  className="ml-1 text-[10px] text-[var(--bis-navy)] dark:text-blue-300 hover:underline inline-flex items-center gap-0.5"
                                 >
-                                  🔗 {t('officialLink', language)}
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
+                                    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+                                  </svg>
+                                  {t('officialLink', language)}
                                 </a>
                               ))}
                             </div>
@@ -493,6 +669,51 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
                         })
                       })()}
                     </div>
+
+                    {/* Section 4 — structured "why is it mandatory" details (only if
+                        the response already contains field-style lines) */}
+                    {detailLines.length > 0 && (
+                      <div className="mt-4 rounded-xl border border-gray-200 dark:border-[#2a2d35] bg-[#F2F4F7] dark:bg-[#252830] p-4">
+                        <div className="text-[12px] font-bold uppercase tracking-wider text-[var(--bis-navy)] dark:text-blue-300 mb-2">
+                          Why is it mandatory?
+                        </div>
+                        <div className="space-y-1.5 text-[15px] leading-relaxed text-gray-700 dark:text-gray-300">
+                          {detailLines.map((l, k) => (
+                            <p key={k}><RenderLine line={l} /></p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Section 3 — testing centres notice */}
+                    {section.num === '3' && (
+                      <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300 bg-[#FFFBEB] px-3.5 py-3">
+                        <svg
+                          className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M12 11v5" />
+                          <path d="M12 8h.01" />
+                        </svg>
+                        <p className="text-[14px] leading-relaxed text-gray-800">
+                          For more information, please visit the{' '}
+                          <a
+                            href="#"
+                            onClick={(e) => { e.preventDefault(); onNavigate?.('offices') }}
+                            className="font-semibold text-[var(--bis-navy)] underline underline-offset-2 hover:opacity-80"
+                          >
+                            Testing Centres page
+                          </a>.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -520,9 +741,12 @@ export default function MessageBubble({ message, onRetry, language = 'en' }) {
           <div className="mt-2">
             <button
               onClick={onRetry}
-              className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition"
+              className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg font-medium transition inline-flex items-center gap-1.5"
             >
-              🔄 Try Again
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Try Again
             </button>
           </div>
         )}
