@@ -5,6 +5,7 @@ import os
 import re
 import time
 import logging
+import unicodedata
 import httpx
 from typing import Optional
 
@@ -219,9 +220,8 @@ User Question: {query}
 
 Provide a comprehensive, structured answer following the 6-section format above. Every section MUST have content."""
 
-    def _generate_ollama(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
-        """Generate using Ollama."""
-        prompt = self._build_prompt(query, context, language, conversation_history)
+    def _post_ollama(self, prompt: str, num_predict: int = 2048) -> Optional[str]:
+        """POST a prompt to the local Ollama model. Returns None on failure."""
         try:
             resp = httpx.post(
                 f"{self.ollama_url}/api/generate",
@@ -229,27 +229,53 @@ Provide a comprehensive, structured answer following the 6-section format above.
                     "model": self.ollama_model,
                     "prompt": prompt,
                     "stream": False,
-                    "options": {"temperature": 0.3, "num_predict": 2048}
+                    "options": {"temperature": 0.3, "num_predict": num_predict}
                 },
                 timeout=60.0
             )
             if resp.status_code == 200:
-                return resp.json().get("response", "")
+                return resp.json().get("response") or None
+            logger.warning(f"Ollama returned HTTP {resp.status_code}")
         except Exception as e:
             logger.error(f"Ollama error: {e}")
+        return None
+
+    def _generate_ollama(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
+        """Generate using Ollama."""
+        prompt = self._build_prompt(query, context, language, conversation_history)
+        answer = self._post_ollama(prompt)
+        if answer:
+            return answer
         return self._generate_template(query, context, language)
 
     def _generate_gemini(self, query: str, context: str, language: str, conversation_history: list = None) -> str:
         """Generate using Gemini via REST API (avoids deprecated library issues).
 
-        Tries multiple model names, retries transient failures (429/5xx/timeouts),
-        and records the failure reason in self.last_error so /api/health can expose it.
+        Tries multiple model names, retries transient failures (429/5xx/timeouts), and records the failure reason in self.last_error so /api/health can expose it.
         """
         prompt = self._build_prompt(query, context, language, conversation_history)
-        gemini_key = os.getenv("GEMINI_API_KEY")
-        if not gemini_key:
+        if not os.getenv("GEMINI_API_KEY"):
             self.last_error = "GEMINI_API_KEY is not set"
             return self._generate_template(query, context, language)
+
+        text, errors = self._post_gemini(prompt)
+        if text:
+            self.last_error = None
+            return text
+
+        self.last_error = "; ".join(errors)[-600:] or "no models attempted"
+        logger.error(f"All Gemini models failed, using template fallback. {self.last_error}")
+        return self._generate_template(query, context, language)
+
+    def _post_gemini(self, prompt: str, timeout: float = 70.0):
+        """Send one prompt through the known-good Gemini model chain.
+
+        Returns (text, errors): text is None when every model failed.
+        Pure transport — callers decide how to record/report the errors.
+        """
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        if not gemini_key:
+            return None, ["GEMINI_API_KEY is not set"]
 
         # Known-good model chain: primary + variants that survive deprecations.
         # 503 (high demand) is transient — retry with backoff before moving on.
@@ -274,14 +300,13 @@ Provide a comprehensive, structured answer following the 6-section format above.
             # Up to 3 attempts per model with increasing backoff for 429/5xx.
             for attempt in range(3):
                 try:
-                    resp = httpx.post(url, json=data, headers=headers, timeout=70.0)
+                    resp = httpx.post(url, json=data, headers=headers, timeout=timeout)
                     if resp.status_code == 200:
                         result = resp.json()
                         text = result["candidates"][0]["content"]["parts"][0]["text"]
                         if text and text.strip():
-                            self.last_error = None
                             logger.info(f"Using Gemini ({model_name})")
-                            return text
+                            return text, errors
                         errors.append(f"{model_name}: empty response")
                         break  # empty response — no point retrying this model
 
@@ -300,9 +325,146 @@ Provide a comprehensive, structured answer following the 6-section format above.
                 if attempt < 2:
                     time.sleep(1.5 * (attempt + 1))
 
-        self.last_error = "; ".join(errors)[-600:] or "no models attempted"
-        logger.error(f"All Gemini models failed, using template fallback. {self.last_error}")
-        return self._generate_template(query, context, language)
+        return None, errors
+
+    # --- Answer translation -------------------------------------------------
+    # Spans the translator must not touch: the frontend parser and the citation
+    # extractor depend on them surviving byte-for-byte. Each match is masked
+    # with a unique placeholder before sending and restored afterwards.
+    _MASK_SPECS = [
+        ("CITE", re.compile(r"\[IS\s+\d[^\]\n]*\]")),       # [IS 456:2000, Section 5]
+        ("URL", re.compile(r"https?://[^\s\]\)]+")),          # https://bis.gov.in
+        ("WHY", re.compile(r"Why\s+this\s+standard\s+applies", re.I)),
+        ("ISNO", re.compile(r"\bIS\s+\d{1,5}(?::\d{4})?")),   # IS 456:2000 in prose
+    ]
+
+    # Unicode script keyword per target language — used to detect an answer
+    # that is ALREADY in the target language (skip = no wasted LLM call and
+    # zero risk of mangling a good answer).
+    _SCRIPT_KEYWORDS = {
+        "hi": "DEVANAGARI", "mr": "DEVANAGARI", "sa": "DEVANAGARI",
+        "ne": "DEVANAGARI", "doi": "DEVANAGARI", "gom": "DEVANAGARI",
+        "mai": "DEVANAGARI", "bn": "BENGALI", "as": "BENGALI",
+        "ta": "TAMIL", "te": "TELUGU", "gu": "GUJARATI",
+        "kn": "KANNADA", "ml": "MALAYALAM", "pa": "GURMUKHI",
+        "or": ("ORIYA", "ODIA"), "ur": "ARABIC", "sd": "ARABIC",
+    }
+
+    @classmethod
+    def _already_in_language(cls, text: str, language: str) -> bool:
+        """True when enough of the answer already uses the target script."""
+        keyword = cls._SCRIPT_KEYWORDS.get(language)
+        if keyword is None:
+            return False
+        keywords = keyword if isinstance(keyword, tuple) else (keyword,)
+        letters = hits = 0
+        for ch in text:
+            if not ch.isalpha():
+                continue
+            letters += 1
+            try:
+                name = unicodedata.name(ch, "")
+            except ValueError:
+                continue
+            if any(k in name for k in keywords):
+                hits += 1
+        # 0.25: a FULLY translated answer is dominated by its target script,
+        # while a half-translated one (English body, translated titles only)
+        # stays well below — those must still go through the translator.
+        return letters > 0 and hits / letters >= 0.25
+
+    def _mask_protected_spans(self, text: str):
+        """Replace citations/URLs/labels with placeholder tokens.
+
+        Returns (masked_text, {token: original_span}).
+        """
+        masks = {}
+        counter = 0
+        for tag, pattern in self._MASK_SPECS:
+            def _sub(match, _tag=tag):
+                nonlocal counter
+                token = f"__{_tag}{counter}__"
+                counter += 1
+                masks[token] = match.group(0)
+                return token
+            text = pattern.sub(_sub, text)
+        return text, masks
+
+    def _build_translate_prompt(self, text: str, lang_name: str) -> str:
+        return f"""You are a translator for ManakMitra, an assistant about Indian Standards (BIS).
+
+Translate the ANSWER below into {lang_name}.
+
+STRICT RULES:
+1. Keep every Markdown marker exactly as in the source: #, ###, **, -, line order, and blank-line spacing.
+2. Keep every placeholder token (e.g. __CITE0__, __ISNO1__, __WHY2__, __URL3__) EXACTLY unchanged — same spelling, same digits, same positions relative to surrounding text. Never translate, drop, or reorder them.
+3. Translate all prose, the top '# heading', and the section titles naturally into {lang_name}.
+4. Keep numbers, units, dates and measurements as-is.
+5. Output ONLY the translated text — no preamble, no explanations, no surrounding quotes.
+
+ANSWER TO TRANSLATE:
+{text}"""
+
+    def translate_answer(self, text: str, language: str) -> str:
+        """Translate a generated answer into the user's selected language.
+
+        Uses the same LLM provider as generation (the Google free-translate
+        endpoint is rate-limited and also refuses >5000-char texts, which is
+        why full answers used to ship in English). Citations, URLs, IS
+        standard numbers and the 'Why this standard applies' label are masked
+        so parsing keeps working. Returns the original text whenever
+        translation is unnecessary or fails — never worse than before.
+        """
+        if not text or language == "en" or self.llm_provider is None:
+            return text
+        if language not in self.LANGUAGE_NAMES:
+            return text
+        if self._already_in_language(text, language):
+            return text
+
+        lang_name = self.LANGUAGE_NAMES[language]
+        masked, masks = self._mask_protected_spans(text)
+        prompt = self._build_translate_prompt(masked, lang_name)
+
+        try:
+            if self.llm_provider == "ollama":
+                out = self._post_ollama(prompt, num_predict=4096)
+            elif self.llm_provider == "gemini":
+                out, errors = self._post_gemini(prompt, timeout=90.0)
+                if not out:
+                    logger.warning(f"Answer translation to {language} failed: {'; '.join(errors)[:300]}")
+            else:
+                out = None
+        except Exception as e:
+            logger.warning(f"Answer translation to {language} crashed: {e}")
+            out = None
+
+        if not out:
+            return text
+        out = out.strip()
+        # Drop an echoed language-instruction first line, mirroring generate().
+        out = re.sub(r"^\s*Respond in [A-Za-z]+[.!]?\s*\n?", "", out).strip() or out
+
+        # Sanity: keep structure or fall back to the untranslated answer.
+        if len(out) < 0.25 * len(text):
+            logger.warning(f"Translation to {language} looks truncated ({len(out)} vs {len(text)} chars) — keeping original")
+            return text
+        restored = 0
+        for token, original in masks.items():
+            if token in out:
+                out = out.replace(token, original)
+                restored += 1
+            elif token in out.upper():
+                # Translator lower/upper-cased the token — still recoverable.
+                out = re.sub(re.escape(token), original, out, flags=re.I)
+                restored += 1
+        if masks and restored / len(masks) < 0.7:
+            logger.warning(f"Translation to {language} lost {len(masks) - restored}/{len(masks)} protected tokens — keeping original")
+            return text
+        if any(token in out for token in masks):
+            logger.warning(f"Translation to {language} left unrestored placeholder tokens")
+            return text
+        return out
 
     def _generate_template(self, query: str, context: str, language: str) -> str:
         """Friendly fallback when no LLM is available.

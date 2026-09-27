@@ -127,8 +127,11 @@ async def query(request: QueryRequest):
         # Generate response with multi-turn context
         answer = llm_generator.generate(processed, context, language, request.conversation_history)
         
-        # Always translate response to user's selected language
-        # (Gemini sometimes ignores the language instruction in the prompt)
+        # Always translate the response to the user's selected language.
+        # (Gemini sometimes ignores the language instruction in the prompt, and
+        # the Google free-translate endpoint both rate-limits and refuses
+        # >5000-char texts — so translation runs through the LLM itself with
+        # citations/URLs masked.)
         # Skip translation for the no-LLM fallback so its first-line marker
         # stays intact (the frontend detects it and renders plain text).
         response_lang = request.response_language or "en"
@@ -136,13 +139,8 @@ async def query(request: QueryRequest):
             "The AI service is briefly unavailable",
             "Based on the available BIS standard excerpts",
         ))
-        if response_lang in query_processor.supported_languages and not is_fallback:
-            try:
-                from deep_translator import GoogleTranslator
-                # Auto-detect source language, translate to user's selected language
-                answer = GoogleTranslator(source='auto', target=response_lang).translate(answer)
-            except Exception as e:
-                logger.warning(f"Response translation failed: {e}")
+        if response_lang != "en" and not is_fallback:
+            answer = llm_generator.translate_answer(answer, response_lang)
 
         # Extract citations
         citations = llm_generator.extract_citations(answer)
