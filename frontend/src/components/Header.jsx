@@ -23,7 +23,7 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
       {/* Main Header */}
       <header className="bg-[#1a2744] dark:bg-[#0f1a2e] text-white shadow-lg sticky top-0 z-50">
         {/* Top bar — Logo + Actions */}
-        <div className="px-4 md:px-6 py-2.5 flex items-center justify-between">
+        <div className="px-4 md:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Mobile menu toggle */}
             <button
@@ -40,13 +40,13 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
             </button>
             
             {/* Logo */}
-            <button onClick={() => onNavigate('landing')} className="flex items-center gap-2.5 hover:opacity-90 transition">
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <span className="text-[#1a2744] text-xs font-extrabold">BIS</span>
+            <button onClick={() => onNavigate('landing')} className="flex items-center gap-3 hover:opacity-90 transition">
+              <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <span className="text-[#1a2744] text-sm font-extrabold">BIS</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-sm font-bold leading-tight tracking-wide">ManakMitra</h1>
-                <p className="text-[9px] text-blue-200/70 leading-tight">मानक मित्र — AI Assistant</p>
+                <h1 className="text-xl font-bold leading-tight tracking-wide">ManakMitra</h1>
+                <p className="text-[11px] text-blue-200/70 leading-tight mt-0.5">मानक मित्र — AI Assistant</p>
               </div>
             </button>
           </div>
@@ -75,7 +75,7 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
                 </svg>
               )}
             </button>
-            <span className="hidden md:inline-block bg-[#dd6b20] text-white px-2 py-0.5 rounded text-[9px] font-bold">SIH 2026</span>
+            <span className="hidden md:inline-block bg-[#dd6b20] text-white px-2.5 py-1 rounded text-[11px] font-bold">SIH 2026</span>
             <ProfileMenu onNavigate={onNavigate} />
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
-              className={`px-4 py-2 text-xs font-medium transition border-b-2 ${
+              className={`px-5 py-3 text-sm font-medium transition border-b-2 ${
                 currentPage === item.id
                   ? 'text-white border-[#dd6b20] bg-white/5'
                   : 'text-blue-200/70 border-transparent hover:text-white hover:bg-white/5'
