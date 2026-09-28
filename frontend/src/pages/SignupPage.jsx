@@ -80,9 +80,6 @@ export default function SignupPage({ onNavigate }) {
       <header className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <button onClick={() => onNavigate('landing')} className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#000080] rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold">BIS</span>
-            </div>
             <div className="text-left">
               <h1 className="text-base font-bold text-[#000080] leading-tight">ManakMitra</h1>
               <p className="text-[9px] text-gray-500">मानक मित्र</p>

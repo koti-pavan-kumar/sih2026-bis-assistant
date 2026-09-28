@@ -47,9 +47,6 @@ export default function Header({ currentPage, onNavigate, health, onHealthUpdate
             
             {/* Logo */}
             <button onClick={() => onNavigate('landing')} className="flex items-center gap-3 hover:opacity-90 transition">
-              <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                <span className="text-[#1a2744] text-sm font-extrabold">BIS</span>
-              </div>
               <div className="hidden sm:block">
                 <h1 className="text-xl font-bold leading-tight tracking-wide">ManakMitra</h1>
                 <p className="text-[11px] text-blue-200/70 leading-tight mt-0.5">मानक मित्र — AI Assistant</p>

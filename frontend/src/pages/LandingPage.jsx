@@ -578,12 +578,6 @@ export default function LandingPage({ onNavigate }) {
       <header className="bg-white/85 backdrop-blur-xl border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#000080] to-[#1a1aff] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/30">
-                <span className="text-white text-xl font-bold">BIS</span>
-              </div>
-              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#138808] border-2 border-white rounded-full"></span>
-            </div>
             <div>
               <h1 className="text-lg font-bold text-[#000080] leading-tight">ManakMitra</h1>
               <p className="text-[10px] text-gray-500 leading-tight">मानक मित्र — AI Assistant for Indian Standards</p>
@@ -803,7 +797,6 @@ export default function LandingPage({ onNavigate }) {
               </div>
               <div className="relative z-10 bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20">
                 <div className="bg-[#000080] px-5 py-3.5 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/15 rounded-lg grid place-items-center text-white text-xs font-bold">BIS</div>
                   <div className="text-white">
                     <div className="text-sm font-semibold leading-tight">ManakMitra</div>
                     <div className="text-[10px] text-blue-300 leading-tight">मानक मित्र — AI Assistant</div>
@@ -1018,9 +1011,6 @@ export default function LandingPage({ onNavigate }) {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#000080] to-[#1a1aff] rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">BIS</span>
-                </div>
                 <span className="text-white font-bold">ManakMitra</span>
               </div>
               <p className="text-xs leading-relaxed">
