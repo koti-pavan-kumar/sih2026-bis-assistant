@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Header from './components/Header'
 import ChatList from './components/ChatList'
 import ChatInterface from './components/ChatInterface'
@@ -16,7 +16,12 @@ import apiFetch from './utils/apiFetch'
 import { t } from './utils/translations'
 
 export default function App() {
-  const [page, setPage] = useState('landing')
+  // Restore page from browser history (survives refresh) so back/forward work
+  const [page, setPage] = useState(() => {
+    const h = window.history.state
+    return h && h.mm ? h.page : 'landing'
+  })
+  const pageRef = useRef(page)
   const [standards, setStandards] = useState([])
   const [health, setHealth] = useState(null)
   const [rightPanelOpen, setRightPanelOpen] = useState(false)
@@ -36,7 +41,29 @@ export default function App() {
   }, [])
 
   const navigate = useCallback((newPage) => {
+    if (pageRef.current !== newPage) {
+      // Record a history entry so back arrows / browser back return to the
+      // previous page instead of jumping to a fixed page
+      window.history.pushState({ mm: true, page: newPage }, '')
+      pageRef.current = newPage
+    }
     setPage(newPage)
+  }, [])
+
+  // Keep page state in sync with browser back/forward
+  useEffect(() => {
+    const onPopState = (e) => {
+      const p = e.state && e.state.mm ? e.state.page : 'landing'
+      pageRef.current = p
+      setPage(p)
+    }
+    // Mark the initial entry as ours (refresh-safe, prevents back arrows
+    // from leaving the site when there is no in-app entry to go back to)
+    if (!(window.history.state && window.history.state.mm)) {
+      window.history.replaceState({ mm: true, page: 'landing' }, '')
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
   }, [])
 
   // Load standards when on main app or chat page

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import apiFetch from '../utils/apiFetch'
+import { goBack } from '../utils/navigation'
 
 const STEP_STATUS_ICONS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 
@@ -45,7 +46,7 @@ export default function CertificationsPage({ onNavigate, language, darkMode }) {
       <div className="bg-gradient-to-br from-[#1a2744] via-[#1e3a5f] to-[#0f1a2e] text-white py-12 px-6">
         <div className="max-w-5xl mx-auto">
           <button
-            onClick={() => onNavigate('app')}
+            onClick={() => goBack(onNavigate, 'app')}
             className="text-blue-300 hover:text-white text-xs mb-4 flex items-center gap-1"
           >
             ← Back to ManakMitra
