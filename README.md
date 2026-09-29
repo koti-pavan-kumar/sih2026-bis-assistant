@@ -2,7 +2,7 @@
 
 > **Making India's 20,000+ BIS standards accessible to 75 million MSMEs — one conversation at a time.**
 
-An AI-powered conversational assistant that lets anyone ask questions about Bureau of Indian Standards (BIS) in **18 Indian languages** and get instant, source-cited, clause-level answers — with offline support via Ollama.
+An AI-powered conversational assistant that lets anyone ask questions about Bureau of Indian Standards (BIS) in **22 Indian languages** and get instant, source-cited, clause-level answers — with offline support via Ollama.
 
 **Smart India Hackathon 2026 | Problem Statement: SIH26107 | Team Resonant**
 
@@ -51,7 +51,7 @@ India has **20,000+ BIS standards** that govern product quality, safety, and com
 
 **ManakMitra** (मनकमित्र — "Standards Friend") is an AI-powered conversational assistant that:
 
-1. **Understands your question** in any of 18 Indian languages (auto-detected)
+1. **Understands your question** in any of 22 Indian languages (auto-detected)
 2. **Searches** across indexed BIS standards using semantic vector search (FAISS)
 3. **Generates** a precise answer with exact IS number, section, and clause citations
 4. **Tells you honestly** when it doesn't know — no hallucinated answers
@@ -75,7 +75,7 @@ India has **20,000+ BIS standards** that govern product quality, safety, and com
 
 | Feature | Description |
 |---------|-------------|
-| 🌐 **18 Indian Languages** | Ask in Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Nepali, Sindhi, Sanskrit, Dogri, Konkani, Maithili, Urdu, or English — auto-detected and translated |
+| 🌐 **22 Indian Languages** | Ask in Hindi, Bengali, Telugu, Marathi, Tamil, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Nepali, Urdu, Sindhi, Sanskrit, Dogri, Konkani, Maithili, Bodo, Kashmiri, Manipuri or Santali (plus English) — auto-detected and translated |
 | 🎤 **Voice Input** | Speak your question in Hindi or English using browser microphone — hands-free interaction for MSMEs who prefer speaking over typing |
 | 📎 **Source-Cited Answers** | Every answer includes exact IS standard number, section/clause reference, and page number — verified against retrieved document chunks |
 | 🧠 **Anti-Hallucination** | When context doesn't contain the answer, honestly says "I don't know" instead of fabricating information |
@@ -194,7 +194,7 @@ User Query (any Indian language)
        ▼
 ┌─────────────┐
 │ STEP 2:      │  Translate to English using deep-translator
-│ TRANSLATION  │  Supports 18 Indian languages
+│ TRANSLATION  │  Supports 22 Indian languages
 │ (if needed)  │  English queries skip this step
 └──────┬──────┘
        │
@@ -260,7 +260,7 @@ User Query (any Indian language)
 | **Embeddings** | sentence-transformers (all-MiniLM-L6-v2) | 384-dim vectors, runs locally, no API calls, 80MB model |
 | **LLM** | Ollama (llama3.1) / Gemini 2.0 Flash / Template | 3-tier fallback: offline → cloud → text-only |
 | **PDF Parsing** | pdfplumber | Pure Python, handles complex tables and layouts |
-| **NLP** | langdetect + deep-translator | Language detection + Google Translate API for 18 Indian languages |
+| **NLP** | langdetect + deep-translator | Language detection + Google Translate API for 22 Indian languages |
 | **Voice Input** | Web Speech API (webkitSpeechRecognition) | Browser-native, supports Hindi + English |
 | **Deployment** | Docker + docker-compose | One-command deployment |
 
@@ -706,7 +706,7 @@ User: "सीमेंट में क्लोराइड की अधिक
 |---------|:----------:|:----------:|:-------------:|:--------------:|:--------------:|
 | AI-Powered Q&A | ✅ | ❌ | ❌ | ❌ | Manual |
 | Hindi Support | ✅ | ❌ | ✅ | ❌ | ❌ |
-| 18 Indian Languages | ✅ | ❌ | ❌ | ❌ | ❌ |
+| 22 Indian Languages | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Clause-Level Answers | ✅ | ❌ | ❌ | Partial | ❌ |
 | Source Citations | ✅ | ❌ | ❌ | ❌ | Partial |
 | Voice Input | ✅ | ❌ | ❌ | ❌ | ❌ |

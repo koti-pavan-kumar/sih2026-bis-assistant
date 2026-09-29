@@ -122,7 +122,7 @@ class LLMGenerator:
         "kn": "Kannada", "ml": "Malayalam", "pa": "Punjabi", "or": "Odia",
         "as": "Assamese", "ne": "Nepali", "sa": "Sanskrit", "ks": "Kashmiri",
         "bo": "Bodo", "sd": "Sindhi", "doi": "Dogri", "ki": "Konkani",
-        "gom": "Konkani", "mai": "Maithili"
+        "gom": "Konkani", "mai": "Maithili", "mn": "Manipuri", "sat": "Santali"
     }
 
     def _build_prompt(self, query: str, context: str, language: str, conversation_history: list = None) -> str:

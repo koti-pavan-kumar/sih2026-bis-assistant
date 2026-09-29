@@ -1,5 +1,5 @@
 /**
- * Translations for all 18 Indian languages + English.
+ * Translations for all 22 Indian languages + English.
  * Covers all UI labels used in the application.
  */
 
@@ -48,7 +48,7 @@ const translations = {
     certificationWizard: "Certification Wizard",
     bisAssistantTitle: "BIS Standards AI Assistant",
     askAnyQuestion: "Ask any question about Indian Standards in any language",
-    supportsLanguages: "Supports 18 Indian languages with voice input",
+    supportsLanguages: "Supports 22 Indian languages with voice input",
     sources: "Sources:",
     tryAgain: "Try Again",
     confidence: "confidence",
@@ -131,7 +131,7 @@ const translations = {
     certificationWizard: "प्रमाणन विज़ार्ड",
     bisAssistantTitle: "BIS मानक AI सहायक",
     askAnyQuestion: "किसी भी भाषा में भारतीय मानकों के बारे में कोई भी प्रश्न पूछें",
-    supportsLanguages: "18 भारतीय भाषाओं में वॉइस इनपुट समर्थित",
+    supportsLanguages: "22 भारतीय भाषाओं में वॉइस इनपुट समर्थित",
     sources: "स्रोत:",
     tryAgain: "पुनः प्रयास करें",
     confidence: "विश्वास",
@@ -209,7 +209,7 @@ const translations = {
     certificationWizard: "சான்றிதழ் விசார்ட்",
     bisAssistantTitle: "BIS தரங்கள் AI உதவியாளர்",
     askAnyQuestion: "எந்த மொழியிலும் இந்திய தரங்கள் பற்றி எந்த கேள்வியையும் கேளுங்கள்",
-    supportsLanguages: "18 இந்திய மொழிகளில் குரல் உள்ளீடு ஆதரிக்கப்படுகிறது",
+    supportsLanguages: "22 இந்திய மொழிகளில் குரல் உள்ளீடு ஆதரிக்கப்படுகிறது",
     sources: "ஆதாரங்கள்:",
     tryAgain: "மீண்டும் முயற்சிக்கவும்",
     confidence: "நம்பிக்கை",
@@ -538,11 +538,16 @@ export const LANGUAGE_NAMES = {
   doi: "डोगरी",
   gom: "कोंकणी",
   mai: "मैथिली",
+  bo: "बड़ो",
+  ks: "कॉशुर",
+  mn: "মৈতৈলোন্",
+  sat: "ᱥᱟᱱᱛᱟᱲᱤ",
 };
 
 // Get translation for a key in a language (fallback to English)
 export function t(key, lang = "en") {
-  // Newer chrome/Auto-Fetch strings cover all 19 selectable languages.
+  // Newer chrome/Auto-Fetch strings cover all 23 selectable languages
+  // (22 Indian languages + English).
   const ui = uiTranslations[lang]
   if (ui && ui[key] != null && ui[key] !== "") return ui[key]
   const langTranslations = translations[lang] || translations.en;

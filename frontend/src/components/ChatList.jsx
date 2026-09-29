@@ -170,7 +170,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-500 dark:text-gray-400">{t('languagesWord', language)}</span>
-              <span className="font-bold text-[#000080] dark:text-blue-300">20</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">22</span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-500 dark:text-gray-400">{t('yourChats', language)}</span>

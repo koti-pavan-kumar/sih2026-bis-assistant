@@ -33,6 +33,10 @@ INDIAN_LANGUAGES = {
     "doi": "Dogri",
     "gom": "Konkani",
     "mai": "Maithili",
+    "bo": "Bodo",
+    "ks": "Kashmiri",
+    "mn": "Manipuri",
+    "sat": "Santali",
 }
 
 
