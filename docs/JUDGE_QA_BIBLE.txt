@@ -169,7 +169,7 @@ A: We use a two-step approach:
 
 Q: What LLM (AI model) do you use?
 A: We support three options in a priority chain:
-   1. Gemini 3.5 Flash (Google) — Used when you have an internet connection.
+   1. Gemini Flash (Google) — Used when you have an internet connection.
       This is the recommended option for demos because it produces the best
       quality answers. It is free for moderate usage.
    2. Ollama with Llama 3.1 — Used for fully offline operation. You install
@@ -184,7 +184,7 @@ A: We support three options in a priority chain:
 
 Q: Why Gemini and not ChatGPT or other LLMs?
 A: Several reasons:
-   - Cost: Gemini 3.5 Flash is free for moderate usage. ChatGPT requires a
+   - Cost: Gemini Flash is free for moderate usage. ChatGPT requires a
      paid API key.
    - Speed: Gemini Flash models are optimized for fast responses (2-5 seconds)
    - Quality: Gemini produces well-structured, cited answers for our prompts

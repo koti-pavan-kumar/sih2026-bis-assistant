@@ -1,120 +1,134 @@
 /**
- * Auth Utility — Manages user registration and login via localStorage.
- * 
- * Stores registered users in 'manakmitra_users' as an array of user objects.
- * Current logged-in user stored in 'manakmitra_user'.
+ * Auth Utility — server-side authentication via /api/auth/* (JWT + bcrypt).
+ *
+ * Passwords are bcrypt-hashed server-side (backend/auth.py); sessions are
+ * signed JWTs stored in localStorage. The current session profile lives in
+ * 'manakmitra_user', the token in 'manakmitra_token'.
+ *
+ * All functions are async and return the same { success, user?, error? }
+ * shape the old localStorage implementation used.
  */
+import apiFetch from './apiFetch'
 
-const USERS_KEY = 'manakmitra_users'
+const TOKEN_KEY = 'manakmitra_token'
 const CURRENT_USER_KEY = 'manakmitra_user'
+const LEGACY_USERS_KEY = 'manakmitra_users'
 
-// Simple hash for password (not cryptographically secure — acceptable for hackathon demo)
-function simpleHash(str) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32-bit integer
-  }
-  return 'h_' + Math.abs(hash).toString(36)
-}
-
-/**
- * Get all registered users from localStorage.
- */
-function getUsers() {
+/** POST JSON to the backend; normalize errors to { success:false, error }. */
+async function postJSON(url, body) {
+  let res
   try {
-    const stored = localStorage.getItem(USERS_KEY)
-    return stored ? JSON.parse(stored) : []
+    res = await apiFetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
   } catch {
-    return []
+    return { success: false, error: 'Cannot reach the server. Please try again.' }
   }
+
+  let data = null
+  try {
+    data = await res.json()
+  } catch {
+    /* empty body */
+  }
+
+  if (!res.ok) {
+    // FastAPI errors: { detail: string } or { detail: [ { msg }, ... ] } (422)
+    let detail = data && data.detail
+    if (Array.isArray(detail)) detail = detail.map((d) => d.msg).join('; ')
+    return { success: false, error: detail || `Registration failed (HTTP ${res.status}).` }
+  }
+
+  return { success: true, data }
+}
+
+/** Persist session (JWT + profile) from a backend auth response. */
+function storeSession(data) {
+  const u = data.user || {}
+  const sessionUser = {
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    phone: u.phone || '',
+    userType: u.user_type || 'individual',
+    organization: u.organization || '',
+    state: u.state || '',
+    loggedIn: true,
+  }
+  localStorage.setItem(TOKEN_KEY, data.token)
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(sessionUser))
+  return sessionUser
+}
+
+/** Current JWT (null for guests / logged out). */
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY)
 }
 
 /**
- * Save users array to localStorage.
+ * Register a new user on the backend (bcrypt-hashed, returns JWT session).
+ * @returns {Promise<{success: boolean, user?: object, error?: string}>}
  */
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users))
-}
-
-/**
- * Register a new user.
- * @returns {{ success: boolean, error?: string }}
- */
-export function register({ name, email, phone, password, userType, organization, gstNumber, state, district }) {
-  const users = getUsers()
-
-  // Validation
+export async function register({
+  name,
+  email,
+  phone,
+  password,
+  userType,
+  organization,
+  gstNumber,
+  state,
+  district,
+}) {
+  // Client-side validation mirrors the backend so users fail fast.
   if (!name || !name.trim()) return { success: false, error: 'Full name is required.' }
   if (!email || !email.trim()) return { success: false, error: 'Email address is required.' }
-  if (!password || password.length < 6) return { success: false, error: 'Password must be at least 6 characters.' }
+  if (!password || password.length < 8) {
+    return { success: false, error: 'Password must be at least 8 characters.' }
+  }
 
-  // Check if email already registered
-  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase())
-  if (existing) return { success: false, error: 'An account with this email already exists. Please sign in instead.' }
-
-  // Create user object
-  const newUser = {
-    id: 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
+  const { success, data, error } = await postJSON('/api/auth/register', {
     name: name.trim(),
-    email: email.trim().toLowerCase(),
+    email: email.trim(),
+    password,
     phone: phone || '',
-    passwordHash: simpleHash(password),
     userType: userType || 'individual',
     organization: organization || '',
     gstNumber: gstNumber || '',
     state: state || '',
     district: district || '',
-    createdAt: new Date().toISOString(),
-  }
+  })
+  if (!success) return { success: false, error }
 
-  users.push(newUser)
-  saveUsers(users)
-
-  return { success: true }
+  const user = storeSession(data)
+  return { success: true, user }
 }
 
 /**
- * Login with email and password.
- * @returns {{ success: boolean, user?: object, error?: string }}
+ * Login with email and password (verified against bcrypt hashes).
+ * @returns {Promise<{success: boolean, user?: object, error?: string}>}
  */
-export function login(email, password) {
+export async function login(email, password) {
   if (!email || !email.trim()) return { success: false, error: 'Email address is required.' }
   if (!password) return { success: false, error: 'Password is required.' }
 
-  const users = getUsers()
-  const user = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase())
+  const { success, data, error } = await postJSON('/api/auth/login', {
+    email: email.trim(),
+    password,
+  })
+  if (!success) return { success: false, error }
 
-  if (!user) {
-    return { success: false, error: 'No account found with this email. Please register first.' }
-  }
-
-  if (user.passwordHash !== simpleHash(password)) {
-    return { success: false, error: 'Incorrect password. Please try again.' }
-  }
-
-  // Login successful — store current user (without password hash)
-  const sessionUser = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    userType: user.userType,
-    organization: user.organization,
-    state: user.state,
-    loggedIn: true,
-  }
-
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(sessionUser))
-
-  return { success: true, user: sessionUser }
+  const user = storeSession(data)
+  return { success: true, user }
 }
 
 /**
- * Logout — clears current user and chat history.
+ * Logout — clears session token, current user, and legacy chat key.
  */
 export function logout() {
-  // Clear user session (chats are per-user and stay in storage)
+  localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(CURRENT_USER_KEY)
   // Clear the old shared chat key (legacy cleanup)
   localStorage.removeItem('manakmitra_chat_history')
@@ -134,7 +148,7 @@ export function setGuest() {
 }
 
 /**
- * Get current logged-in user.
+ * Get current logged-in user (session snapshot; guests have loggedIn:false).
  * @returns {object|null}
  */
 export function getCurrentUser() {
@@ -147,11 +161,18 @@ export function getCurrentUser() {
 }
 
 /**
- * Check if a user is registered with the given email.
+ * Check if an account exists for the given email.
+ * Kept for API compatibility: registration now lives on the server, so this
+ * only reflects pre-existing legacy localStorage accounts.
  * @returns {boolean}
  */
 export function isRegistered(email) {
   if (!email) return false
-  const users = getUsers()
-  return users.some(u => u.email.toLowerCase() === email.trim().toLowerCase())
+  try {
+    const stored = localStorage.getItem(LEGACY_USERS_KEY)
+    const users = stored ? JSON.parse(stored) : []
+    return users.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())
+  } catch {
+    return false
+  }
 }

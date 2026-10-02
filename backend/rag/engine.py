@@ -210,7 +210,32 @@ class RAGEngine:
     def __init__(self):
         self.vector_store = VectorStore()
         self.max_context_chunks = 5
-        self.min_relevance_score = 0.2
+        # Below this FAISS score a chunk is treated as irrelevant. In-scope
+        # queries top out at 0.62-0.77; out-of-scope ones (GST, cricket, recipes)
+        # top out at ~0.51 — 0.55 separates them so off-topic questions abstain
+        # instead of being "answered" from unrelated chunks.
+        self.min_relevance_score = 0.55
+        self.relaxed_relevance_score = 0.2  # explicit standard filter/browsing
+
+    @staticmethod
+    def _diversify(results: List["RetrievalResult"], limit: int, per_is: int = 2) -> List["RetrievalResult"]:
+        """Keep at most `per_is` chunks per standard before refilling.
+
+        FAISS returns chunk-level neighbours, so one standard can monopolise
+        the top-5 (e.g. 5x IS 302 for a refrigerator question while the actual
+        refrigerator standard sat at rank 6). Capping per standard puts the
+        competing candidate standards into the context where the LLM can pick
+        the right one; overflow refills the list so nothing is lost.
+        """
+        picked, overflow, counts = [], [], {}
+        for r in results:
+            key = r.chunk.is_number.split(":")[0]
+            if counts.get(key, 0) < per_is:
+                picked.append(r)
+                counts[key] = counts.get(key, 0) + 1
+            else:
+                overflow.append(r)
+        return (picked + overflow)[:limit]
 
     def retrieve(self, query: str, n_results: int = 5, filter_is_number: str = None) -> List[RetrievalResult]:
         """Retrieve relevant chunks for a query.
@@ -221,8 +246,10 @@ class RAGEngine:
         """
         import re
         
-        # Detect IS number in query (e.g., "IS 1786", "IS 1786:2008")
-        is_match = re.search(r'IS\s+(\d{4,5})(?::(\d{4}))?', query, re.IGNORECASE)
+        # Detect IS number in query (e.g., "IS 1786", "IS 456", "IS 1786:2008")
+        # 3-5 digits: IS 456 / IS 302 / IS 269 are all real 3-digit standards
+        # and used to silently fall through to semantic search.
+        is_match = re.search(r'IS\s+(\d{3,5})(?::(\d{4}))?', query, re.IGNORECASE)
         
         if is_match and not filter_is_number:
             # Query contains an IS number — direct lookup in chunks
@@ -250,7 +277,9 @@ class RAGEngine:
         
         # Standard semantic search
         results = self.vector_store.search(query, n_results=n_results, filter_is_number=filter_is_number)
-        filtered_results = [r for r in results if r.score >= self.min_relevance_score]
+        threshold = self.relaxed_relevance_score if filter_is_number else self.min_relevance_score
+        filtered_results = [r for r in results if r.score >= threshold]
+        filtered_results = self._diversify(filtered_results, n_results)
         logger.info(f"Retrieved {len(filtered_results)} relevant chunks (from query: {query[:50]})")
         return filtered_results
 

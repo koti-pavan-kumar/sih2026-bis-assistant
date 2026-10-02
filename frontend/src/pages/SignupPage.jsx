@@ -34,7 +34,7 @@ export default function SignupPage({ onNavigate }) {
     setError('') // Clear error on any input change
   }
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -43,12 +43,12 @@ export default function SignupPage({ onNavigate }) {
     if (!formData.email.trim()) { setError('Please enter your email address.'); return }
     if (!formData.phone.trim()) { setError('Please enter your phone number.'); return }
     if (!formData.password) { setError('Please enter a password.'); return }
-    if (formData.password.length < 6) { setError('Password must be at least 6 characters.'); return }
+    if (formData.password.length < 8) { setError('Password must be at least 8 characters.'); return }
     if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.'); return }
     if (!formData.state) { setError('Please select your state.'); return }
 
-    // Attempt registration
-    const result = register({
+    // Attempt registration (server-side: bcrypt hash + JWT session)
+    const result = await register({
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
@@ -66,9 +66,9 @@ export default function SignupPage({ onNavigate }) {
     setStep(2)
   }
 
-  const handleGoToApp = () => {
+  const handleGoToApp = async () => {
     // Log in the newly registered user
-    const result = login(formData.email, formData.password)
+    const result = await login(formData.email, formData.password)
     if (result.success) {
       localStorage.removeItem('manakmitra_chat_history')
       onNavigate('app')
@@ -178,7 +178,7 @@ export default function SignupPage({ onNavigate }) {
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1">Password *</label>
                         <input type="password" value={formData.password} onChange={(e) => update('password', e.target.value)}
-                          placeholder="Min 6 characters"
+                          placeholder="Min 8 characters"
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#000080] focus:ring-1 focus:ring-[#000080]" />
                       </div>
                       <div>
@@ -268,7 +268,7 @@ export default function SignupPage({ onNavigate }) {
       {/* Footer */}
       <footer className="bg-white border-t py-4">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-xs text-gray-400">
-          <span>© 2026 Bureau of Indian Standards</span>
+          <span>ManakMitra — a Smart India Hackathon 2026 project</span>
           <span>SIH 2026 • PS ID: SIH26107</span>
         </div>
       </footer>

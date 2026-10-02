@@ -299,21 +299,20 @@ function Counter({ to, duration = 1500 }) {
   const [n, setN] = useState(0)
   const ref = useRef(null)
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return
-      io.disconnect()
-      const start = performance.now()
-      const tick = (t) => {
-        const p = Math.min((t - start) / duration, 1)
-        setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
-        if (p < 1) requestAnimationFrame(tick)
-      }
-      requestAnimationFrame(tick)
-    }, { threshold: 0.4 })
-    io.observe(el)
-    return () => io.disconnect()
+    // Animate on mount with a hard timeout fallback — IntersectionObserver and
+    // requestAnimationFrame get throttled/suspended in background or occluded
+    // windows, which left these credibility-critical stats stuck at 0. The
+    // timeout guarantees the real value always lands, visible or not.
+    const start = performance.now()
+    let raf = 0
+    const tick = (t) => {
+      const p = Math.min((t - start) / duration, 1)
+      setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
+      if (p < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    const safety = setTimeout(() => setN(to), duration + 400)
+    return () => { cancelAnimationFrame(raf); clearTimeout(safety) }
   }, [to, duration])
   return <span ref={ref}>{n}</span>
 }
@@ -518,7 +517,7 @@ function DocStage() {
           <div className="absolute -left-24 bottom-2 mm-doc bg-white rounded-2xl px-4 py-3 shadow-xl z-10"
             style={{ animationDelay: '-3s' }}>
             <div className="text-[10px] text-gray-400 font-medium">Response time</div>
-            <div className="text-xl font-extrabold text-[#000080]">2.4s</div>
+            <div className="text-xl font-extrabold text-[#000080]">10s</div>
           </div>
         </div>
       </div>
@@ -532,11 +531,26 @@ function DocStage() {
 export default function LandingPage({ onNavigate }) {
   useReveal()
 
+  // Live counts from the backend's single source of truth (/api/stats) —
+  // static hard-coded numbers here previously contradicted the deck and API.
+  const [liveStats, setLiveStats] = useState(null)
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/stats')
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => { if (!cancelled && d) setLiveStats(d) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [])
+  const standardsCount = liveStats?.standards_indexed ?? 28
+  const chunksCount = liveStats?.chunks_indexed ?? 122
+  const languagesCount = liveStats?.languages_supported ?? 22
+
   const standardsMarquee = [
     'IS 456:2000', 'IS 1786:2008', 'IS 269:2015', 'IS 2062:2011', 'IS 10500:2012',
-    'IS 14543:2016', 'IS 13252:2020', 'IS 2379:2017', 'IS 15489:2012', 'IS 455:2015',
-    'IS 12642:2019', 'IS 302:2024', 'IS 15556:2020', 'IS 3289:2018', 'IS 16001:2018',
-    'IS 383:2016', 'IS 1489:2015', 'IS 1608:2013', 'IS 17091:2019', 'IS 13726:2019',
+    'IS 14543:2018', 'IS 13252:2010', 'IS 455:1989', 'IS 383:2016', 'IS 1489:1991',
+    'IS 12040:1997', 'IS 15258:2016', 'IS 1758:2016', 'IS 17091:2018', 'IS 13726:2016',
+    'IS 2932:2019', 'IS 16001:2012', 'IS 3289:2023', 'IS 15556:2023', 'IS 302:2024',
   ]
 
   const languages = [
@@ -546,15 +560,15 @@ export default function LandingPage({ onNavigate }) {
   ]
 
   const stats = [
-    { value: 23, suffix: '', label: 'BIS Standards Indexed', icon: 'book' },
-    { value: 115, suffix: '', label: 'Knowledge Chunks', icon: 'zap' },
-    { value: 22, suffix: '', label: 'Indian Languages', icon: 'globe' },
+    { value: standardsCount, suffix: '', label: 'BIS Standards Indexed', icon: 'book' },
+    { value: chunksCount, suffix: '', label: 'Knowledge Chunks', icon: 'zap' },
+    { value: languagesCount, suffix: '', label: 'Indian Languages', icon: 'globe' },
     { value: 8, suffix: '', label: 'Product Domains', icon: 'building' },
   ]
 
   const features = [
     { icon: 'chat', title: 'Ask in Your Language', desc: 'Type or speak in any of 22 Indian languages. ManakMitra understands Hindi, Tamil, Telugu, Bengali and more — then answers in the same language.', gradient: 'from-[#FF9933] to-[#FF6B00]' },
-    { icon: 'search', title: 'Cited Answers', desc: 'Every answer includes the exact IS standard number, section and clause. Verify the source yourself — no guessing, no hallucination.', gradient: 'from-[#1D6BFF] to-[#000080]' },
+    { icon: 'search', title: 'Cited Answers', desc: 'Every answer includes the exact IS standard number, section and clause. Verify the source yourself — each citation is checked against the retrieved standard text.', gradient: 'from-[#1D6BFF] to-[#000080]' },
     { icon: 'refresh', title: 'Auto-Fetch Updates', desc: 'When BIS publishes new standards or revisions, ManakMitra automatically discovers and indexes them. Always up to date.', gradient: 'from-[#138808] to-[#0A5F05]' },
     { icon: 'compass', title: 'Certification Wizard', desc: 'Not sure which standard applies? Select your product category and get the exact IS standard, required documents and process steps.', gradient: 'from-[#7C3AED] to-[#4C1D95]' },
     { icon: 'flask', title: 'Lab & Office Finder', desc: 'Find the nearest BIS recognized testing laboratory and regional office with phone numbers and direct Google Maps directions.', gradient: 'from-[#0EA5E9] to-[#0369A1]' },
@@ -562,14 +576,14 @@ export default function LandingPage({ onNavigate }) {
   ]
 
   const domains = [
-    { domain: 'Construction', icon: 'building', count: 8, standards: ['IS 269', 'IS 456', 'IS 1489', 'IS 383'], accent: '#FF9933' },
-    { domain: 'Steel & Metals', icon: 'zap', count: 2, standards: ['IS 1786', 'IS 2062'], accent: '#1D6BFF' },
-    { domain: 'Food & Dairy', icon: 'flask', count: 2, standards: ['IS 10500', 'IS 14543'], accent: '#138808' },
-    { domain: 'Electronics', icon: 'shield', count: 2, standards: ['IS 13252', 'IS 15258'], accent: '#7C3AED' },
-    { domain: 'Textiles', icon: 'award', count: 2, standards: ['IS 1758', 'IS 17091'], accent: '#DB2777' },
-    { domain: 'Packaging', icon: 'file', count: 2, standards: ['IS 13726', 'IS 2932'], accent: '#0EA5E9' },
-    { domain: 'Materials', icon: 'search', count: 2, standards: ['IS 1608', 'IS 383'], accent: '#D69E2E' },
-    { domain: 'Auto-Fetched', icon: 'refresh', count: 3, standards: ['IS 17440', 'IS 6307', 'IS 1867'], accent: '#059669' },
+    { domain: 'Cement & Concrete', icon: 'building', count: 5, standards: ['IS 269', 'IS 456', 'IS 1489', 'IS 455'], accent: '#FF9933' },
+    { domain: 'Construction Materials', icon: 'search', count: 3, standards: ['IS 383', 'IS 12040', 'IS 2185'], accent: '#D69E2E' },
+    { domain: 'Steel & Metals', icon: 'zap', count: 3, standards: ['IS 1786', 'IS 2062', 'IS 19497'], accent: '#1D6BFF' },
+    { domain: 'Food, Dairy & Water', icon: 'flask', count: 3, standards: ['IS 10500', 'IS 14543'], accent: '#138808' },
+    { domain: 'Electronics & Electricals', icon: 'shield', count: 5, standards: ['IS 302', 'IS 13252', 'IS 15556'], accent: '#7C3AED' },
+    { domain: 'Textiles & Leather', icon: 'award', count: 3, standards: ['IS 1758', 'IS 17091', 'IS 3289'], accent: '#DB2777' },
+    { domain: 'Coatings & Packaging', icon: 'file', count: 2, standards: ['IS 2932', 'IS 13726'], accent: '#0EA5E9' },
+    { domain: 'Auto-Fetched Orders', icon: 'refresh', count: 4, standards: ['IS 17440', 'IS 6307', 'IS 1867', 'IS 18841'], accent: '#059669' },
   ]
 
   return (
@@ -618,7 +632,7 @@ export default function LandingPage({ onNavigate }) {
             <div>
               <div className="inline-flex items-center gap-2 mm-glass rounded-full px-4 py-1.5 mb-6">
                 <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <span className="text-xs font-medium">Powered by AI • 23 Standards Indexed • Live</span>
+                <span className="text-xs font-medium">Powered by AI • {standardsCount} Standards Indexed • Live</span>
               </div>
               <h2 className="text-4xl md:text-6xl font-extrabold leading-[1.08] mb-6 tracking-tight">
                 Your AI Guide to<br />
@@ -787,12 +801,12 @@ export default function LandingPage({ onNavigate }) {
               {/* floating chips */}
               <div className="absolute -top-5 -left-4 mm-glass rounded-full px-4 py-2 mm-doc z-20 shadow-xl" style={{ animationDelay: '-1.5s' }}>
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Icon name="zap" className="w-3.5 h-3.5 text-[#FF9933]" /> 2.4s average response
+                  <Icon name="zap" className="w-3.5 h-3.5 text-[#FF9933]" /> 10s average response
                 </span>
               </div>
               <div className="absolute -bottom-6 right-8 mm-glass rounded-full px-4 py-2 mm-doc z-20 shadow-xl" style={{ animationDelay: '-3.5s' }}>
                 <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Icon name="check" className="w-3.5 h-3.5 text-green-400" /> 100% source verified
+                  <Icon name="check" className="w-3.5 h-3.5 text-green-400" /> 97.8% citations verified
                 </span>
               </div>
               <div className="relative z-10 bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/20">
@@ -986,7 +1000,7 @@ export default function LandingPage({ onNavigate }) {
         <div className="mm-aurora w-[400px] h-[400px] right-10 -bottom-32 bg-emerald-500/35" style={{ animationDuration: '22s', animationDelay: '-8s' }}></div>
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 mm-reveal">
           <h3 className="text-3xl md:text-5xl font-extrabold text-white mb-5 leading-tight">Ready to Simplify<br />Indian Standards?</h3>
-          <p className="text-blue-200 mb-9 text-lg">Join thousands of MSMEs already using ManakMitra</p>
+          <p className="text-blue-200 mb-9 text-lg">Built for MSMEs, manufacturers and consumers across India</p>
           <div className="flex flex-wrap justify-center gap-4">
             <button onClick={() => onNavigate('signup')}
               className="mm-shine bg-gradient-to-r from-[#FF9933] to-[#FF6B00] text-white font-bold px-9 py-4 rounded-xl text-base transition shadow-xl shadow-orange-600/40 hover:scale-105 active:scale-95 duration-200">
@@ -1047,7 +1061,7 @@ export default function LandingPage({ onNavigate }) {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-xs">© 2026 Bureau of Indian Standards. All rights reserved.</p>
+            <p className="text-xs">ManakMitra is a Smart India Hackathon 2026 project; standard text sourced from Bureau of Indian Standards publications.</p>
             <p className="text-xs">Smart India Hackathon 2026 • Problem Statement: SIH26107</p>
           </div>
         </div>

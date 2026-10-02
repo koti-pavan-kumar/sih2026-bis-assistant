@@ -3,7 +3,7 @@ import { login, setGuest } from '../utils/auth'
 
 /**
  * LoginPage — Professional government-style login page.
- * Validates credentials against registered users stored in localStorage.
+ * Validates credentials against the backend (bcrypt-hashed passwords, JWT session).
  */
 export default function LoginPage({ onNavigate }) {
   const [email, setEmail] = useState('')
@@ -12,7 +12,7 @@ export default function LoginPage({ onNavigate }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -22,21 +22,18 @@ export default function LoginPage({ onNavigate }) {
 
     setLoading(true)
 
-    // Small delay to simulate network check
-    setTimeout(() => {
-      const result = login(email, password)
+    const result = await login(email, password)
 
-      if (!result.success) {
-        setError(result.error)
-        setLoading(false)
-        return
-      }
-
-      // Login successful — clear old chat, go to app
-      localStorage.removeItem('manakmitra_chat_history')
+    if (!result.success) {
+      setError(result.error)
       setLoading(false)
-      onNavigate('app')
-    }, 400)
+      return
+    }
+
+    // Login successful — clear old chat, go to app
+    localStorage.removeItem('manakmitra_chat_history')
+    setLoading(false)
+    onNavigate('app')
   }
 
   const handleDemoLogin = () => {
@@ -178,7 +175,7 @@ export default function LoginPage({ onNavigate }) {
       {/* Footer */}
       <footer className="bg-white border-t py-4">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-xs text-gray-400">
-          <span>© 2026 Bureau of Indian Standards</span>
+          <span>ManakMitra — a Smart India Hackathon 2026 project</span>
           <span>SIH 2026 • PS ID: SIH26107</span>
         </div>
       </footer>

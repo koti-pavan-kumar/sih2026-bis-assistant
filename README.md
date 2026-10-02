@@ -547,7 +547,7 @@ curl -X POST http://localhost:8000/api/ingest
 
 ## 📚 Indexed Standards
 
-18 standards across 8 domains, 73 total chunks:
+28 standards across 8 domains, 122 total chunks:
 
 | IS Number | Title | Domain | Chunks |
 |-----------|-------|--------|--------|
@@ -592,7 +592,7 @@ curl http://localhost:8000/api/health
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| **FAISS Search** | ~12ms | Top-5 chunks from 73 total vectors |
+| **FAISS Search** | ~12ms | Top-5 chunks from 122 total vectors |
 | **Embedding Generation** | ~45ms | query → 384-dim vector |
 | **Language Detection** | ~8ms | langdetect on 5-word query |
 | **Translation** | ~180ms | Hindi → English via Google Translate |

@@ -130,6 +130,21 @@ class LLMGenerator:
         lang_name = self.LANGUAGE_NAMES.get(language, "English")
         lang_instruction = f"Respond in {lang_name}."
 
+        # When retrieval found nothing, the 6-section format is impossible and
+        # the "always cite" rules would push the model to invent IS numbers.
+        # Overrides the format with a strict abstention path (see prompt below).
+        no_standards_block = ""
+        if "No relevant standards found." in context:
+            no_standards_block = """
+
+CRITICAL — NO STANDARD EXCERPTS WERE RETRIEVED FOR THIS QUESTION:
+The knowledge base does not contain an Indian Standard relevant to this question. You MUST:
+- NOT invent or recall any [IS ...] citations, section numbers, limits, or values from memory.
+- If the question is about BIS certification procedure, regional offices, or contacts, answer ONLY from the office/certification information in the context, WITHOUT any [IS ...] citations.
+- Otherwise answer with ONLY: the '# heading' line, then ONE short paragraph saying that this information is not available in the indexed BIS knowledge base (28 Indian Standards) so you cannot answer it reliably, and suggesting the user ask about a covered topic (for example cement IS 269, structural steel IS 2062, drinking water IS 10500, concrete IS 456). Write that paragraph in {lang_name}.
+- Do NOT write the 6-section format when no standard excerpts were retrieved.
+""".replace("{lang_name}", lang_name)
+
         # Build conversation context from history
         history_text = ""
         if conversation_history:
@@ -157,7 +172,7 @@ The heading MUST be specific to THIS user's question and different for every que
 Then the 6 sections, starting immediately with:
 
 ### 1. Applicable IS Standards
-List every relevant IS standard. For EACH standard use this EXACT sub-format (blank line between standards):
+List every relevant IS standard **that appears in the context excerpts below**. For EACH standard use this EXACT sub-format (blank line between standards):
 
 **IS XXXX:YYYY — Official standard title**
 1-2 sentences describing what the standard covers and its key requirements, with citations like [IS XXXX:YYYY, Section X].
@@ -192,9 +207,10 @@ List all documents needed for certification. Include: application forms, test re
 CRITICAL RULES:
 1. You MUST write ALL 6 sections with actual content in each. NO section can be empty.
 2. Each section MUST contain at least 2-3 real, specific content entries (standards, requirements, steps or documents).
-3. Always cite exact IS standard numbers with sections: [IS XXXX:YYYY, Section X.X]
+3. Cite IS standards with sections ([IS XXXX:YYYY, Section X.X]) ONLY for standards that appear in the provided context — never cite or recall an IS number from memory.
 4. Be specific — numbers, percentages, technical specs from the context
-5. If context lacks info for a section, provide general guidance based on BIS practices
+5. If context lacks info for a section, you may give general BIS-process guidance for certification/testing-centre sections, but NEVER invent technical limits, values, or IS citations — state plainly what the indexed standards do not cover.
+13. NEVER mention any IS number that is absent from the context — not in any section, not as a cross-reference, not as a "related standard". A reader can only verify what is in the excerpts. If a related standard outside the excerpts seems relevant, refer to it generically ("other testing method standards") WITHOUT its IS number.
 6. Use the BIS official website URL: https://bis.gov.in for application links
 7. For testing centres, list real BIS offices with phone numbers from the context
 8. Translate technical terms accurately in non-English languages
@@ -214,8 +230,7 @@ Covers cement grade requirements [IS 269:2015, Section 3].
 **Why this standard applies:** It is the base reference standard for the cement properties you asked about.
 
 Context from BIS Standards:
-{context}{history_text}
-
+{context}{history_text}{no_standards_block}
 User Question: {query}
 
 Provide a comprehensive, structured answer following the 6-section format above. Every section MUST have content."""
@@ -525,24 +540,54 @@ ANSWER TO TRANSLATE:
 {excerpt}"""
 
     def extract_citations(self, response: str) -> list:
-        """Extract IS citations from the response."""
+        """Extract IS citations from the response.
+
+        Three patterns, most specific first: bracketed [IS ...], IS with an
+        explicit Clause/Section, then a bare "IS 456" / "IS 456:2000" mention.
+        Bare mentions count too — they are verifiable against retrieved chunks,
+        and skipping them used to make citation coverage look lower than it is.
+        Overlapping matches keep the most specific pattern; exact
+        (standard, section) duplicates are dropped.
+        """
         patterns = [
-            r'\[IS\s+(\d+)(?::(\d{4}))?(?:,\s*Section\s+([\d.]+))?\]',
-            r'IS\s+(\d+)(?::(\d{4}))?(?:\s*,?\s*(?:Clause|Section)\s+([\d.]+))',
+            r'\[IS\s+(\d{3,5})(?::(\d{4}))?(?:,\s*Section\s+([\d.]+))?\]',
+            r'IS\s+(\d{3,5})(?::(\d{4}))?(?:\s*,?\s*(?:Clause|Section)\s+([\d.]+))',
+            r'\bIS\s+(\d{3,5})(?::(\d{4}))?\b',
         ]
-        citations = []
-        for pattern in patterns:
+        matches = []
+        for priority, pattern in enumerate(patterns):
             for match in re.finditer(pattern, response):
-                is_num = f"IS {match.group(1)}"
-                if match.group(2):
-                    is_num += f":{match.group(2)}"
-                section = match.group(3) if match.lastindex >= 3 and match.group(3) else ""
-                citations.append({"standard": is_num, "section": section})
+                matches.append((match.start(), priority, match))
+        matches.sort(key=lambda x: (x[0], x[1]))
+
+        citations, seen_spans, seen_keys = [], [], set()
+        for start, _priority, match in matches:
+            if any(start < end and start >= s for s, end in seen_spans):
+                continue  # overlaps an already-accepted (more specific) match
+            is_num = f"IS {match.group(1)}"
+            if match.group(2):
+                is_num += f":{match.group(2)}"
+            section = ""
+            if match.lastindex >= 3 and match.group(3):
+                section = match.group(3)
+            key = (is_num, section)
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            seen_spans.append((start, match.end()))
+            citations.append({"standard": is_num, "section": section})
         return citations
 
     def verify_citations(self, citations: list, retrieval_results: list) -> list:
         """Verify extracted citations against actual retrieved chunks.
-        
+
+        A citation passes when:
+        (a) the cited standard IS one of the retrieved chunks' standards, or
+        (b) the cited standard is named inside a retrieved chunk's text —
+            i.e. an in-source cross-reference (IS 456 itself cites IS 10262
+            for mix proportioning, IS 269 cites IS 4031 for test methods),
+            which is still traceable to the source the model actually read.
+
         Returns list of citations with verified status:
         [{standard, section, verified: bool, reason: str}]
         """
@@ -553,15 +598,20 @@ ANSWER TO TRANSLATE:
             is_base = is_num.split(":")[0] if ":" in is_num else is_num  # e.g., "IS 269"
             retrieved_is_numbers.add(is_base)
             retrieved_is_numbers.add(is_num)
-        
+
         verified = []
         for c in citations:
             std = c.get("standard", "")
             section = c.get("section", "")
-            
-            # Check if this standard was in retrieved chunks
-            is_verified = any(std in num or num in std for num in retrieved_is_numbers)
-            
+
+            # (a) standard was directly retrieved
+            is_source_standard = any(std in num or num in std for num in retrieved_is_numbers)
+            # (b) standard named inside a retrieved chunk (cross-reference)
+            is_cross_reference = (not is_source_standard) and any(
+                std in r.chunk.text for r in retrieval_results
+            )
+            is_verified = is_source_standard or is_cross_reference
+
             # Check if section exists in any retrieved chunk (if specified)
             section_verified = True
             if section and is_verified:
@@ -573,16 +623,20 @@ ANSWER TO TRANSLATE:
                         break
                 else:
                     section_verified = False
-            
+
+            if is_verified and section_verified:
+                reason = "Found in retrieved chunks"
+            elif not is_verified:
+                reason = "Standard not in retrieved chunks"
+            else:
+                reason = f"Section {section} not found in text"
             verified.append({
                 "standard": std,
                 "section": section,
                 "verified": is_verified and section_verified,
-                "reason": "Found in retrieved chunks" if (is_verified and section_verified) 
-                          else "Standard not in retrieved chunks" if not is_verified
-                          else f"Section {section} not found in text"
+                "reason": reason
             })
-        
+
         return verified
 
     def compute_confidence(
@@ -621,8 +675,10 @@ ANSWER TO TRANSLATE:
         unverified_citations = []
         for c in citations:
             std = c.get("standard", "")
-            # Check if this standard was actually in retrieved chunks
-            if any(std in num or num in std for num in retrieved_is_numbers):
+            # Check if this standard was actually in retrieved chunks, or is
+            # an in-source cross-reference named inside a retrieved chunk
+            if any(std in num or num in std for num in retrieved_is_numbers) \
+                    or any(std in r.chunk.text for r in retrieval_results):
                 verified_citations.append(c)
             else:
                 unverified_citations.append(c)

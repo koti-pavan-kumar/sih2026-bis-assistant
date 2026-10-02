@@ -254,7 +254,7 @@ def slide_problems(prs):
     tf = inn.text_frame; tf.word_wrap = True; tf.margin_left = Pt(8); tf.margin_top = Pt(4)
 
     innovs = [
-        ("Source-Grounded RAG", " - ONNX + FAISS, hallucination-free, cited responses"),
+        ("Source-Grounded RAG", " - ONNX + FAISS, citation-verified, source-grounded responses"),
         ("Live BIS Pipeline", " - Auto-fetches new standards, always current"),
         ("22 Indian Languages", " - Auto-detect, translate, RAG, translate-back"),
         ("6-Section Responses", " - Standards, testing, offices, legal, QC, documents"),
@@ -305,7 +305,7 @@ def slide_technical(prs):
     lu = s.shapes.add_textbox(Inches(0.5), Inches(5.6), Inches(5.5), Inches(0.4))
     tf = lu.text_frame; p = tf.paragraphs[0]
     r = p.add_run(); r.text = "Live prototype: "; r.font.size = Pt(14); r.font.bold = True; r.font.color.rgb = NAVY
-    r2 = p.add_run(); r2.text = "manakmitra-frontend.vercel.app"; r2.font.size = Pt(14); r2.font.color.rgb = SEC_BLUE; r2.font.bold = True
+    r2 = p.add_run(); r2.text = "sih2026-bis-assistant-ebon.vercel.app"; r2.font.size = Pt(14); r2.font.color.rgb = SEC_BLUE; r2.font.bold = True
 
     # Vertical divider
     div = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.3), Inches(1.5), Inches(0.03), Inches(5.5))
@@ -608,7 +608,7 @@ def slide_impact(prs):
     benefits = [
         ("Multilingual Access:", " Supports 22 Indian languages including Telugu, Hindi, Tamil, Bengali."),
         ("MSME-Friendly:", " Free tool for 63M+ MSMEs who cannot afford compliance consultants."),
-        ("Source-Grounded:", " All responses cite official BIS documents. Zero hallucinations."),
+        ("Source-Grounded:", " All responses cite official BIS documents; 97.8% of references verified in a 28-question eval."),
         ("Always Updated:", " Live auto-fetch pipeline keeps knowledge base current."),
         ("24/7 Availability:", " Always accessible, reducing dependency on BIS office hours."),
         ("Unified Platform:", " Standards + certification + labs + AI in one place."),
@@ -635,7 +635,7 @@ def slide_impact(prs):
     budget_rows = [
         ("Development", "Rs. 1,40,000", "36.36%", "High", RGBColor(0xff, 0xcd, 0xd2)),
         ("Cloud Infrastructure", "Rs. 1,00,000", "25.98%", "High", RGBColor(0xff, 0xcd, 0xd2)),
-        ("BIS Data Licensing", "Rs. 60,000", "15.58%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
+        ("Data Engineering", "Rs. 60,000", "15.58%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
         ("QA & Testing", "Rs. 50,000", "12.99%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
         ("Project Management", "Rs. 35,000", "9.09%", "Medium", RGBColor(0xff, 0xf9, 0xc4)),
     ]
@@ -697,12 +697,12 @@ def slide_feasibility(prs):
     add_heading(s, 0.5, 4.9, 4, "Viability", 18, RGBColor(0x2e, 0x7d, 0x32))
 
     via_items = [
-        ("Market Demand:", " 63M+ MSMEs in India struggle with BIS compliance. No free AI tool exists for this."),
+        ("Market Demand:", " 63M+ MSMEs in India struggle with BIS compliance. Free AI tools answer generically - none indexes official IS text with section-level citations."),
         ("Adoption:", " WhatsApp-like chat interface - familiar to Indian users. No app download needed (web-based)."),
         ("Sustainability:", " Freemium model - free for individuals, paid plans for MSMEs and enterprises."),
-        ("Trust:", " Source-grounded RAG ensures responses cite official BIS documents. No hallucinations."),
+        ("Trust:", " Cited sources on every answer; 97.8% of IS references verified against retrieved text (28-question eval harness in repo)."),
         ("Government Alignment:", " Supports BIS Act 2016 compliance goals. Can integrate with MSME Samadhaan scheme."),
-        ("Partnerships:", " Potential BIS official data provider status. Revenue share on certified leads."),
+        ("Partnerships:", " No committed partners yet - outreach planned to BIS-recognized labs and MSME bodies; freemium subscriptions as the revenue model."),
     ]
 
     tb = s.shapes.add_textbox(Inches(0.5), Inches(5.3), Inches(5.8), Inches(1.8))
@@ -822,7 +822,7 @@ def slide_thankyou(prs):
     cta.fill.background(); cta.line.color.rgb = WHITE; cta.line.width = Pt(1)
     tf = cta.text_frame; p = tf.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
     r = p.add_run(); r.text = "Try live at  "; r.font.size = Pt(12); r.font.color.rgb = RGBColor(0xaa, 0xaa, 0xaa)
-    r2 = p.add_run(); r2.text = "manakmitra-frontend.vercel.app"; r2.font.size = Pt(14); r2.font.bold = True; r2.font.color.rgb = ORANGE
+    r2 = p.add_run(); r2.text = "sih2026-bis-assistant-ebon.vercel.app"; r2.font.size = Pt(14); r2.font.bold = True; r2.font.color.rgb = ORANGE
 
     sih = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(12.0), Inches(0.3), Inches(0.8), Inches(0.8))
     sih.fill.solid(); sih.fill.fore_color.rgb = ORANGE; sih.line.fill.background()

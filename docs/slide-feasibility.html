@@ -163,12 +163,12 @@
       <div style="border-top: 2px solid #e0e0e0; padding-top: 10px;">
         <div class="section-heading green">Viability</div>
         <ul class="bullet-list">
-          <li><b>Market Demand:</b> 63M+ MSMEs in India struggle with BIS compliance. No free AI tool exists for this.</li>
+          <li><b>Market Demand:</b> 63M+ MSMEs in India struggle with BIS compliance. Free AI tools answer generically &mdash; none indexes official IS text with section-level citations.</li>
           <li><b>Adoption:</b> WhatsApp-like chat interface — familiar to Indian users. No app download needed (web-based).</li>
           <li><b>Sustainability:</b> Freemium model — free for individuals, paid plans for MSMEs and enterprises.</li>
-          <li><b>Trust:</b> Source-grounded RAG ensures responses cite official BIS documents. No hallucinations on legal info.</li>
+          <li><b>Trust:</b> Cited sources on every answer; 97.8% of IS references verified against retrieved text (28-question eval harness in the repo).</li>
           <li><b>Government Alignment:</b> Supports BIS Act 2016 compliance goals. Can integrate with MSME Samadhaan scheme.</li>
-          <li><b>Partnerships:</b> Potential BIS official data provider status. Revenue share on certified leads from testing labs.</li>
+          <li><b>Partnerships:</b> No committed partners yet &mdash; outreach planned to BIS-recognized labs and MSME bodies; freemium subscriptions as the revenue model.</li>
         </ul>
       </div>
     </div>
@@ -217,22 +217,27 @@
           <div class="challenge-item">
             <div class="challenge-icon">🔒</div>
             <div class="challenge-name">Data Security</div>
+            <div class="challenge-desc" style="font-size:7.5px;color:#666;text-align:center;margin-top:3px;line-height:1.25;">JWT auth + bcrypt; minimal PII stored</div>
           </div>
           <div class="challenge-item">
             <div class="challenge-icon">📈</div>
             <div class="challenge-name">User Adoption</div>
+            <div class="challenge-desc" style="font-size:7.5px;color:#666;text-align:center;margin-top:3px;line-height:1.25;">WhatsApp-style chat UI; no training needed</div>
           </div>
           <div class="challenge-item">
             <div class="challenge-icon">🌐</div>
             <div class="challenge-name">Scalability</div>
+            <div class="challenge-desc" style="font-size:7.5px;color:#666;text-align:center;margin-top:3px;line-height:1.25;">Modular RAG - add a PDF to add a standard</div>
           </div>
           <div class="challenge-item">
             <div class="challenge-icon">🗣️</div>
             <div class="challenge-name">Language Accuracy</div>
+            <div class="challenge-desc" style="font-size:7.5px;color:#666;text-align:center;margin-top:3px;line-height:1.25;">LLM translation fallback + translate-back</div>
           </div>
           <div class="challenge-item">
             <div class="challenge-icon">🔄</div>
             <div class="challenge-name">Data Freshness</div>
+            <div class="challenge-desc" style="font-size:7.5px;color:#666;text-align:center;margin-top:3px;line-height:1.25;">Auto-fetch pipeline polls bis.gov.in</div>
           </div>
         </div>
       </div>
@@ -240,16 +245,16 @@
       <!-- Key Metrics -->
       <div style="display: flex; gap: 10px; margin-top: 4px;">
         <div style="flex:1; background:#e8f5e9; border:1.5px solid #4caf50; border-radius:8px; padding:8px 12px; text-align:center;">
-          <div style="font-size:20px; font-weight:800; color:#2e7d32;">95%</div>
-          <div style="font-size:9px; color:#555;">RAG Accuracy</div>
+          <div style="font-size:20px; font-weight:800; color:#2e7d32;">97.8%</div>
+          <div style="font-size:9px; color:#555;">Citations Verified</div>
         </div>
         <div style="flex:1; background:#e3f2fd; border:1.5px solid #2196f3; border-radius:8px; padding:8px 12px; text-align:center;">
           <div style="font-size:20px; font-weight:800; color:#1565c0;">22</div>
           <div style="font-size:9px; color:#555;">Languages</div>
         </div>
         <div style="flex:1; background:#fff3e0; border:1.5px solid #ff9800; border-radius:8px; padding:8px 12px; text-align:center;">
-          <div style="font-size:20px; font-weight:800; color:#e65100;">0</div>
-          <div style="font-size:9px; color:#555;">Hallucinations</div>
+          <div style="font-size:20px; font-weight:800; color:#e65100;">100%</div>
+          <div style="font-size:9px; color:#555;">Off-Topic Refusals</div>
         </div>
         <div style="flex:1; background:#f3e5f5; border:1.5px solid #9c27b0; border-radius:8px; padding:8px 12px; text-align:center;">
           <div style="font-size:20px; font-weight:800; color:#6a1b9a;">24/7</div>

@@ -242,7 +242,7 @@ Q: "Walk me through what happens when someone asks a question."
 A: "Step 1: User types 'What are the standards for cement?' in Hindi.
     Step 2: System detects Hindi, translates to English.
     Step 3: ONNX converts the question to a 384-dimension vector.
-    Step 4: FAISS searches 115+ document chunks, finds top 5 matches.
+    Step 4: FAISS searches 122 document chunks, finds top 10 matches.
     Step 5: System also adds BIS office data and certification guides.
     Step 6: Gemini receives the question + context, generates 6 sections.
     Step 7: Citation verification checks all IS numbers mentioned.
@@ -256,7 +256,7 @@ A: "We downloaded 28 BIS standard PDFs from bis.gov.in. Each PDF is
     into chunks of ~500 words with 50-word overlap (for context
     continuity). Each chunk is converted to a vector using ONNX
     embeddings. The vectors are stored in a FAISS index. The original
-    text chunks are stored alongside for retrieval. Total: 115+
+    text chunks are stored alongside for retrieval. Total: 122
     indexed chunks from 28 standards."
 
 Q: "What happens if the Gemini API quota is exceeded?"

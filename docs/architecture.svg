@@ -70,7 +70,7 @@
   <rect x="100" y="380" width="200" height="65" rx="6" fill="#E8F5E9" stroke="#A5D6A7"/>
   <text x="200" y="408" text-anchor="middle" font-size="20">📊</text>
   <text x="200" y="428" text-anchor="middle" font-size="10" fill="#1B2A4A" font-weight="600">FAISS Vector Store</text>
-  <text x="200" y="440" text-anchor="middle" font-size="8" fill="#6C757D">73 chunks, 18 standards</text>
+  <text x="200" y="440" text-anchor="middle" font-size="8" fill="#6C757D">122 chunks, 28 standards</text>
   
   <rect x="320" y="380" width="160" height="65" rx="6" fill="#E8F5E9" stroke="#A5D6A7"/>
   <text x="400" y="408" text-anchor="middle" font-size="20">🧠</text>

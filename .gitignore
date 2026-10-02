@@ -14,11 +14,19 @@ frontend/dist/
 # Environment
 .env
 
+# Auth — never commit user records or signing secrets to the public repo
+backend/data/users.json
+backend/data/users.tmp
+backend/data/.jwt_secret
+
 # Data (regenerable)
 data/chroma_db/
 data/processed/
 *.pkl
 *.index
+
+# Logs (local runs)
+*.log
 
 # OS
 .DS_Store

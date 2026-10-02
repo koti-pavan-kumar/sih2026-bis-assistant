@@ -3,11 +3,12 @@ FastAPI Backend — BIS Standards AI Assistant API
 """
 import os
 import sys
+import re
 import logging
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -32,9 +33,39 @@ from backend.data.certifications import (
     CERTIFICATION_TYPES, CERTIFICATION_FAQS, CERTIFICATION_OFFICES,
     get_certification_info, get_all_certifications, get_certification_offices
 )
+from backend import auth as auth_store
+from backend.rag.query_processor import INDIAN_LANGUAGES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Queries about certification/offices can be answered from the static
+# CERTIFICATION_TYPES / BIS_REGIONAL_OFFICES context even when retrieval
+# finds no standard excerpts — everything else with empty retrieval must
+# abstain deterministically (asking the LLM to "not hallucinate" with an
+# empty context demonstrably fails: it still emits [IS ...] citations).
+CERT_CONTEXT_KEYWORDS = (
+    "certif", "licen", "licence", "scheme", "isi mark", "bis mark",
+    "office", "laborator", "laborator", "testing cent", "audit",
+    "bis act", "application", "document", "timeline", "how long",
+    "process", "contact", "phone", "address", "regional",
+)
+
+
+def _is_cert_or_office_query(query: str) -> bool:
+    q = query.lower()
+    return any(k in q for k in CERT_CONTEXT_KEYWORDS)
+
+
+def _abstention_answer(query: str) -> str:
+    topic = re.sub(r"\s+", " ", query).strip().rstrip("?!. ")[:80] or "This question"
+    return (
+        f"# {topic}\n\n"
+        "I could not find relevant Indian Standard excerpts for this question in the "
+        "indexed BIS knowledge base (28 standards, 122 sections), so I cannot answer "
+        "it reliably. Please ask about a covered topic — for example cement (IS 269), "
+        "structural steel (IS 2062), drinking water (IS 10500), or concrete (IS 456)."
+    )
 
 app = FastAPI(title="BIS Standards AI Assistant", version="1.0.0")
 
@@ -91,6 +122,88 @@ async def get_standards():
     return {"standards": rag_engine.get_available_standards()}
 
 
+@app.get("/api/stats")
+async def stats():
+    """Single source of truth for every count the UI/PPT claims.
+
+    Deck numbers (standards indexed, languages, offices, certifications)
+    must be read from here — never hand-typed — so slides can't drift
+    from reality.
+    """
+    try:
+        fetched_count = len(BISAutoFetcher().get_fetched_history())
+    except Exception:
+        fetched_count = 0
+    standards = rag_engine.get_available_standards()
+    chunks = rag_engine.vector_store.index.ntotal if rag_engine.vector_store.index else 0
+    return {
+        "standards_indexed": len(standards),
+        "chunks_indexed": chunks,
+        "standards_fetched": fetched_count,
+        "languages_supported": len(INDIAN_LANGUAGES),  # 22 Indian languages
+        "offices_mapped": len(BIS_REGIONAL_OFFICES),
+        "certifications_covered": len(CERTIFICATION_TYPES),
+    }
+
+
+# ---------------------------------------------------------------- auth
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    phone: Optional[str] = ""
+    userType: Optional[str] = "individual"
+    organization: Optional[str] = ""
+    gstNumber: Optional[str] = ""
+    state: Optional[str] = ""
+    district: Optional[str] = ""
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/api/auth/register")
+async def auth_register(payload: RegisterRequest):
+    """Register: bcrypt-hashed password, returns a signed JWT session."""
+    try:
+        user, token = auth_store.register_user(
+            name=payload.name,
+            email=payload.email,
+            password=payload.password,
+            phone=payload.phone or "",
+            user_type=payload.userType or "individual",
+            organization=payload.organization or "",
+            gst_number=payload.gstNumber or "",
+            state=payload.state or "",
+            district=payload.district or "",
+        )
+        return {"token": token, "user": user}
+    except auth_store.AuthError as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+
+@app.post("/api/auth/login")
+async def auth_login(payload: LoginRequest):
+    """Verify credentials against bcrypt hashes; returns a signed JWT."""
+    try:
+        user, token = auth_store.login_user(payload.email, payload.password)
+        return {"token": token, "user": user}
+    except auth_store.AuthError as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+
+@app.get("/api/auth/me")
+async def auth_me(authorization: Optional[str] = Header(default=None)):
+    """Resolve the current user from a Bearer JWT (401 if missing/invalid)."""
+    user = auth_store.user_from_authorization(authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {"user": user}
+
+
 @app.post("/api/query", response_model=QueryResponse)
 async def query(request: QueryRequest):
     """Process a query about Indian Standards."""
@@ -98,10 +211,11 @@ async def query(request: QueryRequest):
         # Process query (detect language, translate)
         original, processed, language = query_processor.process_query(request.query)
 
-        # Retrieve relevant chunks
+        # Retrieve relevant chunks (10 so per-standard diversification can
+        # surface competing candidate standards; only top 5 become context)
         results = rag_engine.retrieve(
             processed,
-            n_results=5,
+            n_results=10,
             filter_is_number=request.filter_standard
         )
 
@@ -130,6 +244,22 @@ async def query(request: QueryRequest):
         # "steel doors", process_query defaults its 'auto' branch to 'hi',
         # and no back-translation ever ran for response_lang == "en".
         response_lang = request.response_language or "en"
+
+        # No standard excerpts passed the relevance gate and the question is
+        # not about certification/offices → answer honestly without the LLM.
+        if not results and not _is_cert_or_office_query(request.query):
+            answer = _abstention_answer(request.query)
+            if response_lang != "en":
+                answer = llm_generator.translate_answer(answer, response_lang)
+            return QueryResponse(
+                answer=answer,
+                sources=[],
+                confidence="LOW",
+                language=response_lang,
+                citations=[],
+                citation_verification=[],
+            )
+
         answer = llm_generator.generate(processed, context, response_lang, request.conversation_history)
         
         # Always translate the response to the user's selected language.
@@ -146,10 +276,15 @@ async def query(request: QueryRequest):
         if not is_fallback:
             if response_lang != "en":
                 answer = llm_generator.translate_answer(answer, response_lang)
-            elif not llm_generator.looks_english(answer):
-                # The model answered in another language anyway (it sometimes
-                # mimics a non-English conversation history) — translate back.
-                answer = llm_generator.translate_answer(answer, "en")
+        elif not llm_generator.looks_english(answer):
+            # The model answered in another language anyway (it sometimes
+            # mimics a non-English conversation history) — translate back.
+            answer = llm_generator.translate_answer(answer, "en")
+
+        # Empty retrieval + LLM path (certification/office questions): the
+        # model must not cite IS standards it "recalls" — no chunk backs them.
+        if not results:
+            answer = re.sub(r'\[IS\s+\d[^\]\n]*\]', '', answer)
 
         # Extract citations
         citations = llm_generator.extract_citations(answer)

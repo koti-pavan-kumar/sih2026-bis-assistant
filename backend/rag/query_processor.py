@@ -13,6 +13,9 @@ DetectorFactory.seed = 0
 
 logger = logging.getLogger(__name__)
 
+# Lazily-created LLM generator used only as a translation fallback
+_shared_llm = None
+
 # All Indian languages supported by deep-translator (ISO 639-1 codes)
 INDIAN_LANGUAGES = {
     "hi": "Hindi",
@@ -68,7 +71,12 @@ class QueryProcessor:
 
     def translate_to_english(self, text: str, source_lang: str = "auto") -> str:
         """Translate text to English using auto-detect for source language.
-        
+
+        Google's free endpoint is rate-limited (5 req/s, IP blocks). When it
+        fails we fall back to Gemini so non-English queries never reach the
+        embedder untranslated (an untranslated Hindi query scores ~0.3 against
+        the English corpus and retrieval collapses).
+
         Args:
             text: Text to translate
             source_lang: Source language code, or 'auto' for auto-detection
@@ -85,7 +93,6 @@ class QueryProcessor:
                 return translated
             else:
                 logger.warning(f"Translation returned empty for source={src}")
-                return text
         except Exception as e:
             logger.warning(f"Translation failed (source={source_lang}): {e}")
             # Retry with auto-detect if specific language failed
@@ -97,7 +104,29 @@ class QueryProcessor:
                         return translated
                 except Exception:
                     pass
-            return text
+        return self._llm_translate_fallback(text)
+
+    def _llm_translate_fallback(self, text: str) -> str:
+        """Translate via Gemini when the Google free endpoint fails."""
+        try:
+            from backend.rag.generator import LLMGenerator
+            global _shared_llm
+            if _shared_llm is None:
+                _shared_llm = LLMGenerator()
+            prompt = (
+                "Translate the text below to English. If it is already in English, "
+                "return it unchanged. Return ONLY the translated text — no quotes, "
+                "no explanations.\n\n" + text
+            )
+            out, _errors = _shared_llm._post_gemini(prompt, timeout=30.0)
+            if out and out.strip():
+                cleaned = out.strip().strip('"\'')
+                logger.info(f"Gemini fallback translation: '{text[:40]}' -> '{cleaned[:40]}'")
+                return cleaned
+            logger.warning("Gemini fallback translation returned no text")
+        except Exception as e:
+            logger.warning(f"Gemini fallback translation failed: {e}")
+        return text
 
     def process_query(self, query: str) -> Tuple[str, str, str]:
         """

@@ -521,7 +521,7 @@ def create_problems_slide(prs):
     add_section_heading(slide, 3.5, 6.0, 6, "Innovation and Uniqueness:", 13)
 
     innovations = [
-        ("Source-Grounded RAG", " — ONNX + FAISS ensures hallucination-free, cited responses"),
+        ("Source-Grounded RAG", " — ONNX + FAISS ensures citation-verified, source-grounded responses"),
         ("Live BIS Pipeline", " — Auto-fetches new standards, knowledge base always current"),
         ("22 Indian Languages", " — Auto-detect → translate → RAG → translate-back"),
         ("6-Section Responses", " — Standards, testing, offices, legal, QC, documents"),
@@ -579,7 +579,7 @@ def create_techstack_slide(prs):
         ("🎨 Frontend", "React 18 + Vite\nResponsive SPA, dark/light mode", BLUE_LIGHT, SEC_BLUE),
         ("⚙️ Backend", "FastAPI + Python\nAsync API, structured endpoints", GREEN_LIGHT, SEC_GREEN),
         ("🤖 AI / LLM", "Gemini 3.6 Flash\n6-section structured responses", ORANGE_LIGHT, SEC_AMBER),
-        ("🧠 Embeddings", "ONNX Runtime + FAISS\n384-dim vectors, zero hallucination", PURPLE_LIGHT, SEC_PURPLE),
+        ("🧠 Embeddings", "ONNX Runtime + FAISS\n384-dim vectors, citation-verified output", PURPLE_LIGHT, SEC_PURPLE),
         ("🚀 Deployment", "Render (backend) + Vercel (frontend)\nFree tier, auto-deploy on push", ROSE_LIGHT, SEC_ROSE),
         ("🔐 Security", "JWT tokens + bcrypt\nPer-user chat isolation", TEAL_LIGHT, RGBColor(0x00, 0x96, 0x88)),
     ]
@@ -1182,7 +1182,7 @@ def create_thankyou_slide(prs):
     r.font.size = Pt(12)
     r.font.color.rgb = RGBColor(0xaa, 0xaa, 0xaa)
     r2 = p.add_run()
-    r2.text = "manakmitra-frontend.vercel.app"
+    r2.text = "sih2026-bis-assistant-ebon.vercel.app"
     r2.font.size = Pt(14)
     r2.font.bold = True
     r2.font.color.rgb = ORANGE

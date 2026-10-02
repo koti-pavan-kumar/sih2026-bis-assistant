@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { clearUserChats } from '../utils/chatStorage'
+import { logout } from '../utils/auth'
 
 const USER_TYPE_LABELS = {
   msme: { label: 'MSME', icon: '🏭', color: 'text-[#FF9933]' },
@@ -33,8 +34,8 @@ export default function ProfileMenu({ onNavigate }) {
   }, [])
 
   const handleLogout = () => {
-    // Clear user data (chats stay per-user in storage)
-    localStorage.removeItem('manakmitra_user')
+    // Clears JWT token + session profile (chats stay per-user in storage)
+    logout()
     setOpen(false)
     onNavigate('landing')
   }
