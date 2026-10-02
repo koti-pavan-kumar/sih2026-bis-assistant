@@ -122,6 +122,31 @@ async def get_standards():
     return {"standards": rag_engine.get_available_standards()}
 
 
+@app.get("/api/standards/{is_number}")
+async def get_standard_detail(is_number: str):
+    """Sections and excerpted text behind one indexed standard.
+
+    Powers the card detail view on the Standards page — a card is a real
+    door into the retrieved corpus, not a dead tile.
+    """
+    chunks = [c for c in rag_engine.vector_store.chunks if c.is_number == is_number]
+    if not chunks:
+        raise HTTPException(status_code=404, detail="Standard not indexed")
+    return {
+        "is_number": is_number,
+        "title": chunks[0].title,
+        "chunk_count": len(chunks),
+        "sections": [
+            {
+                "section": c.section or "General",
+                "page": c.page,
+                "excerpt": (c.text[:400] + " …") if len(c.text) > 400 else c.text,
+            }
+            for c in chunks
+        ],
+    }
+
+
 @app.get("/api/stats")
 async def stats():
     """Single source of truth for every count the UI/PPT claims.
