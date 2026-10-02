@@ -3,7 +3,8 @@ Query Processor — Handles language detection and translation.
 Supports 22 Indian languages via deep-translator auto-detect.
 """
 import logging
-from typing import Tuple
+import re
+from typing import Optional, Tuple
 
 from langdetect import detect, DetectorFactory
 from deep_translator import GoogleTranslator
@@ -41,6 +42,47 @@ INDIAN_LANGUAGES = {
     "mn": "Manipuri",
     "sat": "Santali",
 }
+
+
+# Unicode script ranges that map unambiguously to one reply language.
+# Latin is deliberately absent: English and Hinglish are both typed in
+# Latin letters, so script alone can't pick a reply language for them.
+_SCRIPT_REPLY_LANGS = (
+    ("\u0900-\u097F", "hi"),   # Devanagari — Hindi / Marathi / Nepali
+    ("\u0980-\u09FF", "bn"),   # Bengali / Assamese
+    ("\u0A00-\u0A7F", "pa"),   # Gurmukhi — Punjabi
+    ("\u0A80-\u0AFF", "gu"),   # Gujarati
+    ("\u0B00-\u0B7F", "or"),   # Odia
+    ("\u0B80-\u0BFF", "ta"),   # Tamil
+    ("\u0C00-\u0C7F", "te"),   # Telugu
+    ("\u0C80-\u0CFF", "kn"),   # Kannada
+    ("\u0D00-\u0D7F", "ml"),   # Malayalam
+    ("\u0600-\u06FF", "ur"),   # Arabic script — Urdu in this context
+)
+
+
+def detect_reply_language(text: str) -> Optional[str]:
+    """Return the language to ANSWER in from the script the user typed in.
+
+    A message written in Tamil must get a Tamil reply even when the UI
+    language selector is still on English. Detection is script-based, not
+    langdetect-based, because langdetect misclassifies short messages
+    ("steel doors" → 'hi'), which previously made English queries answer
+    in Hindi. Returns None for Latin-script text, so the caller keeps the
+    user's selected language.
+    """
+    try:
+        best_code: Optional[str] = None
+        best_count = 0
+        for chars, code in _SCRIPT_REPLY_LANGS:
+            count = len(re.findall(f"[{chars}]", text or ""))
+            if count > best_count:
+                best_code, best_count = code, count
+        # >= 3 script characters: one stray Devanagari word inside an
+        # English sentence should not flip the whole reply's language.
+        return best_code if best_count >= 3 else None
+    except Exception:
+        return None
 
 
 class QueryProcessor:

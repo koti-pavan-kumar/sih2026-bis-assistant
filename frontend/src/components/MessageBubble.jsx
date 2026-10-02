@@ -482,6 +482,11 @@ export default function MessageBubble({ message, onRetry, language = 'en', onNav
   const isUser = message.role === 'user'
   const isError = message.isError
   const parsed = !isUser && !isError ? parseStructuredResponse(message.content) : null
+  // Language the answer itself was written in (auto-detected from the
+  // user's message by the backend) — section headings and in-answer
+  // labels follow it, so a Hindi question renders a fully Hindi answer
+  // card even while the surrounding UI stays in the selected language.
+  const answerLang = !isUser && !isError && message.language ? message.language : language
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -527,7 +532,7 @@ export default function MessageBubble({ message, onRetry, language = 'en', onNav
               {parsed.sections.map((section, i) => {
                 const known = KNOWN_SECTIONS.has(section.num)
                 const iconPath = SECTION_ICON_PATHS[section.num] || FALLBACK_ICON_PATH
-                const title = known ? t(`sec${section.num}`, language) : (section.title || '')
+                const title = known ? t(`sec${section.num}`, answerLang) : (section.title || '')
                 const sectionNum = String(section.num).padStart(2, '0')
 
                 // Section 4 — verdict callout driven by the existing response text
@@ -587,7 +592,7 @@ export default function MessageBubble({ message, onRetry, language = 'en', onNav
                               : 'bg-[#15803D] hover:bg-[#166534]'
                           }`}
                         >
-                          {t('viewSource', language)}
+                          {t('viewSource', answerLang)}
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 3h6m0 0v6m0-6L10 14" />
                           </svg>
@@ -613,7 +618,7 @@ export default function MessageBubble({ message, onRetry, language = 'en', onNav
                                   </p>
                                 ))}
                                 {entries.map((e, k) => (
-                                  <StandardEntry key={`std-${k}`} entry={e} language={language} />
+                                  <StandardEntry key={`std-${k}`} entry={e} language={answerLang} />
                                 ))}
                               </>
                             )
@@ -661,7 +666,7 @@ export default function MessageBubble({ message, onRetry, language = 'en', onNav
                                     <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
                                     <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
                                   </svg>
-                                  {t('officialLink', language)}
+                                  {t('officialLink', answerLang)}
                                 </a>
                               ))}
                             </div>

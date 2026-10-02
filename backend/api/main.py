@@ -34,7 +34,7 @@ from backend.data.certifications import (
     get_certification_info, get_all_certifications, get_certification_offices
 )
 from backend import auth as auth_store
-from backend.rag.query_processor import INDIAN_LANGUAGES
+from backend.rag.query_processor import INDIAN_LANGUAGES, detect_reply_language
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -244,6 +244,14 @@ async def query(request: QueryRequest):
         # "steel doors", process_query defaults its 'auto' branch to 'hi',
         # and no back-translation ever ran for response_lang == "en".
         response_lang = request.response_language or "en"
+
+        # …but a message WRITTEN in a non-Latin script must be answered in
+        # that language regardless of the selector: a Hindi/Tamil question
+        # gets a Hindi/Tamil answer. Script detection is unambiguous (unlike
+        # langdetect), and Latin-script input keeps the selected language.
+        script_lang = detect_reply_language(request.query)
+        if script_lang:
+            response_lang = script_lang
 
         # No standard excerpts passed the relevance gate and the question is
         # not about certification/offices → answer honestly without the LLM.

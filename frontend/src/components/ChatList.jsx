@@ -23,6 +23,16 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
   const [chats, setChats] = useState([])
   const [hoveredId, setHoveredId] = useState(null)
 
+  // Live count from /api/stats — this sidebar previously hardcoded 23
+  // while the index actually holds 28 standards.
+  const [standardsCount, setStandardsCount] = useState(28)
+  useEffect(() => {
+    fetch('/api/stats')
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => { if (d && d.standards_indexed) setStandardsCount(d.standards_indexed) })
+      .catch(() => {})
+  }, [])
+
   // Reload chats on mount and when refreshKey changes
   useEffect(() => {
     const loaded = loadChats()
@@ -166,7 +176,7 @@ export default function ChatList({ onChatSelect, activeChatId, refreshKey, onWiz
           <div className="bg-white/50 dark:bg-[#1a1d23] rounded-xl p-3.5 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-500 dark:text-gray-400">{t('standardsIndexed', language)}</span>
-              <span className="font-bold text-[#000080] dark:text-blue-300">23</span>
+              <span className="font-bold text-[#000080] dark:text-blue-300">{standardsCount}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-gray-500 dark:text-gray-400">{t('languagesWord', language)}</span>
